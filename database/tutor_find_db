@@ -1,0 +1,332 @@
+#!/usr/bin/python
+
+import sqlite3
+import os
+import json
+import hashlib
+import collections
+import math
+import cgi
+import cgitb
+import sys
+
+cgitb.enable()
+
+db_name = 'tutor.db'
+db      = None
+
+################################################################################
+class DbTable:
+   """ Wrapper class to simplify common operations on a database table"""
+
+   DbVar = collections.namedtuple('DbVar', 'name editable type')
+
+   def __init__(self, name, cols):
+      self.name     = name
+      self.cols     = [DbTable.DbVar._make(c) for c in cols]
+      self.col_type = collections.namedtuple('%s_type' % name, [c.name for c in self.cols])
+      self.id_col   = self.cols[0]
+
+      self.col_set          = set((c.name for c in self.cols))
+      self.col_editable_set = set((c.name for c in self.cols if c.editable))
+
+   def create(self):
+      """Create this table"""
+
+      column_text = ','.join([' '.join((c.name, c.type)) for c in self.cols])
+      db.execute('create table %s (%s)' % (self.name, column_text))
+
+   def select_many(self, conditions, condition_vals):
+      """Return a list of rows from the database matching the given conditions
+
+      conditions     -- SQL formatted condition string (e.g. 'val1=2 and val2=?')
+      condition_vals -- List of parameters to sub into condition string
+      """
+      fields = ','.join(self.col_type._fields)
+      dbc = db.cursor()
+      dbc.execute('select %s from %s where %s' % (fields, self.name, conditions), condition_vals)
+      return [u for u in map(self.col_type._make, dbc.fetchall())]
+
+   def select_one(self, conditions, condition_vals):
+      """Return a single row matching the given conditions or None
+
+      conditions     -- SQL formatted condition string (e.g. 'val1=2 and val2=?')
+      condition_vals -- List of parameters to sub into condition string
+      """
+
+      results = self.select_many(conditions, condition_vals);
+      if len(results) == 0: return None
+      return results[0]
+
+   def get(self, id_val):
+      """Return the row with the matching ID
+         
+      id_val -- row ID number
+      """
+
+      return self.select_one('%s=?' % self.id_col.name, [id_val])
+
+   def insert(self, values):
+      """Add a new row to the table
+
+      values -- dict of column names mapped to their new values (e.g. {'name': 'Alice'})
+      """
+
+      insert_vals = {k: values[k] for k in (set(values.keys()) & self.col_set)}
+      key_str = ','.join(insert_vals.keys())
+      val_str = ','.join('?' * len(insert_vals))
+
+      query = 'insert into %s(%s) values (%s)' % (self.name, key_str, val_str)
+      dbc = db.cursor()
+      dbc.execute(query, insert_vals.values())
+
+      return dbc.lastrowid # Return row ID that we just added
+
+   def update(self, id_val, changes, editable_only=False):
+      """Update an existing row in the table
+
+      id_val        -- row ID number
+      changes       -- dict of column names mapped to their new values (e.g. {'name': 'Alice'})
+      editable_only -- if True, only columns marked as editable will be modified
+      """
+
+      selected_set = self.col_editable_set if editable_only else self.col_set
+      update_vals = {k: changes[k] for k in (set(changes.keys()) & selected_set)}
+      update_str = ','.join((k + '=?' for k in update_vals.keys()))
+
+      query = 'update %s set %s where %s=?' % (self.name, update_str, self.id_col.name)
+      db.execute(query, update_vals.values() + [id_val])
+
+   def delete(self, conditions, condition_vals):
+      """Delete a row from the table
+
+      conditions     -- SQL formatted condition string (e.g. 'val1=2 and val2=?')
+      condition_vals -- List of parameters to sub into condition string
+      """
+      db.execute('delete from %s where %s' % (self.name, conditions), condition_vals)
+
+################################################################################
+# Functions intended to be accessed by the database for searching
+def geo_dist(lat1, lon1, lat2, lon2):
+   """Calculate distance between two geographic points"""
+   if not (lat1 and lon1 and lat2 and lon2): return float('inf')
+   dlon = lon2 - lon1 
+   dlat = lat2 - lat1 
+   a = math.sin(dlat/2.0)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2.0)**2 
+   c = 2 * math.atan2(math.sqrt(a), math.sqrt(1.0-a)) 
+   return 3963.1676 * c # Multiply by radius of earth to get distance
+
+def comp_tags(tags1, tags2):
+   """Check for overlap between two sets of tags"""
+   if not (tags1 and tags2): return False
+   return len(set(tags1.split(',')) & set(tags2.split(','))) > 0
+
+################################################################################
+class RequestError(Exception):
+   """Name for errors errors produced while processing a database request"""
+   pass
+
+################################################################################
+# Table definitions for the database
+users_table = DbTable('users', (
+      ('user_id',              False, 'integer primary key autoincrement'),
+      ('password_hash',        False, 'text'),
+      ('account_email',        False, 'text'),
+      ('name',                 True,  'text'),
+      ('phone',                True,  'text'),
+      ('public_email_address', True,  'text'),
+      ('loc_address',          True,  'text'),
+      ('loc_lat',              True,  'real'),
+      ('loc_lon',              True,  'real'),
+      ('loc_max_dist',         True,  'real'),
+      ('tutor_flag',           True,  'integer'),
+      ('preferred_flag',       True,  'integer'),
+      ('subject_tags',         True,  'text'),
+      ('available_days',       True,  'text'),
+      ('available_times',      True,  'text'),
+      ('price_per_hour',       True,  'real'),
+      ('score',                False, 'real')))
+reviews_table = DbTable('reviews', (
+      ('review_id',            False, 'integer primary key autoincrement'),
+      ('submitter_id',         False, 'integer'),
+      ('subject_id',           False, 'integer'),
+      ('score',                True,  'real'),
+      ('text',                 True,  'text')))
+sessions_table = DbTable('sessions', (
+      ('session_id',           False, 'integer primary key autoincrement'),
+      ('user_id',              False, 'integer')))
+
+################################################################################
+# Handler functions for user requests
+def init_db():
+   """Create database tables"""
+   users_table.create()
+   reviews_table.create()
+   sessions_table.create()
+   db.commit()
+
+def login(req):
+   """Check password and create session for existing user"""
+
+   # Look for matching email/password
+   hashed_pw = hashlib.sha1(req['password']).hexdigest()
+   user = users_table.select_one('account_email=? and password_hash=?', [req['email'], hashed_pw])
+   if not user:
+      raise RequestError('invalid_login')
+
+   # Return session id if we find user
+   sessions_table.delete('user_id=?', [user.user_id])
+   session_id = sessions_table.insert({'user_id': user.user_id})
+   db.commit()
+   return {'session_id': session_id, 'user_id': user.user_id}
+
+def register(req):
+   """Add a new user and create new session"""
+
+   # Make sure password meets requirements
+   if len(req['password']) < 6:
+      raise RequestError('invalid_password')
+
+   # Make sure user id doesn't already exist
+   if users_table.select_one('account_email=?', [req['email']]):
+      raise RequestError('duplicate_user')
+
+   # Add user and return session ID
+   hashed_pw  = hashlib.sha1(req['password']).hexdigest()
+   user_id    = users_table.insert({'account_email': req['email'], 'password_hash': hashed_pw})
+   session_id = sessions_table.insert({'user_id': user_id})
+   db.commit()
+
+   return {'session_id': session_id, 'user_id': user_id}
+
+def validate_session(req):
+   """Get valid session or throw exception"""
+
+   session = sessions_table.get(req['session_id'])
+   if not session:
+      raise RequestError('invalid_session')
+   return session
+
+def update_user(req):
+   """Update a user's profile data"""
+
+   session = validate_session(req)
+
+   # Update editable fields with request data
+   users_table.update(session.user_id, req, True)
+   db.commit()
+
+   # Return updated data
+   return sanitize_user(users_table.get(session.user_id))
+
+def submit_review(req):
+   """Add a new review for a tutor or update an existing one"""
+
+   session = validate_session(req)
+
+   # Check valid subject and can't submit rewviews for self
+   subject = users_table.get(req['subject_id'])
+   if not subject or session.user_id == subject.user_id:
+      raise RequestError('invalid_subject')
+
+   # Insert new review or update existing
+   existing = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, subject.user_id])
+   review_id = None
+   if existing:
+      reviews_table.update(existing.review_id, req, True)
+      review_id = existing.review_id
+   else:
+      review_id = reviews_table.insert(dict({'submitter_id': session.user_id}, **req))
+
+   # Update subject score
+   scores = map(r.score for r in reviews_table.select_many('subject_id=?', subject.user_id))
+   new_score = sum(scores) / len(scores)
+   users_table.update(subject.user_id, {'score': new_score})
+   db.commit()
+
+   return dict(reviews_table.get(review_id)._asdict())
+
+def get_reviews(req):
+   """Get full list of reviews for a given tutor"""
+
+   validate_session(req)
+   return {'reviews': reviews_table.select_many('subject_id=?', [req['subject_id']])}
+
+def get_user(req):
+   """Return a single user's profile data"""
+
+   validate_session(req)
+
+   user = users_table.get(req['user_id'])
+   if not user:
+      raise RequestError('invalid_user')
+
+   return sanitize_user(user)
+
+def sanitize_user(user):
+   """Remove private fields from a user object and convert to dictionary"""
+
+   user = dict(user._asdict())
+   del user['password_hash']
+   return user
+
+def search(req):
+   return users_table.select_many('comp_tags(subject_tags, ?)', ['calculus,math'])
+   return users_table.select_many('geo_dist(loc_lat, loc_lon, 50, 50) < 20', [])
+   
+################################################################################
+# Table mapping request names to handler functions and required arguments
+RequestHandler = collections.namedtuple('RequestHandler', 'func required')
+request_table = {
+   'login':         RequestHandler(login,         set(['email', 'password'])),
+   'register':      RequestHandler(register,      set(['email', 'password'])),
+   'update_user':   RequestHandler(update_user,   set(['session_id'])),
+   'submit_review': RequestHandler(submit_review, set(['session_id', 'subject_id', 'score', 'text'])),
+   'get_user':      RequestHandler(get_user,      set(['session_id', 'user_id'])),
+   'get_reviews':   RequestHandler(get_reviews,   set(['session_id', 'subject_id'])),
+}
+
+################################################################################
+# Request handling
+def handle_request(req_str):
+   """Execute user request and return results"""
+
+   req = json.loads(req_str)
+
+   # Make sure action is defined
+   if 'action' not in req or req['action'] not in request_table:
+      return json.dumps({'success': False, 'error': 'invalid_action'})
+
+   # Make sure argument list is complete
+   args_required = request_table[req['action']].required
+   if len(set(req.keys()) & args_required) != len(args_required):
+      return json.dumps({'success': False, 'error': 'incomplete_argument_list'})
+
+   # Make request
+   try:
+      result = request_table[req['action']].func(req)
+      result['success'] = True
+      return json.dumps(result)
+   except RequestError as e:
+      return json.dumps({'success': False, 'error': e.message})
+
+# Initialize DB if it doesn't already exist
+do_init = not os.path.exists(db_name)
+db = sqlite3.connect(db_name)
+if do_init:
+   init_db()
+
+# Store search functions in database
+db.create_function('geo_dist', 4, geo_dist)
+db.create_function('comp_tags', 2, comp_tags)
+
+# Handle request and return result
+request = sys.stdin.read(int(os.environ['CONTENT_LENGTH']))
+result  = handle_request(request)
+
+db.close()
+
+print 'Content-Type: application/json'
+print 'Content-Length: %d' % len(result)
+print
+print result
