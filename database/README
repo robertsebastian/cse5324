@@ -1,0 +1,168 @@
+Components:
+   tutor_find_db -- CGI script to handle database requests.
+
+   tutor.db -- Sqlite3 database. Created by tutor_find_db when run the first
+      time. You can simply delete this to start fresh.
+
+   test_server -- Simple python HTTP server to call tutor_find_db. Listens on
+      port 8000, so HTTP requests to the database should be directed to
+      localhost:8000 for now.
+
+   test_client.py -- Unit tests for database. Clears the database before each
+      test and operates using test_server and Python's built in HTTP client. Run
+      with 'python -m unittest test_client'
+
+--------------------------------------------------------------------------------
+tutor_find_db interaction:
+   Interaction with the database is done through HTTP POST requests with JSON
+   formatted request data. Requests are simply a set of name/value pairs, and
+   responses are exactly the same.
+
+   Request should be a POST request (like a GET, but with data included in the
+   body of the request) directed to http://localhost:8000/tutor_find_db. An
+   example of this in python is in test_client.py.
+
+   Android offers a module to easily parse and generate JSON text: JSONObject
+   Android also offers a module to easily generate HTTP requests: HTTPClient
+
+--------------------------------------------------------------------------------
+tutor_find_db requests:
+
+   Requests should always include an action key with the request name, and all
+   required parameters for the request.
+
+   Responses will always include a boolean "success" field. If success is false,
+   it will also include an "error" field, indicating the reason for the failure
+   (e.g. an invalid password)
+
+   Examples of requests:
+      {"action": "login", "email": "alice@example.com", "password": "MyPaSsWoRd1"}
+      {"action": "get_user", "session_id": 100, "user_id": 123}
+      {"action": "update_user", "session_id": 100, "name": "Alice", "phone": 8176290000}
+
+   Examples of replies:
+      {"success": false, "error": "invalid_login"}
+      {"success": true, "session_id": 100}
+
+   Currently supported requests:
+   login:
+      Required parameters:
+         email    -- Account e-mail address
+         password -- Account password
+      Returns:
+         session_id
+      Errors:
+         invalid_login -- User/password did not match
+
+   register:
+      Required parameters:
+         email    -- Desired registration e-mail address
+         password -- Desired account password
+      Returns:
+         session_id
+      Errors:
+         duplicate_user   -- A user with the same account_email already exists
+         invalid_password -- Password did not meet the complexity requirements
+
+   get_user:
+      Required parameters:
+         session_id -- Session associated with the logged in user
+         user_id    -- User_id of user to get information for
+      Returns:
+         All user_table fields for this user after the update
+      Errors:
+         invalid_user -- User_id does not exist
+
+   get_reviews:
+      Required parameters:
+         session_id -- Session associated with the logged in user
+         subject_id -- User_id of user to get reviews for
+      Returns:
+         reviews -- array of review objects with the provided subject_id each
+            of which contains all columns from the review table
+
+   update_user:
+      Required parameters:
+         session_id -- The user logged in with this session will be edited
+      Optional paramters:
+         Any user-editable column in the users_table can be included and the new
+         value will be stored. Any other parameters will be ignored.
+      Returns:
+         All user_table fields for this user after the update
+      
+   submit_review:
+      Required parameters:
+         session_id -- The user logged in with this session will be the submitter
+         subject_id -- The user_id of the tutor who is being reviewed
+         score      -- 0.0 to 5.0 stars
+         text       -- May be blank
+      Returns:
+         All review_table fields for this review after the update
+
+--------------------------------------------------------------------------------
+Database layout:
+   There are three tables with the listed columns.
+
+   users_table:
+      user_id -- Unique value identifying this user. Generated automatically
+         when the row is added.
+
+      password_hash -- Passwords are only stored in their hashed form. This is
+         never passed to the Android client. SHA1 hash.
+                            
+      account_email -- Unique e-mail address associated with this user's
+         account. Used during login, registration, or search.
+
+      name -- User's displayed name. If this is not provided then their e-mail
+         address should be shown.
+
+      phone -- User's phone number -- 10 digits, no symbols
+
+      public_email_address -- User's displayed e-mail address. Displayed instead
+         of their account_email if this is provided.
+
+      loc_address -- User's preferred meeting address in whatever textual form
+         they provided
+
+      loc_lat, loc_lon -- User's loc_address converted using Google's location
+         services to lat/lon. Used for map display and distance calculations.
+
+      loc_max_dist -- Max distance user is willing to travel from loc_address.
+         Used to filter search results.
+
+      tutor_flag -- User wishes to be displayed as a tutor. This means that the
+         following database fields are shown on their profile: subject_tags,
+         available_days, available_times, price_per_hour, and score
+
+      preferred_flag -- User should be bumped to the top of the search results.
+
+      subject_tags -- Comma separated, alphanumeric only (no spaces, no symbols)
+         list of subjects the tutor is willing to teach. Used by search.
+
+      available_days -- ??? The best way to describe availability is TBD.
+
+      available_times -- ???
+
+      price_per_hour -- Dollars per hour of tutoring.
+
+      score -- User score in 0.0 to 5.0 stars. Calculated automatically by
+         database when a review is submitted.
+
+   reviews_table:
+      review_id -- Unique value identifying this review. Generated automatically
+         by database when the row is added.
+
+      submitter_id -- User_id of user who submitted this review.
+         
+      subject_id -- User_id of tutor who is being reviewed.
+
+      score -- User rating of tutor nn range 0.0-5.0 stars.
+
+      text -- Optional text discussing the tutor and the rating.
+
+   sessions_table:
+      session_id -- Automatically generated number assigned to a login session
+         when a user is logged in. Sent in most commands to identify the current
+         user.
+
+      user_id -- User_id logged in with this session_id.

@@ -140,7 +140,7 @@ users_table = DbTable('users', (
       ('loc_lon',              True,  'real'),
       ('loc_max_dist',         True,  'real'),
       ('tutor_flag',           True,  'integer'),
-      ('preferred_flag',       True,  'integer'),
+      ('preferred_flag',       False, 'integer'),
       ('subject_tags',         True,  'text'),
       ('available_days',       True,  'text'),
       ('available_times',      True,  'text'),
