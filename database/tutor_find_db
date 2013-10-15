@@ -9,6 +9,7 @@ import math
 import cgi
 import cgitb
 import sys
+import time
 
 cgitb.enable()
 
@@ -224,6 +225,10 @@ def submit_review(req):
 
    session = validate_session(req)
 
+   # Valid score between 0 and 5
+   if not 0.0 <= req['score'] <= 5.0:
+      raise RequestError('invalid_score')
+
    # Check valid subject and can't submit rewviews for self
    subject = users_table.get(req['subject_id'])
    if not subject or session.user_id == subject.user_id:
@@ -239,7 +244,7 @@ def submit_review(req):
       review_id = reviews_table.insert(dict({'submitter_id': session.user_id}, **req))
 
    # Update subject score
-   scores = map(r.score for r in reviews_table.select_many('subject_id=?', subject.user_id))
+   scores = [r.score for r in reviews_table.select_many('subject_id=?', [subject.user_id])]
    new_score = sum(scores) / len(scores)
    users_table.update(subject.user_id, {'score': new_score})
    db.commit()
@@ -250,7 +255,9 @@ def get_reviews(req):
    """Get full list of reviews for a given tutor"""
 
    validate_session(req)
-   return {'reviews': reviews_table.select_many('subject_id=?', [req['subject_id']])}
+
+   reviews = [dict(r._asdict()) for r in reviews_table.select_many('subject_id=?', [req['subject_id']])]
+   return {'reviews': reviews}
 
 def get_user(req):
    """Return a single user's profile data"""
@@ -326,6 +333,7 @@ result  = handle_request(request)
 
 db.close()
 
+print 'Connection: close'
 print 'Content-Type: application/json'
 print 'Content-Length: %d' % len(result)
 print
