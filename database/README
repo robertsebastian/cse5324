@@ -8,9 +8,9 @@ Components:
       port 8000, so HTTP requests to the database should be directed to
       localhost:8000 for now.
 
-   test_client.py -- Unit tests for database. Clears the database before each
-      test and operates using test_server and Python's built in HTTP client. Run
-      with 'python -m unittest test_client'
+   test_client -- Unit tests for database. Clears the database before each test
+      and operates using test_server and Python's built in HTTP client. Run with
+      'python -m unittest test_client'
 
 --------------------------------------------------------------------------------
 tutor_find_db interaction:
