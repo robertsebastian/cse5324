@@ -1,15 +1,17 @@
-package com.example.tutorfind;
+package com.team7.tutorfind;
+
+import com.team7.tutorfind.R;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.EditText;
+//import android.widget.EditText;
 
 public class MainActivity extends Activity {
 
-	public final static String EXTRA_MESSAGE = "com.example.tutorfind.MESSAGE";
+	public final static String EXTRA_MESSAGE = "com.team7.tutorfind.MESSAGE";
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,4 +1,6 @@
-package com.example.tutorfind;
+package com.team7.tutorfind;
+
+import com.team7.tutorfind.R;
 
 import android.app.Activity;
 import android.content.Intent;

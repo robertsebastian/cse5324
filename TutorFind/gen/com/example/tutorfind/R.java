@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.example.tutorfind;
+package com.team7.tutorfind;
 
 public final class R {
     public static final class attr {
