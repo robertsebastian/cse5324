@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference android:title="@string/pref_db_hostname" android:key="pref_db_hostname" android:defaultValue="localhost" android:summary="@string/pref_db_hostname_description"/>
+    <EditTextPreference android:title="@string/pref_db_port" android:key="pref_db_port" android:defaultValue="8000" android:summary="@string/pref_db_port_description"/>
+    
+
+</PreferenceScreen>

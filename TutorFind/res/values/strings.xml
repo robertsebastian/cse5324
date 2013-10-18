@@ -11,5 +11,10 @@
     <string name="button_register">Register</string>
     <string name="enter_login">someone@example.com</string>
     <string name="enter_password">Password</string>
+    <string name="pref_db_hostname">Database hostname</string>
+    <string name="pref_db_port">Database port</string>
+    <string name="pref_db_hostname_description">Address of server hosting TutorFind DB</string>
+    <string name="pref_db_port_description">Port of webserver on host for TutorFind DB</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

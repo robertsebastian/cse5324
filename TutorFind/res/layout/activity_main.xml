@@ -5,16 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView  android:id="@+id/testing"
+    <TextView
+        android:id="@+id/testing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10pt"
-        android:textColor="#444444"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dip"
         android:layout_marginRight="9dip"
         android:layout_marginTop="20dip"
-        android:layout_marginLeft="10dip"
-        android:text="TutorFind"/>
+        android:text="@string/app_name"
+        android:textColor="#444444"
+        android:textSize="10pt" />
 
    	<EditText android:id="@+id/login_field"
 	    android:layout_width="match_parent"
