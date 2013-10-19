@@ -4,19 +4,30 @@ import unittest
 import httplib
 import json
 import os
+import imp
+import sys
+
+tutor_find_db = imp.load_source('tutor_find_db', 'tutor_find_db')
+direct_requests = False
 
 ################################################################################
-
 def request(text):
    """Make a request to the database's HTTP server"""
 
-   conn = httplib.HTTPConnection('localhost:8000')
-   conn.request('POST', '/tutor_find_db', json.dumps(text), {
-      'Content-Type': 'application/json',
-      'Accept':       'application/json',
-   })
-   response = conn.getresponse().read()
-   conn.close()
+   response = None
+   if direct_requests:
+      tutor_find_db.open_db()
+      response = tutor_find_db.handle_request(json.dumps(text))
+      tutor_find_db.close_db()
+
+   else:
+      conn = httplib.HTTPConnection('localhost:8000')
+      conn.request('POST', '/tutor_find_db', json.dumps(text), {
+         'Content-Type': 'application/json',
+         'Accept':       'application/json',
+      })
+      response = conn.getresponse().read()
+      conn.close()
 
    try:
       return json.loads(response)
@@ -40,6 +51,9 @@ class DatabaseTest(unittest.TestCase):
 
 class DatabaseTestWithUsers(DatabaseTest):
    """Base test class including some predefined users"""
+
+   def get_user(self, user, subject):
+      return request({'action': 'get_user', 'session_id': user['session_id'], 'user_id': subject['user_id']})
 
    def setUp(self):
       super(DatabaseTest, self).setUp()
@@ -134,20 +148,53 @@ class ReviewTests(DatabaseTestWithUsers):
       self.assertAlmostEqual(r['score'], 5.0 / 2.0, places=1)
 
 class UpdateTests(DatabaseTestWithUsers):
-#print request({
-#      'action':       'update_user',
-#      'name':         'Alice Example',
-#      'user_id':      '1000',
-#      'phone':        '1234567890',
-#      'tutor_flag':   1,
-#      'subject_tags': 'math,calculus,math2310',
-#      'loc_lat':      50.0001,
-#      'loc_lon':      50.0001,
-#      'session_id':   login_info['session_id']})
    def test_update(self):
-      r = request({'action': 'get_user', 'session_id': self.alice['session_id'], 'user_id': self.alice['user_id']})
+      update_vals = {
+         'action':       'update_user',
+         'name':         'Alice Example',
+         'user_id':      '1000',
+         'phone':        '1234567890',
+         'tutor_flag':   1,
+         'subject_tags': 'math,calculus,math2310',
+         'loc_lat':      50.0001,
+         'loc_lon':      50.0001,
+         'session_id':   self.alice['session_id']}
+      r = request(update_vals)
+
       self.assertEqual(r['success'], True)
-      self.assertEqual(r['account_email'], 'alice@example.org')
+
+      # Editable fields should be set
+      for val in 'name', 'phone', 'tutor_flag', 'subject_tags', 'loc_lat', 'loc_lon':
+         self.assertEqual(update_vals[val], r[val])
+
+      # Non-editable fields should not
+      self.assertNotEqual(update_vals['user_id'], r['user_id'])
+
+class FavoriteTests(DatabaseTestWithUsers):
+   def favorite(self, user, subject, status):
+      return request({
+         'action':     'set_favorite',
+         'session_id': user['session_id'],
+         'subject_id': subject['user_id'],
+         'favorited':  status})
+
+   def test_favorite(self):
+      self.favorite(self.alice, self.bob, False)
+      r = self.favorite(self.alice, self.bob, True)
+      self.assertEqual(r['success'], True)
+
+      u = self.get_user(self.alice, self.bob)
+      self.assertEqual(u['favorited'], True)
+
+   def test_get_favorites(self):
+      self.favorite(self.alice, self.bob, True)
+      self.favorite(self.alice, self.cindy, True)
+      
+      r = request({'action': 'get_favorites', 'session_id': self.alice['session_id']})
+      self.assertEqual(r['success'], True)
+      self.assertEqual(len(r['favorites']), 2)
 
 if __name__ == '__main__':
+#   tests = unittest.TestLoader().loadTestsFromTestCase(FavoriteTests)
+#   unittest.TextTestRunner(verbosity=2).run(tests)
    unittest.main()

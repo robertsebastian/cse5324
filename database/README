@@ -89,6 +89,20 @@ tutor_find_db requests:
          value will be stored. Any other parameters will be ignored.
       Returns:
          All user_table fields for this user after the update
+
+   set_favorite:
+      Required parameters:
+         session_id -- The user logged in with this session will be edited
+         subject_id -- User_id of user to set favorite status for
+         favorited  -- Boolean indicating new favorite status
+      Returns:
+         New favorited status for subject_id
+
+   get_favorites:
+      Required parameters:
+         session_id -- Favorites for the user logged in with this session will be returned
+      Returns:
+         favorites -- Array of user objects in no particular order
       
    submit_review:
       Required parameters:

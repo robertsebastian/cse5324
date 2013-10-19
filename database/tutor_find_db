@@ -156,15 +156,37 @@ reviews_table = DbTable('reviews', (
 sessions_table = DbTable('sessions', (
       ('session_id',           False, 'integer primary key autoincrement'),
       ('user_id',              False, 'integer')))
+favorites_table = DbTable('favorites', (
+      ('row_id',               False, 'integer primary key autoincrement'),
+      ('user_id',              True,  'integer'),
+      ('subject_id',           True,  'integer')))
 
 ################################################################################
 # Handler functions for user requests
-def init_db():
-   """Create database tables"""
-   users_table.create()
-   reviews_table.create()
-   sessions_table.create()
-   db.commit()
+def open_db():
+   global db
+
+   if db: return
+
+   # Create database if it doesn't already exist
+   do_create = not os.path.exists(db_name)
+   db = sqlite3.connect(db_name)
+   if do_create:
+      users_table.create()
+      reviews_table.create()
+      sessions_table.create()
+      favorites_table.create()
+      db.commit()
+
+   # Store search functions -- has to be done fresh every time
+   db.create_function('geo_dist', 4, geo_dist)
+   db.create_function('comp_tags', 2, comp_tags)
+
+def close_db():
+   global db
+
+   if db: db.close()
+   db = None
 
 def login(req):
    """Check password and create session for existing user"""
@@ -262,13 +284,49 @@ def get_reviews(req):
 def get_user(req):
    """Return a single user's profile data"""
 
-   validate_session(req)
+   session = validate_session(req)
 
    user = users_table.get(req['user_id'])
    if not user:
       raise RequestError('invalid_user')
+   user = sanitize_user(user)
 
-   return sanitize_user(user)
+   # Append favorite status
+   user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, req['user_id']]) != None
+
+   return user
+
+def set_favorite(req):
+   """Set the favorite status for a user"""
+
+   session = validate_session(req)
+   if req['favorited']:
+      # Set favorited status if not already in the table
+      if favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, req['subject_id']]) == None:
+         favorites_table.insert({'user_id': session.user_id, 'subject_id': req['subject_id']})
+   else:
+      # Clear favorite entry
+      favorites_table.delete('user_id=? and subject_id=?', [session.user_id, req['subject_id']])
+   db.commit()
+
+   return {'subject_id': req['subject_id'], 'favorited': req['favorited']}
+
+def get_favorites(req):
+   """Get list of favorited users"""
+
+   session = validate_session(req)
+
+   favorites = []
+   for fav in favorites_table.select_many('user_id=?', [session.user_id]):
+      subject = users_table.get(fav.subject_id)
+      if not subject: continue
+
+      subject = sanitize_user(subject)
+      subject['favorited'] = True
+      
+      favorites.append(subject)
+
+   return {'favorites': favorites}
 
 def sanitize_user(user):
    """Remove private fields from a user object and convert to dictionary"""
@@ -291,6 +349,8 @@ request_table = {
    'submit_review': RequestHandler(submit_review, set(['session_id', 'subject_id', 'score', 'text'])),
    'get_user':      RequestHandler(get_user,      set(['session_id', 'user_id'])),
    'get_reviews':   RequestHandler(get_reviews,   set(['session_id', 'subject_id'])),
+   'set_favorite':  RequestHandler(set_favorite,  set(['session_id', 'subject_id', 'favorited'])),
+   'get_favorites': RequestHandler(get_favorites, set(['session_id'])),
 }
 
 ################################################################################
@@ -317,24 +377,17 @@ def handle_request(req_str):
    except RequestError as e:
       return json.dumps({'success': False, 'error': e.message})
 
-# Initialize DB if it doesn't already exist
-do_init = not os.path.exists(db_name)
-db = sqlite3.connect(db_name)
-if do_init:
-   init_db()
+if __name__ == "__main__":
+   open_db()
 
-# Store search functions in database
-db.create_function('geo_dist', 4, geo_dist)
-db.create_function('comp_tags', 2, comp_tags)
+   # Handle request and return result
+   request = sys.stdin.read(int(os.environ['CONTENT_LENGTH']))
+   result  = handle_request(request)
 
-# Handle request and return result
-request = sys.stdin.read(int(os.environ['CONTENT_LENGTH']))
-result  = handle_request(request)
+   close_db()
 
-db.close()
-
-print 'Connection: close'
-print 'Content-Type: application/json'
-print 'Content-Length: %d' % len(result)
-print
-print result
+   print 'Connection: close'
+   print 'Content-Type: application/json'
+   print 'Content-Length: %d' % len(result)
+   print
+   print result
