@@ -37,7 +37,8 @@ public final class R {
     }
     public static final class layout {
         public static final int activity_display_message=0x7f030000;
-        public static final int activity_main=0x7f030001;
+        public static final int activity_login=0x7f030001;
+        public static final int activity_main=0x7f030002;
     }
     public static final class menu {
         public static final int display_message=0x7f090000;
@@ -53,6 +54,9 @@ public final class R {
         public static final int enter_login=0x7f070008;
         public static final int enter_password=0x7f070009;
         public static final int hello_world=0x7f070002;
+        public static final int navigation_favorites=0x7f070011;
+        public static final int navigation_my_profile=0x7f070010;
+        public static final int navigation_search=0x7f070012;
         public static final int pref_db_hostname=0x7f07000a;
         public static final int pref_db_hostname_description=0x7f07000c;
         public static final int pref_db_port=0x7f07000b;

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 
@@ -19,6 +18,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        // Load navigation list for action bar
         ActionBar bar = getActionBar();
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         bar.setTitle("");
@@ -28,6 +28,8 @@ public class MainActivity extends Activity {
         bar.setListNavigationCallbacks(spinnerAdapter, new ActionBar.OnNavigationListener() {
         	@Override
         	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        		//String items[] = getResources().getStringArray(R.array.action_list);
+        		
         		return true;
         	}
         });
@@ -54,23 +56,5 @@ public class MainActivity extends Activity {
     	}
     	
     	return true;
-    }
-
-    public void sendMessage (View view)
-    {
-//    	Intent intent = new Intent(this, DisplayMessageActivity.class);
-//    	EditText editText = (EditText)findViewById(R.id.login_field);
-//    	String message = editText.getText().toString();
-  //  	editText = (EditText)findViewById(R.id.password_field);
-    //	String message1 = editText.getText().toString();
-//    	message = message + "-" + message1;
-  //  	intent.putExtra(EXTRA_MESSAGE,  message);
-    //	startActivity(sendIntent);
-    	//startActivity(sendintent);
-    	Intent sendIntent = new Intent();
-    	sendIntent.setAction(Intent.ACTION_SEND);
-    	sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text");
-    	sendIntent.setType("text/plain");
-    	startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.enter_login)));
     }
 }

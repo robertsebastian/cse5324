@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:windowActionBar="false">
+
+    <TextView
+        android:id="@+id/testing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="9dip"
+        android:layout_marginTop="20dip"
+        android:text="@string/app_name"
+        android:textColor="#444444"
+        android:textSize="10pt" />
+
+   	<EditText android:id="@+id/login_field"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/testing"
+	    android:hint="@string/enter_login" />
+	
+	<EditText android:id="@+id/password_field"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/login_field"
+	    android:inputType="textPassword"
+	    android:hint="@string/enter_password"/>	
+
+	<Button android:id="@+id/register_button"
+	    android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password_field"
+        android:text="@string/button_register"
+	    android:onClick="onRegisterButtonClicked" />
+	
+	<Button android:id="@+id/login_button"
+	    android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password_field"
+        android:layout_toRightOf="@+id/register_button"
+        android:text="@string/button_login"
+	    android:onClick="onLoginButtonClicked" />
+	
+</RelativeLayout>
