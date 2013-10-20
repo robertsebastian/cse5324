@@ -27,18 +27,24 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_logout=0x7f0a0006;
-        public static final int action_settings=0x7f0a0005;
+        public static final int action_logout=0x7f0a0009;
+        public static final int action_search=0x7f0a000a;
+        public static final int action_settings=0x7f0a0008;
+        public static final int fragment_edit_profile=0x7f0a0006;
         public static final int login_button=0x7f0a0004;
         public static final int login_field=0x7f0a0001;
+        public static final int main_fragment=0x7f0a0005;
         public static final int password_field=0x7f0a0002;
         public static final int register_button=0x7f0a0003;
         public static final int testing=0x7f0a0000;
+        public static final int textView1=0x7f0a0007;
     }
     public static final class layout {
         public static final int activity_display_message=0x7f030000;
         public static final int activity_login=0x7f030001;
         public static final int activity_main=0x7f030002;
+        public static final int fragment_edit_profile=0x7f030003;
+        public static final int fragment_search_results=0x7f030004;
     }
     public static final class menu {
         public static final int display_message=0x7f090000;
@@ -46,6 +52,7 @@ public final class R {
     }
     public static final class string {
         public static final int action_logout=0x7f07000f;
+        public static final int action_search=0x7f070013;
         public static final int action_settings=0x7f070001;
         public static final int app_name=0x7f070000;
         public static final int button_login=0x7f070004;

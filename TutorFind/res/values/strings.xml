@@ -20,5 +20,6 @@
     <string name="navigation_my_profile">My Profile</string>
     <string name="navigation_favorites">Favorites</string>
     <string name="navigation_search">Search</string>
+    <string name="action_search">Search</string>
 
 </resources>
