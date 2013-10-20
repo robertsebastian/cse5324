@@ -1,12 +1,14 @@
 package com.team7.tutorfind;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-//import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
 
 public class MainActivity extends Activity {
 
@@ -16,6 +18,19 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        ActionBar bar = getActionBar();
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        bar.setTitle("");
+        
+        SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.action_list,
+                android.R.layout.simple_spinner_dropdown_item);
+        bar.setListNavigationCallbacks(spinnerAdapter, new ActionBar.OnNavigationListener() {
+        	@Override
+        	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        		return true;
+        	}
+        });
     }
 
     @Override
@@ -30,6 +45,9 @@ public class MainActivity extends Activity {
     	switch(item.getItemId()) {
     	case R.id.action_settings:
     		startActivity(new Intent(this, SettingsActivity.class));
+    		break;
+    	case R.id.action_logout:
+    		// TODO
     		break;
     	default:
     		return super.onOptionsItemSelected(item);
