@@ -51,8 +51,8 @@ public final class R {
         public static final int main=0x7f090001;
     }
     public static final class string {
-        public static final int action_logout=0x7f07000f;
-        public static final int action_search=0x7f070013;
+        public static final int action_logout=0x7f07000b;
+        public static final int action_search=0x7f07000f;
         public static final int action_settings=0x7f070001;
         public static final int app_name=0x7f070000;
         public static final int button_login=0x7f070004;
@@ -61,16 +61,16 @@ public final class R {
         public static final int enter_login=0x7f070008;
         public static final int enter_password=0x7f070009;
         public static final int hello_world=0x7f070002;
-        public static final int navigation_favorites=0x7f070011;
-        public static final int navigation_my_profile=0x7f070010;
-        public static final int navigation_search=0x7f070012;
-        public static final int pref_db_hostname=0x7f07000a;
-        public static final int pref_db_hostname_description=0x7f07000c;
-        public static final int pref_db_port=0x7f07000b;
-        public static final int pref_db_port_description=0x7f07000d;
+        public static final int navigation_favorites=0x7f07000d;
+        public static final int navigation_my_profile=0x7f07000c;
+        public static final int navigation_search=0x7f07000e;
+        public static final int pref_db_address=0x7f070010;
+        public static final int pref_db_address_description=0x7f070011;
+        public static final int pref_db_port=0x7f070012;
+        public static final int pref_db_port_description=0x7f070013;
         public static final int title_activity_display_message=0x7f070006;
         public static final int title_activity_main=0x7f070005;
-        public static final int title_activity_settings=0x7f07000e;
+        public static final int title_activity_settings=0x7f07000a;
     }
     public static final class style {
         /** 

@@ -135,6 +135,7 @@ users_table = DbTable('users', (
       ('account_email',        False, 'text'),
       ('name',                 True,  'text'),
       ('phone',                True,  'text'),
+      ('about_me',             True,  'text'),
       ('public_email_address', True,  'text'),
       ('loc_address',          True,  'text'),
       ('loc_lat',              True,  'real'),
@@ -234,6 +235,11 @@ def update_user(req):
    """Update a user's profile data"""
 
    session = validate_session(req)
+
+   # Validate length fields
+   if 'about_me' in req and len(req['about_me']) > 3000:
+      raise RequestError('length_error')
+   # TODO: Validate other length fields
 
    # Update editable fields with request data
    users_table.update(session.user_id, req, True)

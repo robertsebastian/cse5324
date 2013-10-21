@@ -125,18 +125,21 @@ Database layout:
          never passed to the Android client. SHA1 hash.
                             
       account_email -- Unique e-mail address associated with this user's
-         account. Used during login, registration, or search.
+         account. Used during login, registration, or search. Limit of 256
+         characters. Limit to 256 characters.
 
       name -- User's displayed name. If this is not provided then their e-mail
-         address should be shown.
+         address should be shown. Limit to 256 characters.
 
       phone -- User's phone number -- 10 digits, no symbols
+
+      about_me -- User's "about me" section. Limit to 3000 characters.
 
       public_email_address -- User's displayed e-mail address. Displayed instead
          of their account_email if this is provided.
 
       loc_address -- User's preferred meeting address in whatever textual form
-         they provided
+         they provided. Limit to 256 characters.
 
       loc_lat, loc_lon -- User's loc_address converted using Google's location
          services to lat/lon. Used for map display and distance calculations.
@@ -151,7 +154,8 @@ Database layout:
       preferred_flag -- User should be bumped to the top of the search results.
 
       subject_tags -- Comma separated, alphanumeric only (no spaces, no symbols)
-         list of subjects the tutor is willing to teach. Used by search.
+         list of subjects the tutor is willing to teach. Used by search. Limit to
+         1000 characters.
 
       available_days -- ??? The best way to describe availability is TBD.
 
