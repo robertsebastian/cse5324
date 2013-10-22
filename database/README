@@ -41,7 +41,7 @@ tutor_find_db requests:
       {"action": "update_user", "session_id": 100, "name": "Alice", "phone": 8176290000}
 
    Examples of replies:
-      {"success": false, "error": "invalid_login"}
+      {"success": false, "error": "login_failed"}
       {"success": true, "session_id": 100}
 
    Currently supported requests:
@@ -52,7 +52,7 @@ tutor_find_db requests:
       Returns:
          session_id
       Errors:
-         invalid_login -- User/password did not match
+         login_failed -- User/password did not match
 
    register:
       Required parameters:
@@ -62,6 +62,7 @@ tutor_find_db requests:
          session_id
       Errors:
          duplicate_user   -- A user with the same account_email already exists
+         invalid_email    -- Email was not valid
          invalid_password -- Password did not meet the complexity requirements
 
    get_user:

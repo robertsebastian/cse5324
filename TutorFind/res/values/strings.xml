@@ -21,5 +21,10 @@
     <string name="pref_db_address_description">Address of database server</string>
     <string name="pref_db_port">Port</string>
     <string name="pref_db_port_description">Port of HTTP server at address</string>
+    <string name="error_duplicate_user">Error: User already exists</string>
+    <string name="error_invalid_password">Error: Password must contain at least 6 characters</string>
+    <string name="error_invalid_login">Error: Invalid e-mail address</string>
+    <string name="error_login_failed">Error: Email and Password did not match</string>
+    <string name="error_connecting_to_server">Error: Could not connect to server</string>
 
 </resources>

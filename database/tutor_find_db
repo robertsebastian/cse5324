@@ -196,7 +196,7 @@ def login(req):
    hashed_pw = hashlib.sha1(req['password']).hexdigest()
    user = users_table.select_one('account_email=? and password_hash=?', [req['email'], hashed_pw])
    if not user:
-      raise RequestError('invalid_login')
+      raise RequestError('login_failed')
 
    # Return session id if we find user
    sessions_table.delete('user_id=?', [user.user_id])
@@ -206,6 +206,10 @@ def login(req):
 
 def register(req):
    """Add a new user and create new session"""
+
+   # Make sure email meets requirements
+   if len(req['email']) < 3: # TODO: Actual e-mail address validation
+      raise RequestError('invalid_email')
 
    # Make sure password meets requirements
    if len(req['password']) < 6:
@@ -368,17 +372,18 @@ def handle_request(req_str):
 
    # Make sure action is defined
    if 'action' not in req or req['action'] not in request_table:
-      return json.dumps({'success': False, 'error': 'invalid_action'})
+      return json.dumps({'action': 'unknown', 'success': False, 'error': 'invalid_action'})
 
    # Make sure argument list is complete
    args_required = request_table[req['action']].required
    if len(set(req.keys()) & args_required) != len(args_required):
-      return json.dumps({'success': False, 'error': 'incomplete_argument_list'})
+      return json.dumps({'action': req['action'], 'success': False, 'error': 'incomplete_argument_list'})
 
    # Make request
    try:
       result = request_table[req['action']].func(req)
       result['success'] = True
+      result['action'] = req['action']
       return json.dumps(result)
    except RequestError as e:
       return json.dumps({'success': False, 'error': e.message})

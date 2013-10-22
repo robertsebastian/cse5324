@@ -30,14 +30,14 @@ public final class R {
         public static final int action_logout=0x7f0a0009;
         public static final int action_search=0x7f0a000a;
         public static final int action_settings=0x7f0a0008;
-        public static final int fragment_edit_profile=0x7f0a0006;
+        public static final int fragment_edit_profile=0x7f0a0007;
         public static final int login_button=0x7f0a0004;
+        public static final int login_error_text=0x7f0a0003;
         public static final int login_field=0x7f0a0001;
-        public static final int main_fragment=0x7f0a0005;
+        public static final int main_fragment=0x7f0a0006;
         public static final int password_field=0x7f0a0002;
-        public static final int register_button=0x7f0a0003;
+        public static final int register_button=0x7f0a0005;
         public static final int testing=0x7f0a0000;
-        public static final int textView1=0x7f0a0007;
     }
     public static final class layout {
         public static final int activity_display_message=0x7f030000;
@@ -60,6 +60,11 @@ public final class R {
         public static final int edit_message=0x7f070003;
         public static final int enter_login=0x7f070008;
         public static final int enter_password=0x7f070009;
+        public static final int error_connecting_to_server=0x7f070018;
+        public static final int error_duplicate_user=0x7f070014;
+        public static final int error_invalid_login=0x7f070016;
+        public static final int error_invalid_password=0x7f070015;
+        public static final int error_login_failed=0x7f070017;
         public static final int hello_world=0x7f070002;
         public static final int navigation_favorites=0x7f07000d;
         public static final int navigation_my_profile=0x7f07000c;
