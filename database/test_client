@@ -56,7 +56,7 @@ class DatabaseTestWithUsers(DatabaseTest):
       return request({'action': 'get_user', 'session_id': user['session_id'], 'user_id': subject['user_id']})
 
    def setUp(self):
-      super(DatabaseTest, self).setUp()
+      super(DatabaseTestWithUsers, self).setUp()
       self.alice = request({'action': 'register', 'email': 'alice@example.org', 'password': 'password'})
       self.bob   = request({'action': 'register', 'email': 'bob@example.org', 'password': 'password'})
       self.cindy = request({'action': 'register', 'email': 'cindy@example.org', 'password': 'password'})
@@ -194,7 +194,43 @@ class FavoriteTests(DatabaseTestWithUsers):
       self.assertEqual(r['success'], True)
       self.assertEqual(len(r['favorites']), 2)
 
+class SearchTests(DatabaseTestWithUsers):
+   def update_user(self, user, name, tags):
+      return request({
+         'action':       'update_user',
+         'name':         name,
+         'subject_tags': tags,
+         'session_id':   user['session_id']})
+
+   def search(self, query):
+      return request({
+         'action':     'search',
+         'query':      query,
+         'session_id': self.alice['session_id']})
+
+   def setUp(self):
+      super(SearchTests, self).setUp()
+      self.update_user(self.alice, 'Alice Example', 'math,calculus,math2013')
+      self.update_user(self.bob,   'Bob Example', 'math,physics,phys1302')
+      self.update_user(self.cindy, 'Cindy Someone', 'physics,english,eng3110,phys1302')
+
+   def test_name(self):
+      r = self.search('example')
+      self.assertEqual(len(r['results']), 2)
+
+   def test_name_2(self):
+      r = self.search('Bob')
+      self.assertEqual(len(r['results']), 1)
+
+   def test_subject(self):
+      r = self.search('physics')
+      self.assertEqual(len(r['results']), 2)
+
+   def test_subject2(self):
+      r = self.search('MATH-2013')
+      self.assertEqual(len(r['results']), 1)
+
 if __name__ == '__main__':
-#   tests = unittest.TestLoader().loadTestsFromTestCase(FavoriteTests)
-#   unittest.TextTestRunner(verbosity=2).run(tests)
+   #tests = unittest.TestLoader().loadTestsFromTestCase(SearchTests)
+   #unittest.TextTestRunner(verbosity=2).run(tests)
    unittest.main()

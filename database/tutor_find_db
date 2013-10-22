@@ -10,6 +10,7 @@ import cgi
 import cgitb
 import sys
 import time
+import re
 
 cgitb.enable()
 
@@ -134,6 +135,7 @@ users_table = DbTable('users', (
       ('password_hash',        False, 'text'),
       ('account_email',        False, 'text'),
       ('name',                 True,  'text'),
+      ('name_normalized',      True,  'text'),
       ('phone',                True,  'text'),
       ('about_me',             True,  'text'),
       ('public_email_address', True,  'text'),
@@ -245,6 +247,11 @@ def update_user(req):
       raise RequestError('length_error')
    # TODO: Validate other length fields
 
+   # Add normalized name for searching
+   if 'name_normalized' in req: del req['name_normalized']
+   if 'name' in req:
+      req['name_normalized'] = normalize_search_string(req['name'])
+
    # Update editable fields with request data
    users_table.update(session.user_id, req, True)
    db.commit()
@@ -345,9 +352,22 @@ def sanitize_user(user):
    del user['password_hash']
    return user
 
+def normalize_search_string(string):
+   return re.sub('[^0-9a-zA-Z]+', '', string).lower()
+
 def search(req):
-   return users_table.select_many('comp_tags(subject_tags, ?)', ['calculus,math'])
-   return users_table.select_many('geo_dist(loc_lat, loc_lon, 50, 50) < 20', [])
+   """Search database for a tutor"""
+   session = validate_session(req)
+
+   # First treat the query as a subject tag and search for that
+   query = normalize_search_string(req['query'])
+   query_glob = '*%s*' % query
+
+   results = users_table.select_many('comp_tags(subject_tags, ?) or name_normalized glob ?', [query, query_glob])
+
+   #return users_table.select_many('comp_tags(subject_tags, ?)', ['calculus,math'])
+   #return users_table.select_many('geo_dist(loc_lat, loc_lon, 50, 50) < 20', [])
+   return {'results': results}
    
 ################################################################################
 # Table mapping request names to handler functions and required arguments
@@ -361,6 +381,7 @@ request_table = {
    'get_reviews':   RequestHandler(get_reviews,   set(['session_id', 'subject_id'])),
    'set_favorite':  RequestHandler(set_favorite,  set(['session_id', 'subject_id', 'favorited'])),
    'get_favorites': RequestHandler(get_favorites, set(['session_id'])),
+   'search':        RequestHandler(search,        set(['session_id', 'query'])),
 }
 
 ################################################################################

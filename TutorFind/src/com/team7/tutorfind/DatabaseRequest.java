@@ -23,6 +23,7 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 	
 	protected Listener mListener;
 	protected String mAddress;
+	protected String mSessionId;
 	protected int mPort;
 	
 	public DatabaseRequest(JSONObject request, Listener listener, Context context) {
@@ -31,6 +32,7 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 		// Read address and port from preferences
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
 		mAddress = pref.getString("pref_db_address", "10.0.2.2");
+		mSessionId = pref.getString("session_id", null);
 		try {
 			mPort = Integer.parseInt(pref.getString("pref_db_port", "8000"));
 		} catch(NumberFormatException e) {
@@ -44,6 +46,9 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 	// Make HTTP request to database
 	protected JSONObject doInBackground(JSONObject... requests) {
 		try {
+			// Add session ID to request if available
+			requests[0].put("session_id", mSessionId);
+			
 			// Open POST request
 			URL url = new URL("http", mAddress, mPort, "tutor_find_db"); // TODO: Fix hard coded stuff
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();

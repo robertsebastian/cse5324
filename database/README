@@ -114,6 +114,13 @@ tutor_find_db requests:
       Returns:
          All review_table fields for this review after the update
 
+   search:
+      Required parameters:
+         session_id -- User must be logged in
+         query      -- Search string containing name or subject tag
+      Returns:
+         results -- Array of user objects with matchig name or subject tags
+
 --------------------------------------------------------------------------------
 Database layout:
    There are three tables with the listed columns.

@@ -1,7 +1,12 @@
 package com.team7.tutorfind;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +18,10 @@ import android.widget.SpinnerAdapter;
 
 public class MainActivity extends Activity implements
 	ActionBar.OnNavigationListener,
-	SearchView.OnQueryTextListener 
+	SearchView.OnQueryTextListener,
+	DatabaseRequest.Listener
 {
-
-	public final static String EXTRA_MESSAGE = "com.team7.tutorfind.MESSAGE";
+	protected DatabaseRequest mDatabaseReq = null;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,7 @@ public class MainActivity extends Activity implements
         SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.action_list,
                 android.R.layout.simple_spinner_dropdown_item);
         bar.setListNavigationCallbacks(spinnerAdapter, this);
+        
         /*
         FragmentManager fm = getFragmentManager();
         Fragment defaultFrag = fm.findFragmentById(R.id.fragment_edit_profile);
@@ -48,19 +54,58 @@ public class MainActivity extends Activity implements
         		
         return true;
     }
-	
+
 	@Override
-	public boolean onQueryTextChange(String newText)
-	{
-		Log.d("main", newText);
+	public boolean onQueryTextChange(String newText) {
 		return true;
 	}
 	
 	@Override
-	public boolean onQueryTextSubmit(String newText)
-	{
-		Log.d("main", "Submit" + newText);
+	public boolean onQueryTextSubmit(String newText) {
+		// Kick off search request
+		JSONObject j = new JSONObject();
+		try {
+			j.put("action", "search");
+			j.put("query",  newText);
+		} catch(JSONException e) {
+			Log.e("main", e.toString());
+		}
+		mDatabaseReq = new DatabaseRequest(j, this, this);
 		return true;
+	}
+	
+	protected void handleSearchResults(JSONObject results) throws JSONException {
+		Log.d("main", "Results received: " + results.toString());
+        
+		
+        FragmentManager fm = getFragmentManager();
+        //Fragment searchFrag = fm.findFragmentById(R.id.fragment_search_results);
+        
+        FragmentTransaction ft = fm.beginTransaction();
+        //ft.replace(R.id.fragment_container, new SearchResultsFragment());
+        SearchResultsFragment search = new SearchResultsFragment();
+        ft.replace(R.id.fragment_container, search);
+        ft.commit();
+        fm.executePendingTransactions();
+        search.setText(results.toString());
+	}
+	
+	@Override
+	public void onDatabaseResponse(JSONObject response) {
+		try {
+			if(response == null) {
+				// Some sort of connection issue, most likely
+				// TODO: Error dialog
+			} else if(response.getBoolean("success") == false) {
+				// TODO: Error message
+				// TODO: If invalid session, bump back to login screen
+			} else if(response.getString("action").equals("search")) {
+				handleSearchResults(response);
+			}
+		} catch(JSONException e) {
+			Log.e("main", e.toString());
+		}
+		mDatabaseReq = null;
 	}
 
     @Override
