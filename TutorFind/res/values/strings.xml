@@ -26,5 +26,33 @@
     <string name="error_invalid_login">Error: Invalid e-mail address</string>
     <string name="error_login_failed">Error: Email and Password did not match</string>
     <string name="error_connecting_to_server">Error: Could not connect to server</string>
+    <string name="profile_edit_title">Please edit the following Categories</string>
+    <string name="profile_placeholder">Profile Name Here</string>
+    <string name="title_activity_profile_edit">Profile_edit</string>
+    <string name="title_activity_profile_view">ProfileView</string>
+    <string name="FirstNameString">First Name:</string>
+    <string name="lastNameText">Last Name:</string>
+    <string name="phoneText">Phone Number:</string>
+    <string name="emailText">Email Address:</string>
+    <string name="meetingText">Meeting Location:</string>
+    <string name="timesText">Meeting Times:</string>
+    <string name="priceText">Price rate:</string>
+    <string name="questionTutorText">Tutor?</string>
+    <string name="tagText">Tutoring Categories:</string>
+    <string name="BioText">Bio Description:</string>
+    <string name="SubmitText">Submit</string>
+    <string name="travelText">Max Travel Distance:</string>
+    <string name="pictureContentText">Tutor Profile Picture</string>
+    <string name="textPlaceHolder">Text Place Holder</string>
+
+    <string-array name="profile_items">
+        <item>Email</item>
+        <item>Phone Number</item>
+        <item>Meeting Location</item>
+        <item>Available Times</item>
+        <item>Price Rate</item>
+        <item>Bio Description</item>
+    </string-array>
+
 
 </resources>
