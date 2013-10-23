@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="action_list">
-        <item>@string/navigation_my_profile</item>
-        <item >@string/navigation_favorites</item>
-        <item >@string/navigation_search</item>
-    </string-array>
-</resources>
