@@ -364,6 +364,7 @@ def search(req):
    query_glob = '*%s*' % query
 
    results = users_table.select_many('comp_tags(subject_tags, ?) or name_normalized glob ?', [query, query_glob])
+   results = [sanitize_user(u) for u in results]
 
    #return users_table.select_many('comp_tags(subject_tags, ?)', ['calculus,math'])
    #return users_table.select_many('geo_dist(loc_lat, loc_lon, 50, 50) < 20', [])

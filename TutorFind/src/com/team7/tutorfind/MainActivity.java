@@ -64,12 +64,12 @@ public class MainActivity extends Activity implements
 	}
 	
 	@Override
-	public boolean onQueryTextSubmit(String newText) {
+	public boolean onQueryTextSubmit(String query) {
 		// Kick off search request
 		JSONObject j = new JSONObject();
 		try {
 			j.put("action", "search");
-			j.put("query",  newText);
+			j.put("query",  query);
 		} catch(JSONException e) {
 			Log.e("main", e.toString());
 		}
@@ -90,6 +90,7 @@ public class MainActivity extends Activity implements
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
 				Fragment searchFragment = SearchResultsFragment.newInstance(response.getJSONArray("results"));
 				ft.replace(R.id.fragment_container, searchFragment);
+				ft.addToBackStack(SearchResultsFragment.TAG);
 				ft.commit();     				
 			}
 		} catch(JSONException e) {

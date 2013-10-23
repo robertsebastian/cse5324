@@ -44,12 +44,20 @@ def update_user(user, name, tags):
       'subject_tags': tags,
       'session_id':   user['session_id']})
 
+def register(email, name):
+   u = request({'action': 'register', 'email': email, 'password': 'password'})
+   update_user(u, name, 'subject1,subject2')
+   return u
+
 if os.access('tutor.db', os.R_OK):
    os.remove('tutor.db')
 
-alice = request({'action': 'register', 'email': 'alice@example.org', 'password': 'password'})
-bob   = request({'action': 'register', 'email': 'bob@example.org', 'password': 'password'})
-cindy = request({'action': 'register', 'email': 'cindy@example.org', 'password': 'password'})
+alice = register('alice@example.org', 'Alice Example')
+bob   = register('bob@example.org', 'Bob Example')
+cindy = register('cindy@example.org', 'Cindy Someone')
+
+for name in ('Dan', 'Eve', 'Fran', 'Gary', 'Hanna', 'Isis', 'Jon', 'Kyle', 'Lana', 'Matt', 'Nancy', 'Ophelia', 'Peter', 'Quara', 'Robert', 'Steve'):
+   register('%s@example.org' % name.lower(), '%s Example' % name)
 
 review(alice, bob, 5.0, 'good')
 review(bob, alice, 4.0, 'decent')

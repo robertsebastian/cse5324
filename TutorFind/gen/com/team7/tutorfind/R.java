@@ -28,9 +28,9 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_logout=0x7f0a0025;
-        public static final int action_search=0x7f0a0026;
-        public static final int action_settings=0x7f0a0024;
+        public static final int action_logout=0x7f0a0028;
+        public static final int action_search=0x7f0a0029;
+        public static final int action_settings=0x7f0a0027;
         public static final int bioEdit=0x7f0a001b;
         public static final int bioText=0x7f0a001a;
         public static final int button1=0x7f0a001c;
@@ -59,14 +59,17 @@ public final class R {
         public static final int priceText=0x7f0a0018;
         public static final int profileText=0x7f0a001e;
         public static final int register_button=0x7f0a0005;
+        public static final int search_results_list=0x7f0a0022;
         public static final int tagEdit=0x7f0a0015;
-        public static final int test_search_results=0x7f0a0022;
+        public static final int test_search_results=0x7f0a0023;
         public static final int testing=0x7f0a0000;
-        public static final int textView2=0x7f0a0023;
+        public static final int textView2=0x7f0a0024;
         public static final int timesEdit=0x7f0a0017;
         public static final int titleText=0x7f0a0007;
         public static final int travelEcit=0x7f0a0013;
         public static final int travelText=0x7f0a0012;
+        public static final int user_summary_name=0x7f0a0026;
+        public static final int user_summary_row=0x7f0a0025;
     }
     public static final class layout {
         public static final int activity_display_message=0x7f030000;
@@ -78,6 +81,7 @@ public final class R {
         public static final int fragment_favorites=0x7f030006;
         public static final int fragment_search_results=0x7f030007;
         public static final int profile_view_item=0x7f030008;
+        public static final int user_summary_row=0x7f030009;
     }
     public static final class menu {
         public static final int display_message=0x7f090000;
