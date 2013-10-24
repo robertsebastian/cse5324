@@ -6,6 +6,7 @@ import json
 import os
 import imp
 import sys
+import random
 
 tutor_find_db = imp.load_source('tutor_find_db', 'tutor_find_db')
 
@@ -39,10 +40,11 @@ def favorite(user, subject, status):
 
 def update_user(user, name, tags):
    return request({
-      'action':       'update_user',
-      'name':         name,
-      'subject_tags': tags,
-      'session_id':   user['session_id']})
+      'action':         'update_user',
+      'name':           name,
+      'subject_tags':   tags,
+      'price_per_hour': random.randrange(1, 999) / 10.0,
+      'session_id':     user['session_id']})
 
 def register(email, name):
    u = request({'action': 'register', 'email': email, 'password': 'password'})
@@ -56,8 +58,13 @@ alice = register('alice@example.org', 'Alice Example')
 bob   = register('bob@example.org', 'Bob Example')
 cindy = register('cindy@example.org', 'Cindy Someone')
 
-for name in ('Dan', 'Eve', 'Fran', 'Gary', 'Hanna', 'Isis', 'Jon', 'Kyle', 'Lana', 'Matt', 'Nancy', 'Ophelia', 'Peter', 'Quara', 'Robert', 'Steve'):
-   register('%s@example.org' % name.lower(), '%s Example' % name)
+names = ('Dan', 'Eve', 'Fran', 'Gary', 'Hanna', 'Isis', 'Jon', 'Kyle', 'Lana', 'Matt', 'Nancy', 'Ophelia', 'Peter', 'Quara', 'Robert', 'Steve')
+users = []
+for name in names:
+   users.append(register('%s@example.org' % name.lower(), '%s Example' % name))
+
+for user in users:
+   review(alice, user, random.randrange(0, 50) / 10.0, 'I have no real opinion about this tutor')
 
 review(alice, bob, 5.0, 'good')
 review(bob, alice, 4.0, 'decent')

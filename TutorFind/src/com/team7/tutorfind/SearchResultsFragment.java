@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class SearchResultsFragment extends Fragment {
@@ -46,8 +47,18 @@ public class SearchResultsFragment extends Fragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.user_summary_row, parent, false);
-			TextView textView = (TextView)rowView.findViewById(R.id.user_summary_name);
-			textView.setText(mUsers.get(position).optString("name"));
+			
+			TextView name     = (TextView)rowView.findViewById(R.id.user_summary_name);
+			TextView cost     = (TextView)rowView.findViewById(R.id.user_summary_price);
+			TextView distance = (TextView)rowView.findViewById(R.id.user_summary_distance);
+			RatingBar rating  = (RatingBar)rowView.findViewById(R.id.user_summary_score);
+			
+			JSONObject user = mUsers.get(position);			
+			name.setText(user.optString("name"));
+			cost.setText(String.format("$%.2f/hr", user.optDouble("price_per_hour", 999.0)));
+			distance.setText(String.format("%.1f mi", user.optDouble("distance", 99.0)));
+			rating.setRating((float)user.optDouble("score", 0.0));
+			
 			return rowView;
 		}
 	}

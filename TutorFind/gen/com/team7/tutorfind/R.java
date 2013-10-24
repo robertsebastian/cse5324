@@ -28,9 +28,9 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_logout=0x7f0a0028;
-        public static final int action_search=0x7f0a0029;
-        public static final int action_settings=0x7f0a0027;
+        public static final int action_logout=0x7f0a002b;
+        public static final int action_search=0x7f0a002c;
+        public static final int action_settings=0x7f0a002a;
         public static final int bioEdit=0x7f0a001b;
         public static final int bioText=0x7f0a001a;
         public static final int button1=0x7f0a001c;
@@ -68,8 +68,11 @@ public final class R {
         public static final int titleText=0x7f0a0007;
         public static final int travelEcit=0x7f0a0013;
         public static final int travelText=0x7f0a0012;
+        public static final int user_summary_distance=0x7f0a0028;
         public static final int user_summary_name=0x7f0a0026;
+        public static final int user_summary_price=0x7f0a0027;
         public static final int user_summary_row=0x7f0a0025;
+        public static final int user_summary_score=0x7f0a0029;
     }
     public static final class layout {
         public static final int activity_display_message=0x7f030000;
