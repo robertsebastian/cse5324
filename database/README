@@ -70,7 +70,9 @@ tutor_find_db requests:
          session_id -- Session associated with the logged in user
          user_id    -- User_id of user to get information for
       Returns:
-         All user_table fields for this user after the update
+         All user_table fields for this user after the update including these
+         extra calculated fields:
+            favorited -- User is favorited by the requesting user
       Errors:
          invalid_user -- User_id does not exist
 

@@ -66,12 +66,12 @@ class LoginTests(DatabaseTestWithUsers):
    def test_login_invalid_user(self):
       r = request({'action': 'login', 'email': 'danny@example.org', 'password': 'password'})
       self.assertEqual(r['success'], False)
-      self.assertEqual(r['error'], 'invalid_login')
+      self.assertEqual(r['error'], 'login_failed')
 
    def test_login_invalid_password(self):
       r = request({'action': 'login', 'email': 'alice@example.org', 'password': 'password1'})
       self.assertEqual(r['success'], False)
-      self.assertEqual(r['error'], 'invalid_login')
+      self.assertEqual(r['error'], 'login_failed')
       
    def test_login_valid(self):
       r = request({'action': 'login', 'email': 'alice@example.org', 'password': 'password'})

@@ -44,6 +44,7 @@ class DbTable:
       conditions     -- SQL formatted condition string (e.g. 'val1=2 and val2=?')
       condition_vals -- List of parameters to sub into condition string
       """
+
       fields = ','.join(self.col_type._fields)
       dbc = db.cursor()
       dbc.execute('select %s from %s where %s' % (fields, self.name, conditions), condition_vals)
@@ -149,7 +150,8 @@ users_table = DbTable('users', (
       ('available_days',       True,  'text'),
       ('available_times',      True,  'text'),
       ('price_per_hour',       True,  'real'),
-      ('score',                False, 'real')))
+      ('score',                False, 'real'),
+      ('num_reviews',          False, 'integer')))
 reviews_table = DbTable('reviews', (
       ('review_id',            False, 'integer primary key autoincrement'),
       ('submitter_id',         False, 'integer'),
@@ -285,7 +287,8 @@ def submit_review(req):
    # Update subject score
    scores = [r.score for r in reviews_table.select_many('subject_id=?', [subject.user_id])]
    new_score = sum(scores) / len(scores)
-   users_table.update(subject.user_id, {'score': new_score})
+
+   users_table.update(subject.user_id, {'score': new_score, 'num_reviews': len(scores)})
    db.commit()
 
    return dict(reviews_table.get(review_id)._asdict())
@@ -308,7 +311,7 @@ def get_user(req):
       raise RequestError('invalid_user')
    user = sanitize_user(user)
 
-   # Append favorite status
+   # Append calculated values
    user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, req['user_id']]) != None
 
    return user
