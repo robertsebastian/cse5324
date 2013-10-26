@@ -120,6 +120,7 @@ tutor_find_db requests:
       Required parameters:
          session_id -- User must be logged in
          query      -- Search string containing name or subject tag
+         lat, lon   -- Location of user
       Returns:
          results -- Array of user objects with matchig name or subject tags
 

@@ -200,12 +200,16 @@ class SearchTests(DatabaseTestWithUsers):
          'action':       'update_user',
          'name':         name,
          'subject_tags': tags,
+         'loc_lat':      50.0,
+         'loc_lon':      50.0,
          'session_id':   user['session_id']})
 
    def search(self, query):
       return request({
          'action':     'search',
          'query':      query,
+         'lat':        50.1,
+         'lon':        50.1,
          'session_id': self.alice['session_id']})
 
    def setUp(self):

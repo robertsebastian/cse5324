@@ -366,11 +366,13 @@ def search(req):
    query = normalize_search_string(req['query'])
    query_glob = '*%s*' % query
 
-   results = users_table.select_many('comp_tags(subject_tags, ?) or name_normalized glob ?', [query, query_glob])
+   results = users_table.select_many( 'comp_tags(subject_tags, ?) or name_normalized glob ?', [query, query_glob])
    results = [sanitize_user(u) for u in results]
 
-   #return users_table.select_many('comp_tags(subject_tags, ?)', ['calculus,math'])
-   #return users_table.select_many('geo_dist(loc_lat, loc_lon, 50, 50) < 20', [])
+   # Calculate distance from querying user
+   for u in results:
+      u['distance'] = geo_dist(u['loc_lat'], u['loc_lon'], req['lat'], req['lon'])
+
    return {'results': results}
    
 ################################################################################
@@ -385,7 +387,7 @@ request_table = {
    'get_reviews':   RequestHandler(get_reviews,   set(['session_id', 'subject_id'])),
    'set_favorite':  RequestHandler(set_favorite,  set(['session_id', 'subject_id', 'favorited'])),
    'get_favorites': RequestHandler(get_favorites, set(['session_id'])),
-   'search':        RequestHandler(search,        set(['session_id', 'query'])),
+   'search':        RequestHandler(search,        set(['session_id', 'query', 'lat', 'lon'])),
 }
 
 ################################################################################

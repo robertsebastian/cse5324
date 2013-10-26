@@ -44,6 +44,8 @@ def update_user(user, name, tags):
       'name':           name,
       'subject_tags':   tags,
       'price_per_hour': random.randrange(1, 999) / 10.0,
+      'loc_lat':        32.715278 + random.randrange(0, 1000) / 1000.0,
+      'loc_lon':        -97.016944 + random.randrange(0, 1000) / 1000.0,
       'session_id':     user['session_id']})
 
 def register(email, name):
