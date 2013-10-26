@@ -1,14 +1,14 @@
 Components:
-   tutor_find_db -- CGI script to handle database requests.
+   tutor_find_db.py -- CGI script to handle database requests.
 
    tutor.db -- Sqlite3 database. Created by tutor_find_db when run the first
       time. You can simply delete this to start fresh.
 
-   test_server -- Simple python HTTP server to call tutor_find_db. Listens on
+   test_server.py -- Simple python HTTP server to call tutor_find_db. Listens on
       port 8000, so HTTP requests to the database should be directed to
       localhost:8000 for now.
 
-   test_client -- Unit tests for database. Clears the database before each test
+   test_client.py -- Unit tests for database. Clears the database before each test
       and operates using test_server and Python's built in HTTP client. Run with
       'python -m unittest test_client'
 
@@ -19,7 +19,7 @@ tutor_find_db interaction:
    responses are exactly the same.
 
    Request should be a POST request (like a GET, but with data included in the
-   body of the request) directed to http://localhost:8000/tutor_find_db. An
+   body of the request) directed to http://localhost:8000/tutor_find_db.py. An
    example of this in python is in test_client.py.
 
    Android offers a module to easily parse and generate JSON text: JSONObject

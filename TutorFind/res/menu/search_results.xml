@@ -1,5 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/action_filter" android:showAsAction="always" android:orderInCategory="0" android:title="Filter" android:icon="@android:drawable/ic_menu_sort_by_size">
+    <item android:id="@+id/action_filter" android:showAsAction="always" android:orderInCategory="0" android:title="@string/action_filter" android:icon="@android:drawable/ic_menu_sort_by_size">
         <menu>
             <item android:id="@+id/action_filter_by_distance" android:title="@string/filter_by_distance"/>
             <item android:id="@+id/action_filter_by_price" android:title="@string/filter_by_price"/>

@@ -73,8 +73,7 @@ public class MainActivity extends Activity implements
 			j.put("action", "search");
 			j.put("query",  query);
 			j.put("lat", 32.715278);
-			j.put("lon", -97.016944
-					);
+			j.put("lon", -97.016944);
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString());
 		}

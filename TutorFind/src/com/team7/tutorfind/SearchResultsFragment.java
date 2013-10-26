@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,21 +42,33 @@ public class SearchResultsFragment extends Fragment {
 			mUsers = users;
 		}
 		
+		// Fill a user summary view with data from a user object
+		public void fillUserSummary(JSONObject user, View v) {
+			float rating = (float)user.optDouble("score", 0.0);
+			int num_reviews = user.optInt("num_reviews", 0);
+			
+			// Unrated is represented by no stars -- make sure low rated tutors show a half star
+			if(num_reviews > 0 && rating < 0.5) rating = 0.5f;
+			
+			String name    = user.optString("name", "???");
+			String price   = String.format(Locale.US, "$%.2f/hr", user.optDouble("price_per_hour", 999.0));
+			String dist    = String.format(Locale.US, "%.1f mi", user.optDouble("distance", 999.0));
+			String reviews = String.format(Locale.US, "(%d)", user.optInt("num_reviews", 0));
+			
+			((TextView)v.findViewById(R.id.user_summary_name)).setText(name);
+			((TextView)v.findViewById(R.id.user_summary_price)).setText(price);
+			((TextView)v.findViewById(R.id.user_summary_distance)).setText(dist);
+			((TextView)v.findViewById(R.id.user_summary_num_reviews)).setText(reviews);
+			((RatingBar)v.findViewById(R.id.user_summary_score)).setRating(rating);
+		}
+		
+		// Build the view for a given row position in the search results list
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.user_summary_row, parent, false);
 			
-			TextView name     = (TextView)rowView.findViewById(R.id.user_summary_name);
-			TextView cost     = (TextView)rowView.findViewById(R.id.user_summary_price);
-			TextView distance = (TextView)rowView.findViewById(R.id.user_summary_distance);
-			RatingBar rating  = (RatingBar)rowView.findViewById(R.id.user_summary_score);
-			
-			JSONObject user = mUsers.get(position);			
-			name.setText(user.optString("name"));
-			cost.setText(String.format("$%.2f/hr", user.optDouble("price_per_hour", 999.0)));
-			distance.setText(String.format("%.1f mi", user.optDouble("distance", 99.0)));
-			rating.setRating((float)user.optDouble("score", 0.0));
+			fillUserSummary(mUsers.get(position), rowView);
 			
 			return rowView;
 		}
@@ -95,12 +108,14 @@ public class SearchResultsFragment extends Fragment {
 		return f;
 	}
 	
+	// Inflate search results fragment layout
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
 		return inflater.inflate(R.layout.fragment_search_results, container, false);
 	}
 	
+	// Add search results to ListView in search results layout
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		try {
@@ -123,6 +138,7 @@ public class SearchResultsFragment extends Fragment {
 		}
 	}
 	
+	// Add search result filtering menu to the options menu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -130,6 +146,7 @@ public class SearchResultsFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
     
+    // Handle result filtering options
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
@@ -148,9 +165,4 @@ public class SearchResultsFragment extends Fragment {
     	
     	return true;
     }
-	
-	public void onDestroy() {
-		Log.d("search", "Search fragment destroyed");
-		super.onDestroy();
-	}
 }
