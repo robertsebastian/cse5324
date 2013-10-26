@@ -7,8 +7,7 @@ import os
 import imp
 import sys
 import random
-
-tutor_find_db = imp.load_source('tutor_find_db', 'tutor_find_db')
+import tutor_find_db
 
 def request(text):
    """Make a request to the database's HTTP server"""

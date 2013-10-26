@@ -6,8 +6,8 @@ import json
 import os
 import imp
 import sys
+import tutor_find_db
 
-tutor_find_db = imp.load_source('tutor_find_db', 'tutor_find_db')
 direct_requests = False
 
 ################################################################################
