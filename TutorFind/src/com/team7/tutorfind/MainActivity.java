@@ -21,6 +21,8 @@ public class MainActivity extends Activity implements
 	SearchView.OnQueryTextListener,
 	DatabaseRequest.Listener
 {
+	public static final String TAG = "main";
+	
 	protected DatabaseRequest mDatabaseReq = null;
 	
 	@Override
@@ -70,8 +72,11 @@ public class MainActivity extends Activity implements
 		try {
 			j.put("action", "search");
 			j.put("query",  query);
+			j.put("lat", 32.715278);
+			j.put("lon", -97.016944
+					);
 		} catch(JSONException e) {
-			Log.e("main", e.toString());
+			Log.e(TAG, e.toString());
 		}
 		mDatabaseReq = new DatabaseRequest(j, this, this);
 		return true;
@@ -84,9 +89,11 @@ public class MainActivity extends Activity implements
 				// Some sort of connection issue, most likely
 				// TODO: Error dialog
 			} else if(response.getBoolean("success") == false) {
+				Log.e(TAG, response.toString());
 				// TODO: Error message
 				// TODO: If invalid session, bump back to login screen
 			} else if(response.getString("action").equals("search")) {
+				// Replace currently loaded fragment with search results fragment
 				FragmentTransaction ft = getFragmentManager().beginTransaction();
 				Fragment searchFragment = SearchResultsFragment.newInstance(response.getJSONArray("results"));
 				ft.replace(R.id.fragment_container, searchFragment);
@@ -94,7 +101,7 @@ public class MainActivity extends Activity implements
 				ft.commit();     				
 			}
 		} catch(JSONException e) {
-			Log.e("main", e.toString());
+			Log.e(TAG, e.toString());
 		}
 		mDatabaseReq = null;
 	}
@@ -104,6 +111,7 @@ public class MainActivity extends Activity implements
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         
+        // Listen to search entries
         SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
         searchView.setOnQueryTextListener(this);
         

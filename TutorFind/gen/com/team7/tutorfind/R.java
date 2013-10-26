@@ -28,6 +28,10 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
+        public static final int action_filter=0x7f0a002d;
+        public static final int action_filter_by_distance=0x7f0a002e;
+        public static final int action_filter_by_price=0x7f0a002f;
+        public static final int action_filter_by_rating=0x7f0a0030;
         public static final int action_logout=0x7f0a002b;
         public static final int action_search=0x7f0a002c;
         public static final int action_settings=0x7f0a002a;
@@ -89,6 +93,7 @@ public final class R {
     public static final class menu {
         public static final int display_message=0x7f090000;
         public static final int main=0x7f090001;
+        public static final int search_results=0x7f090002;
     }
     public static final class string {
         public static final int BioText=0x7f060023;
@@ -111,6 +116,9 @@ public final class R {
         public static final int error_invalid_login=0x7f060013;
         public static final int error_invalid_password=0x7f060012;
         public static final int error_login_failed=0x7f060014;
+        public static final int filter_by_distance=0x7f06002a;
+        public static final int filter_by_price=0x7f06002b;
+        public static final int filter_by_rating=0x7f06002c;
         public static final int hello_world=0x7f060002;
         public static final int lastNameText=0x7f06001b;
         public static final int meetingText=0x7f06001e;

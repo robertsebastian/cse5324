@@ -1,6 +1,8 @@
 package com.team7.tutorfind;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -12,6 +14,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -22,17 +27,10 @@ import android.widget.TextView;
 public class SearchResultsFragment extends Fragment {
 	public static final String TAG = "search_results_fragment";
 	
-	static SearchResultsFragment newInstance(JSONArray results) {
-		SearchResultsFragment f = new SearchResultsFragment();
-		
-		// Add results argument
-		Bundle args = new Bundle();
-		args.putString("results", results.toString());
-		f.setArguments(args);
-		
-		return f;
-	}
+	private UserSummaryArrayAdapter mAdapter;
 	
+	// Array adapter to manage the search results ListView. Populates user
+	// summary views and handles sorting of the data set.
 	private static class UserSummaryArrayAdapter extends ArrayAdapter<JSONObject> {
 		private final Context mContext;
 		private final List<JSONObject> mUsers;
@@ -63,33 +61,93 @@ public class SearchResultsFragment extends Fragment {
 		}
 	}
 	
+	// Comparison functions for sorting search results
+	private class DistanceComparator implements Comparator<JSONObject> {
+		@Override
+		public int compare(JSONObject a, JSONObject b) {
+			return Double.compare(a.optDouble("distance"), b.optDouble("distance"));
+		}
+	}
+	
+	private class PriceComparator implements Comparator<JSONObject> {
+		@Override
+		public int compare(JSONObject a, JSONObject b) {
+			return Double.compare(a.optDouble("price_per_hour"), b.optDouble("price_per_hour"));
+		}
+	}
+	
+	private class ScoreComparator implements Comparator<JSONObject> {
+		@Override
+		public int compare(JSONObject a, JSONObject b) {
+			return Double.compare(b.optDouble("score"), a.optDouble("score"));
+		}
+	}
+	
+	// Create a new instance of this fragment, passing a search results array argument
+	static SearchResultsFragment newInstance(JSONArray results) {
+		SearchResultsFragment f = new SearchResultsFragment();
+		
+		// Add results argument
+		Bundle args = new Bundle();
+		args.putString("results", results.toString());
+		f.setArguments(args);
+		
+		return f;
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
 		return inflater.inflate(R.layout.fragment_search_results, container, false);
-
 	}
 	
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		try {
-			//TextView textView = (TextView)getView().findViewById(R.id.test_search_results);
-			//textView.setText(getArguments().getString("results"));
 			ListView list = (ListView)getView().findViewById(R.id.search_results_list);
 			
+			// Build a list of results
 			JSONArray resultArray = new JSONArray(getArguments().getString("results"));
 			ArrayList<JSONObject> results = new ArrayList<JSONObject>();
 			for(int i = 0; i < resultArray.length(); i++) {
 				results.add(resultArray.getJSONObject(i));
 			}
 			
-			SearchResultsFragment.UserSummaryArrayAdapter arrayAdapter = new SearchResultsFragment.UserSummaryArrayAdapter(getActivity(), results);
-			//ArrayAdapter<JSONObject> arrayAdapter = new ArrayAdapter<JSONObject>(getActivity(),
-			//           android.R.layout.simple_expandable_list_item_1, results);
-			list.setAdapter(arrayAdapter);
+			// Create new adapter using the list as its data source
+			Collections.sort(results, new DistanceComparator());
+			mAdapter = new UserSummaryArrayAdapter(getActivity(), results);
+			
+			list.setAdapter(mAdapter);
 		} catch(JSONException e) {
 			Log.e("search", e.toString());
 		}
 	}
+	
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.search_results, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+    	case R.id.action_filter_by_distance:
+    		mAdapter.sort(new DistanceComparator());
+    		break;
+    	case R.id.action_filter_by_price:
+    		mAdapter.sort(new PriceComparator());
+    		break;
+    	case R.id.action_filter_by_rating:
+    		mAdapter.sort(new ScoreComparator());
+    		break;
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    	
+    	return true;
+    }
 	
 	public void onDestroy() {
 		Log.d("search", "Search fragment destroyed");
