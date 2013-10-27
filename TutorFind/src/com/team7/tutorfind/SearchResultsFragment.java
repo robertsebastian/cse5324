@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -118,11 +119,14 @@ public class SearchResultsFragment extends Fragment {
 	// Add search results to ListView in search results layout
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
+		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+	}
+	
+	public void updateResults(JSONArray resultArray) {
 		try {
 			ListView list = (ListView)getView().findViewById(R.id.search_results_list);
 			
 			// Build a list of results
-			JSONArray resultArray = new JSONArray(getArguments().getString("results"));
 			ArrayList<JSONObject> results = new ArrayList<JSONObject>();
 			for(int i = 0; i < resultArray.length(); i++) {
 				results.add(resultArray.getJSONObject(i));
@@ -133,9 +137,10 @@ public class SearchResultsFragment extends Fragment {
 			mAdapter = new UserSummaryArrayAdapter(getActivity(), results);
 			
 			list.setAdapter(mAdapter);
+			
 		} catch(JSONException e) {
 			Log.e("search", e.toString());
-		}
+		}		
 	}
 	
 	// Add search result filtering menu to the options menu
@@ -164,5 +169,11 @@ public class SearchResultsFragment extends Fragment {
     	}
     	
     	return true;
+    }
+    
+    @Override
+    public void onDestroyView() {
+		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		super.onDestroyView();
     }
 }

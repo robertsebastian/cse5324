@@ -4,60 +4,82 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.SearchView;
-import android.widget.SpinnerAdapter;
 
 public class MainActivity extends Activity implements
-	ActionBar.OnNavigationListener,
 	SearchView.OnQueryTextListener,
-	DatabaseRequest.Listener
+	DatabaseRequest.Listener,
+	ActionBar.TabListener
 {
 	public static final String TAG = "main";
 	
-	protected DatabaseRequest mDatabaseReq = null;
+	private ProfileEditFragment   mProfileEditFragment;
+	private FavoritesFragment     mFavoritesFragment;
+	private SearchResultsFragment mSearchResultsFragment;
+	
+	// Set content area to selected fragment
+	public void selectFragment(String tag) {
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		selectFragment(tag, ft);
+		ft.commit();
+	}
+	
+	public void selectFragment(String tag, FragmentTransaction ft) {
+		// TODO: Probably a better way to do this
+		if(tag == ProfileEditFragment.TAG) {
+			if(mProfileEditFragment == null) mProfileEditFragment = new ProfileEditFragment();
+			
+			ft.replace(android.R.id.content, mProfileEditFragment, tag);
+		} else if(tag == FavoritesFragment.TAG) {
+			if(mFavoritesFragment == null) mFavoritesFragment = new FavoritesFragment();
+			
+			ft.replace(android.R.id.content, mFavoritesFragment, tag);
+		} else if(tag == SearchResultsFragment.TAG) {
+			if(mSearchResultsFragment == null) mSearchResultsFragment = new SearchResultsFragment();
+			
+			ft.replace(android.R.id.content, mSearchResultsFragment, tag);
+			if(getFragmentManager().findFragmentByTag(tag) == null) {
+				ft.addToBackStack(tag);
+			}
+		}
+	}
+	
+    // Select fragment associated with the tab
+    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+    	selectFragment((String)tab.getTag(), ft);
+    }
+
+    // Nothing to do on tab unselected
+    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+    }
+
+    // Nothing to do if the tag is already selected
+    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+    }
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);     
+        setContentView(R.layout.activity_main);   
         
-        // Load navigation list for action bar
-        ActionBar bar = getActionBar();
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        bar.setTitle("");
-        
-        SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.action_list,
-                android.R.layout.simple_spinner_dropdown_item);
-        bar.setListNavigationCallbacks(spinnerAdapter, this);
-    }
-	
-	@Override
-    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		// TODO: Pretty ugly way to determine which item is selected -- probably a better way
-    	String item = getResources().getStringArray(R.array.action_list)[itemPosition];
-    	String my_profile_str = getResources().getString(R.string.action_list_my_profile);
-    	String favorites_str = getResources().getString(R.string.action_list_favorites);
-    	
-    	// Transition fragement_container to the selected fragment
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-        if(item.equals(my_profile_str)) {
-        	ft.replace(R.id.fragment_container, new ProfileEditFragment());
-        } else if(item.equals(favorites_str)) {
-        	ft.replace(R.id.fragment_container, new FavoritesFragment());
-        }
-        ft.commit();
-        
-        return true;
+        // setup action bar for tabs
+        ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        Tab profileTab = actionBar.newTab().setText("Profile").setTag(ProfileEditFragment.TAG).setTabListener(this);
+        Tab favoritesTab = actionBar.newTab().setText("Favorites").setTag(FavoritesFragment.TAG).setTabListener(this);
+        actionBar.addTab(profileTab);
+        actionBar.addTab(favoritesTab);
     }
 
 	@Override
@@ -72,15 +94,18 @@ public class MainActivity extends Activity implements
 		try {
 			j.put("action", "search");
 			j.put("query",  query);
-			j.put("lat", 32.715278);
-			j.put("lon", -97.016944);
+			j.put("lat",    32.715278);
+			j.put("lon",    -97.016944);
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString());
 		}
-		mDatabaseReq = new DatabaseRequest(j, this, this);
+		
+		new DatabaseRequest(j, this, this);
+		selectFragment(SearchResultsFragment.TAG);
 		return true;
 	}
 	
+	SearchResultsFragment mSearchFragment;
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
 		try {
@@ -93,16 +118,11 @@ public class MainActivity extends Activity implements
 				// TODO: If invalid session, bump back to login screen
 			} else if(response.getString("action").equals("search")) {
 				// Replace currently loaded fragment with search results fragment
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				Fragment searchFragment = SearchResultsFragment.newInstance(response.getJSONArray("results"));
-				ft.replace(R.id.fragment_container, searchFragment);
-				ft.addToBackStack(SearchResultsFragment.TAG);
-				ft.commit();     				
+				mSearchResultsFragment.updateResults(response.getJSONArray("results"));
 			}
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString());
 		}
-		mDatabaseReq = null;
 	}
 
     @Override

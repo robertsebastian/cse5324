@@ -171,6 +171,8 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f080001;
+        /**      <style name="CustomActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse"> 
+         */
         public static final int CustomActionBar=0x7f080003;
         public static final int CustomActionBarTheme=0x7f080002;
     }
