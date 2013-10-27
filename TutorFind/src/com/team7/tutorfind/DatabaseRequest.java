@@ -50,7 +50,7 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 			requests[0].put("session_id", mSessionId);
 			
 			// Open POST request
-			URL url = new URL("http", mAddress, mPort, "tutor_find_db"); // TODO: Fix hard coded stuff
+			URL url = new URL("http", mAddress, mPort, "tutor_find_db.py"); // TODO: Fix hard coded stuff
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			conn.setDoOutput(true);
 			

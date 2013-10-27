@@ -41,6 +41,7 @@
     <string name="travelText">Max Travel Distance:</string>
     <string name="pictureContentText">Tutor Profile Picture</string>
     <string name="textPlaceHolder">Text Place Holder</string>
+
     <string-array name="profile_items">
         <item>Email</item>
         <item>Phone Number</item>
@@ -53,6 +54,12 @@
         <item>@string/action_list_my_profile</item>
         <item>@string/action_list_favorites</item>
     </string-array>
-	<string name="action_list_my_profile">My Profile</string>
-	<string name="action_list_favorites">Favorites</string>
+
+    <string name="action_list_my_profile">My Profile</string>
+    <string name="action_list_favorites">Favorites</string>
+    <string name="title_activity_custom_favorites_adapter">CustomFavoritesAdapter</string>
+    <string name="title_activity_favorites">Favorites</string>
+    <string name="title_activity_all_favorites">AllFavorites</string>
+    <string name="title_activity_favorite">Favorite</string>
+
 </resources>
