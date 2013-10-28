@@ -53,10 +53,14 @@
         <item>@string/action_list_my_profile</item>
         <item>@string/action_list_favorites</item>
     </string-array>
-	<string name="action_list_my_profile">My Profile</string>
-	<string name="action_list_favorites">Favorites</string>
-	<string name="filter_by_distance">Distance</string>
-	<string name="filter_by_price">Price</string>
-	<string name="filter_by_rating">Rating</string>
-	<string name="action_filter">Filter</string>
+	 <string name="action_list_my_profile">My Profile</string>
+	 <string name="action_list_favorites">Favorites</string>
+	 <string name="filter_by_distance">Distance</string>
+	 <string name="filter_by_price">Price</string>
+	 <string name="filter_by_rating">Rating</string>
+	 <string name="action_filter">Filter</string>
+    <string name="title_activity_custom_favorites_adapter">CustomFavoritesAdapter</string>
+    <string name="title_activity_favorites">Favorites</string>
+    <string name="title_activity_all_favorites">AllFavorites</string>
+    <string name="title_activity_favorite">Favorite</string>
 </resources>
