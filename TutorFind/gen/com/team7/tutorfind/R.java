@@ -28,20 +28,14 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-<<<<<<< HEAD
-        public static final int action_filter=0x7f0a002e;
-        public static final int action_filter_by_distance=0x7f0a002f;
-        public static final int action_filter_by_price=0x7f0a0030;
-        public static final int action_filter_by_rating=0x7f0a0031;
-        public static final int action_logout=0x7f0a002c;
-        public static final int action_search=0x7f0a002d;
-        public static final int action_settings=0x7f0a002b;
-=======
         public static final int RelativeLayout1=0x7f0a0021;
-        public static final int action_logout=0x7f0a002e;
-        public static final int action_search=0x7f0a002f;
-        public static final int action_settings=0x7f0a002d;
->>>>>>> 2b2a98c0a4bd3e0ac40aff5a212a7446d9a8c976
+        public static final int action_filter=0x7f0a0031;
+        public static final int action_filter_by_distance=0x7f0a0032;
+        public static final int action_filter_by_price=0x7f0a0033;
+        public static final int action_filter_by_rating=0x7f0a0034;
+        public static final int action_logout=0x7f0a002f;
+        public static final int action_search=0x7f0a0030;
+        public static final int action_settings=0x7f0a002e;
         public static final int bioEdit=0x7f0a001b;
         public static final int bioText=0x7f0a001a;
         public static final int button1=0x7f0a001c;
@@ -58,7 +52,7 @@ public final class R {
         public static final int imageView1=0x7f0a001d;
         public static final int lastEdit=0x7f0a000b;
         public static final int lastText=0x7f0a000a;
-        public static final int lastname_textbox=0x7f0a0022;
+        public static final int lastname_textbox=0x7f0a0023;
         public static final int listView=0x7f0a001f;
         public static final int login_button=0x7f0a0004;
         public static final int login_error_text=0x7f0a0003;
@@ -68,7 +62,7 @@ public final class R {
         public static final int password_field=0x7f0a0002;
         public static final int phoneEdit=0x7f0a000f;
         public static final int phoneText=0x7f0a000e;
-        public static final int phonenumber_textbox=0x7f0a0023;
+        public static final int phonenumber_textbox=0x7f0a0022;
         public static final int priceEdit=0x7f0a0019;
         public static final int priceText=0x7f0a0018;
         public static final int profileText=0x7f0a001e;
@@ -81,20 +75,12 @@ public final class R {
         public static final int titleText=0x7f0a0007;
         public static final int travelEcit=0x7f0a0013;
         public static final int travelText=0x7f0a0012;
-<<<<<<< HEAD
-        public static final int user_summary_distance=0x7f0a0028;
-        public static final int user_summary_name=0x7f0a0026;
-        public static final int user_summary_num_reviews=0x7f0a002a;
-        public static final int user_summary_price=0x7f0a0027;
-        public static final int user_summary_row=0x7f0a0025;
-        public static final int user_summary_score=0x7f0a0029;
-=======
         public static final int user_summary_distance=0x7f0a002b;
         public static final int user_summary_name=0x7f0a0029;
+        public static final int user_summary_num_reviews=0x7f0a002d;
         public static final int user_summary_price=0x7f0a002a;
         public static final int user_summary_row=0x7f0a0028;
         public static final int user_summary_score=0x7f0a002c;
->>>>>>> 2b2a98c0a4bd3e0ac40aff5a212a7446d9a8c976
     }
     public static final class layout {
         public static final int activity_all_favorites=0x7f030000;
@@ -113,16 +99,11 @@ public final class R {
         public static final int user_summary_row=0x7f03000d;
     }
     public static final class menu {
-<<<<<<< HEAD
-        public static final int display_message=0x7f090000;
-        public static final int main=0x7f090001;
-        public static final int search_results=0x7f090002;
-=======
         public static final int all_favorites=0x7f090000;
         public static final int display_message=0x7f090001;
         public static final int favorite=0x7f090002;
         public static final int main=0x7f090003;
->>>>>>> 2b2a98c0a4bd3e0ac40aff5a212a7446d9a8c976
+        public static final int search_results=0x7f090004;
     }
     public static final class string {
         public static final int BioText=0x7f060023;
@@ -165,11 +146,11 @@ public final class R {
         public static final int tagText=0x7f060022;
         public static final int textPlaceHolder=0x7f060027;
         public static final int timesText=0x7f06001f;
-        public static final int title_activity_all_favorites=0x7f06002c;
-        public static final int title_activity_custom_favorites_adapter=0x7f06002a;
+        public static final int title_activity_all_favorites=0x7f060030;
+        public static final int title_activity_custom_favorites_adapter=0x7f06002e;
         public static final int title_activity_display_message=0x7f060006;
-        public static final int title_activity_favorite=0x7f06002d;
-        public static final int title_activity_favorites=0x7f06002b;
+        public static final int title_activity_favorite=0x7f060031;
+        public static final int title_activity_favorites=0x7f06002f;
         public static final int title_activity_main=0x7f060005;
         public static final int title_activity_profile_edit=0x7f060018;
         public static final int title_activity_profile_view=0x7f060019;

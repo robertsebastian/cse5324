@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.app.ListFragment;
 
 public class FavoritesFragment extends ListFragment {
-	public static final String TAG = "favorites";
 
     private ArrayList<Favorite> favoriteList;
     
@@ -31,6 +30,14 @@ public class FavoritesFragment extends ListFragment {
 	
 	private class FavoriteAdapter extends ArrayAdapter<Favorite> {
 
+<<<<<<< HEAD
+public class FavoritesFragment extends Fragment {
+	public static final String TAG = "favorites_fragment";
+	
+	@Override
+	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_favorites, container, false);
+=======
 		public FavoriteAdapter(ArrayList<Favorite> contacts) {
 	    	
 	    		// An Adapter acts as a bridge between an AdapterView and the 
@@ -99,6 +106,7 @@ public class FavoritesFragment extends ListFragment {
 			
 		}
 		
+>>>>>>> 2b2a98c0a4bd3e0ac40aff5a212a7446d9a8c976
 	}
 
     /*String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
