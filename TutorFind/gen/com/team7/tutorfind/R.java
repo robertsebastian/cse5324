@@ -28,7 +28,7 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int RelativeLayout1=0x7f0a0021;
+        public static final int RelativeLayout1=0x7f0a0022;
         public static final int action_filter=0x7f0a0031;
         public static final int action_filter_by_distance=0x7f0a0032;
         public static final int action_filter_by_price=0x7f0a0033;
@@ -43,16 +43,16 @@ public final class R {
         public static final int dataEdit=0x7f0a0016;
         public static final int emailEdit=0x7f0a000d;
         public static final int emailText=0x7f0a000c;
-        public static final int email_textbox=0x7f0a0025;
+        public static final int email_textbox=0x7f0a0026;
         public static final int firstEdit=0x7f0a0009;
         public static final int firstText=0x7f0a0008;
-        public static final int firstname_textbox=0x7f0a0024;
+        public static final int firstname_textbox=0x7f0a0025;
         public static final int fragment_container=0x7f0a0006;
-        public static final int fragment_edit_profile=0x7f0a0020;
+        public static final int fragment_edit_profile=0x7f0a0021;
         public static final int imageView1=0x7f0a001d;
         public static final int lastEdit=0x7f0a000b;
         public static final int lastText=0x7f0a000a;
-        public static final int lastname_textbox=0x7f0a0023;
+        public static final int lastname_textbox=0x7f0a0024;
         public static final int listView=0x7f0a001f;
         public static final int login_button=0x7f0a0004;
         public static final int login_error_text=0x7f0a0003;
@@ -62,12 +62,12 @@ public final class R {
         public static final int password_field=0x7f0a0002;
         public static final int phoneEdit=0x7f0a000f;
         public static final int phoneText=0x7f0a000e;
-        public static final int phonenumber_textbox=0x7f0a0022;
+        public static final int phonenumber_textbox=0x7f0a0023;
         public static final int priceEdit=0x7f0a0019;
         public static final int priceText=0x7f0a0018;
         public static final int profileText=0x7f0a001e;
         public static final int register_button=0x7f0a0005;
-        public static final int search_results_list=0x7f0a0026;
+        public static final int search_results_list=0x7f0a0020;
         public static final int tagEdit=0x7f0a0015;
         public static final int test_search_results=0x7f0a0027;
         public static final int testing=0x7f0a0000;
@@ -92,9 +92,9 @@ public final class R {
         public static final int activity_main=0x7f030006;
         public static final int activity_profile_edit=0x7f030007;
         public static final int activity_profile_view=0x7f030008;
-        public static final int fragment_edit_profile=0x7f030009;
-        public static final int fragment_favorites=0x7f03000a;
-        public static final int fragment_search_results=0x7f03000b;
+        public static final int activity_search=0x7f030009;
+        public static final int fragment_edit_profile=0x7f03000a;
+        public static final int fragment_favorites=0x7f03000b;
         public static final int profile_view_item=0x7f03000c;
         public static final int user_summary_row=0x7f03000d;
     }

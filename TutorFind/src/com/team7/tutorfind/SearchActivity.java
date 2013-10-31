@@ -10,24 +10,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ActionBar;
-import android.app.Fragment;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
-public class SearchResultsFragment extends Fragment {
-	public static final String TAG = "search_results_fragment";
+public class SearchActivity extends Activity implements
+SearchView.OnQueryTextListener,
+DatabaseRequest.Listener
+{
+	public static final String TAG = "search_activity";
+	public static final String SEARCH_QUERY = "com.team7.tutorfind.SEARCH_QUERY";
 	
 	private UserSummaryArrayAdapter mAdapter;
 	
@@ -97,34 +101,43 @@ public class SearchResultsFragment extends Fragment {
 		}
 	}
 	
-	// Create a new instance of this fragment, passing a search results array argument
-	static SearchResultsFragment newInstance(JSONArray results) {
-		SearchResultsFragment f = new SearchResultsFragment();
-		
-		// Add results argument
-		Bundle args = new Bundle();
-		args.putString("results", results.toString());
-		f.setArguments(args);
-		
-		return f;
-	}
-	
-	// Inflate search results fragment layout
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		setHasOptionsMenu(true);
-		return inflater.inflate(R.layout.fragment_search_results, container, false);
-	}
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
+        
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        doSearch(getIntent().getStringExtra(SEARCH_QUERY));
+    }
 	
-	// Add search results to ListView in search results layout
+	protected void doSearch(String query) {
+		JSONObject j = new JSONObject();
+		try {
+			j.put("action", "search");
+			j.put("query",  query);
+			j.put("lat",    32.715278);
+			j.put("lon",    -97.016944);
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		}
+			new DatabaseRequest(j, this, this);
+	}
+
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+	public void onDatabaseResponse(JSONObject response) {
+		try {
+			updateResults(response.getJSONArray("results"));
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		} catch(NullPointerException e) {
+			Log.e(TAG, e.toString());
+		}
 	}
 	
 	public void updateResults(JSONArray resultArray) {
 		try {
-			ListView list = (ListView)getView().findViewById(R.id.search_results_list);
+			ListView list = (ListView)findViewById(R.id.search_results_list);
 			
 			// Build a list of results
 			ArrayList<JSONObject> results = new ArrayList<JSONObject>();
@@ -134,7 +147,7 @@ public class SearchResultsFragment extends Fragment {
 			
 			// Create new adapter using the list as its data source
 			Collections.sort(results, new DistanceComparator());
-			mAdapter = new UserSummaryArrayAdapter(getActivity(), results);
+			mAdapter = new UserSummaryArrayAdapter(this, results);
 			
 			list.setAdapter(mAdapter);
 			
@@ -143,18 +156,37 @@ public class SearchResultsFragment extends Fragment {
 		}		
 	}
 	
-	// Add search result filtering menu to the options menu
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		return true;
+	}
+	
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		doSearch(query);
+		return true;
+	}
+    
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.search_results, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.search_results, menu);
+        
+        // Listen to search entries
+        SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(this);
+        
+        return true;
     }
     
     // Handle result filtering options
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
+        case android.R.id.home:
+            NavUtils.navigateUpFromSameTask(this);
+            break;
     	case R.id.action_filter_by_distance:
     		mAdapter.sort(new DistanceComparator());
     		break;
@@ -169,11 +201,5 @@ public class SearchResultsFragment extends Fragment {
     	}
     	
     	return true;
-    }
-    
-    @Override
-    public void onDestroyView() {
-		getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		super.onDestroyView();
     }
 }

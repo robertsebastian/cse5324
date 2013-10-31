@@ -52,6 +52,7 @@
             android:name="com.team7.tutorfind.Favorite"
             android:label="@string/title_activity_favorite" >
         </activity>
+        <activity android:name="com.team7.tutorfind.SearchActivity" android:parentActivityName="com.team7.tutorfind.MainActivity"></activity>
     </application>
 
 </manifest>
