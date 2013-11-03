@@ -12,6 +12,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -101,6 +104,14 @@ DatabaseRequest.Listener
 		}
 	}
 	
+	// Get Simple method to grab the last known location. Warning: Can return null
+	protected Location getLastLocation()
+	{
+	    LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+	    String lp = lm.getBestProvider(new Criteria(), false);
+	    return lm.getLastKnownLocation(lp);
+	}
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,15 +124,19 @@ DatabaseRequest.Listener
 	
 	protected void doSearch(String query) {
 		JSONObject j = new JSONObject();
+		Location l = getLastLocation();
+		if(l != null) Log.d(TAG, l.toString());
 		try {
+			Location loc = getLastLocation();	
+			
 			j.put("action", "search");
-			j.put("query",  query);
-			j.put("lat",    32.715278);
-			j.put("lon",    -97.016944);
+			j.put("query", query);
+			j.put("lat", loc != null ? loc.getLatitude() : 32.715278);
+			j.put("lon", loc != null ? loc.getLongitude() : -97.016944);
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString());
 		}
-			new DatabaseRequest(j, this, this);
+		new DatabaseRequest(j, this, this);
 	}
 
 	@Override
