@@ -2,27 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical" >
-    
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
             <ImageView
                 android:id="@+id/profilePicture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher" 
-                android:paddingRight="@dimen/profile_view_picture_right_padding"/>
+                android:src="@drawable/ic_launcher" />
 
             <TextView
                 android:id="@+id/profileNameText"
@@ -30,6 +29,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_placeholder"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <ImageButton
+                android:id="@+id/starbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:onClick="onStarButtonClick"
+                android:src="@drawable/starbutton" />
 
         </LinearLayout>
 
@@ -144,6 +150,15 @@
             android:layout_height="wrap_content"
             android:ems="10" />
 
+        <Button
+            android:id="@+id/reviewButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/add_review_text" />
+
     </LinearLayout>
-    
+
 </ScrollView>
+
+

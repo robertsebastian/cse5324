@@ -5,7 +5,12 @@ import java.lang.String;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class ProfileView extends Activity implements DatabaseRequest.Listener {
@@ -74,6 +79,24 @@ public class ProfileView extends Activity implements DatabaseRequest.Listener {
 		bioData = (TextView) findViewById(R.id.bioData);
 		
 		updateTextFields();
+	}
+	
+	public void onStarButtonClick(View v)
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Test box!!!");
+		alert.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//Pressed the button to get of the box
+			}
+		});
+		
+		if(v.isPressed())
+			alert.setMessage("Star Button is set");
+		else
+			alert.setMessage("Star Button is unset");
+			
 	}
 
 	@Override
