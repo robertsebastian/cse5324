@@ -9,9 +9,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class ProfileView extends Activity implements DatabaseRequest.Listener {
 
@@ -34,7 +33,8 @@ public class ProfileView extends Activity implements DatabaseRequest.Listener {
 	
 	private boolean updateTextFields()
 	{
-		nameData.setText(firstName + " " + lastName);
+		String concatName = firstName + " " + lastName;
+		nameData.setText(concatName);
 		emData.setText(emailTest);
 		phoneData.setText(phoneTest);
 		meetingData.setText(meetTest);
@@ -53,10 +53,6 @@ public class ProfileView extends Activity implements DatabaseRequest.Listener {
 		setContentView(R.layout.activity_profile_view);
 		
 		//Setup connections for TextView on page
-		TextView emText, phoneText, meetingText, travelText,
-				 catText, timesText, priceText, bioText;
-		TextView nameData, emData, phoneData, meetingData, travelData,
-		 		 catData, timesData, priceData, bioData;
 		
 		//Link information for each text field
 		emText = (TextView) findViewById(R.id.viewEmailText);
@@ -92,7 +88,7 @@ public class ProfileView extends Activity implements DatabaseRequest.Listener {
 			}
 		});
 		
-		if(v.isPressed())
+		if(((ToggleButton) v).isChecked())
 			alert.setMessage("Star Button is set");
 		else
 			alert.setMessage("Star Button is unset");

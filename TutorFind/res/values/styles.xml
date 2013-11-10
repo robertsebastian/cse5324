@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -23,6 +23,12 @@
 <!--     <style name="CustomActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse"> -->
     <style name="CustomActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">#448BC9</item>
+    </style>
+    
+    <style name="StarButton_Style" parent="@android:style/Widget.CompoundButton">  
+        <item name="android:background">@drawable/starbutton</item>
+        <item name="android:textOff"></item>
+   		<item name="android:textOn"></item>
     </style>
 
 </resources>

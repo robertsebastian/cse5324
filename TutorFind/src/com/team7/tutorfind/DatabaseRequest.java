@@ -67,6 +67,8 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 			requests[0].put("session_id", mSessionId);
 			
 			// Open POST request
+			mAddress = "team7.dyndns.org";
+			mPort = 80;
 			URL url = new URL("http", mAddress, mPort, "tutor_find_db.py");
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			conn.setDoOutput(true);

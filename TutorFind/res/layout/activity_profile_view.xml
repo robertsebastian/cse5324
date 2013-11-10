@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -27,17 +27,19 @@
                 android:id="@+id/profileNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/profile_placeholder"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <ImageButton
+            <ToggleButton
                 android:id="@+id/starbutton"
+                style="@style/StarButton_Style"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:onClick="onStarButtonClick"
-                android:src="@drawable/starbutton" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:onClick="onStarButtonClick" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/viewEmailText"
