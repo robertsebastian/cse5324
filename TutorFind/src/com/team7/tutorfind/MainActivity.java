@@ -20,7 +20,8 @@ public class MainActivity extends Activity implements
 	ActionBar.TabListener
 {
 	public static final String TAG = "main";
-	
+
+	private ProfileViewFragment   mProfileViewFragment;
 	private ProfileEditFragment   mProfileEditFragment;
 	private FavoritesFragment     mFavoritesFragment;
 	
@@ -41,6 +42,10 @@ public class MainActivity extends Activity implements
 			if(mFavoritesFragment == null) mFavoritesFragment = new FavoritesFragment();
 			
 			ft.replace(android.R.id.content, mFavoritesFragment, tag);
+		} else if(tag == ProfileViewFragment.TAG) {
+			if(mProfileViewFragment == null) mProfileViewFragment = new ProfileViewFragment();
+			
+			ft.replace(android.R.id.content, mProfileViewFragment, tag);
 		}
 	}
 	
@@ -67,7 +72,7 @@ public class MainActivity extends Activity implements
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        Tab profileTab = actionBar.newTab().setText("Profile").setTag(ProfileEditFragment.TAG).setTabListener(this);
+        Tab profileTab = actionBar.newTab().setText("Profile").setTag(ProfileViewFragment.TAG).setTabListener(this);
         Tab favoritesTab = actionBar.newTab().setText("Favorites").setTag(FavoritesFragment.TAG).setTabListener(this);
         actionBar.addTab(profileTab);
         actionBar.addTab(favoritesTab);
@@ -121,7 +126,6 @@ public class MainActivity extends Activity implements
     		startActivity(new Intent(this, SettingsActivity.class));
     		break;
     	case R.id.action_logout:
-    		// TODO: Log out and return to login screen
     		break;
     	default:
     		return super.onOptionsItemSelected(item);
