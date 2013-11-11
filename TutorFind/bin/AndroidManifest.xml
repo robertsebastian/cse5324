@@ -9,17 +9,17 @@
         android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" android:debuggable="true">
         <activity
             android:name="com.team7.tutorfind.LoginActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,7 +54,14 @@
             android:name="com.team7.tutorfind.Favorite"
             android:label="@string/title_activity_favorite" >
         </activity>
-        <activity android:name="com.team7.tutorfind.SearchActivity" android:parentActivityName="com.team7.tutorfind.MainActivity"></activity>
+        <activity
+            android:name="com.team7.tutorfind.SearchActivity"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.team7.tutorfind.ProfileView"
+            android:label="@string/title_activity_profile_view" >
+        </activity>
     </application>
 
 </manifest>

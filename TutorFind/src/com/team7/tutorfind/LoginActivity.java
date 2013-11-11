@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 public class LoginActivity extends Activity implements DatabaseRequest.Listener {
@@ -22,6 +21,11 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
         //getActionBar().hide(); //TODO: Should be some way to do this in the layout XML file
         setContentView(R.layout.activity_login);
         //TODO: If already logged in, automatically proceed to main activity
+        
+        // Clear saved session ID when login paged opened
+		SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		edit.remove("session_id");
+		edit.commit();	
     }
 	
 	// Handle response to either login or register messages
@@ -88,25 +92,12 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.login, menu);
-        
+        getMenuInflater().inflate(R.menu.login, menu);     
         return true;
     }
     
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	switch(item.getItemId()) {
-    	case R.id.action_settings:
-    		startActivity(new Intent(this, SettingsActivity.class));
-    		break;
-    	case R.id.action_logout:
-    		break;
-    	default:
-    		return super.onOptionsItemSelected(item);
-    	}
-    	
-    	return true;
+    public void onSettingsOption(MenuItem menu) {
+    	startActivity(new Intent(this, SettingsActivity.class));
     }
 	
 	public void onRegisterButtonClicked(View v)

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -216,5 +217,13 @@ DatabaseRequest.Listener
     	}
     	
     	return true;
+    }
+
+    public void onSettingsOption(MenuItem item) {
+    	startActivity(new Intent(this, SettingsActivity.class));
+    }
+    
+    public void onLogoutOption(MenuItem item) {
+    	startActivity(new Intent(this, LoginActivity.class));
     }
 }
