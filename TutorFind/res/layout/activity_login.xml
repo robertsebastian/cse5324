@@ -3,69 +3,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#30618D"
     android:orientation="vertical"
     android:windowActionBar="false" >
 
-    <TextView
-        android:id="@+id/testing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="9dip"
-        android:layout_marginTop="20dip"
-        android:text="@string/app_name"
-        android:textColor="#444444"
-        android:textSize="10pt" />
-
-    <EditText
-        android:id="@+id/login_field"
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/testing"
-        android:hint="@string/enter_login"
-        android:text="alice@example.org" />
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/password_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/login_field"
-        android:ems="10"
-        android:hint="@string/enter_password"
-        android:inputType="textPassword"
-        android:text="password" >
+        <EditText
+            android:id="@+id/login_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/login_edit_box"
+            android:ems="10"
+            android:hint="@string/enter_login"
+            android:padding="5dp"
+            android:text="alice@example.org" />
 
-        <requestFocus />
-    </EditText>
+        <EditText
+            android:id="@+id/password_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/login_edit_box"
+            android:ems="10"
+            android:hint="@string/enter_password"
+            android:inputType="textPassword"
+            android:padding="5dp"
+            android:text="password" />
 
-    <TextView
-        android:id="@+id/login_error_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/testing"
-        android:layout_below="@+id/password_field"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="#FF0000" />
+        <TextView
+            android:id="@+id/login_error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#FF0000" />
 
-    <Button
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/register_button"
-        android:layout_alignBottom="@+id/register_button"
-        android:layout_toRightOf="@+id/register_button"
-        android:onClick="onLoginButtonClicked"
-        android:text="@string/button_login" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right" >
 
-    <Button
-        android:id="@+id/register_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/login_error_text"
-        android:onClick="onRegisterButtonClicked"
-        android:text="@string/button_register" />
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onLoginButtonClicked"
+                android:text="@string/button_login" />
+
+            <Button
+                android:id="@+id/register_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onRegisterButtonClicked"
+                android:text="@string/button_register" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

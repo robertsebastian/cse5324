@@ -12,12 +12,14 @@ import org.json.JSONObject;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
+public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> implements OnDismissListener {
 	public static final String TAG = "database_request";
 	
 	public interface Listener {
@@ -37,12 +39,12 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 		
 		// Read address and port from preferences
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-		mAddress = pref.getString("pref_db_address", "10.0.2.2");
+		mAddress = pref.getString("pref_db_address", "team7.dyndns.org");
 		mSessionId = pref.getString("session_id", null);
 		try {
-			mPort = Integer.parseInt(pref.getString("pref_db_port", "8000"));
+			mPort = Integer.parseInt(pref.getString("pref_db_port", "80"));
 		} catch(NumberFormatException e) {
-			mPort = 8000;
+			mPort = 80;
 		}
 		
 		// Kick off request
@@ -55,8 +57,9 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 		mProgress = new ProgressDialog(mContext);
 		mProgress.setTitle("Processing...");
 		mProgress.setMessage("Please wait.");
-		mProgress.setCancelable(false);
+		mProgress.setCancelable(true);
 		mProgress.setIndeterminate(true);
+		mProgress.setOnDismissListener(this);		
 		mProgress.show();
 	}
 	
@@ -66,9 +69,9 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 			// Add session ID to request if available
 			requests[0].put("session_id", mSessionId);
 			
+			Log.d("DAT", "Connecting to " + mAddress + " " + mPort);
+			
 			// Open POST request
-			mAddress = "team7.dyndns.org";
-			mPort = 80;
 			URL url = new URL("http", mAddress, mPort, "tutor_find_db.py");
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			conn.setDoOutput(true);
@@ -103,7 +106,12 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> {
 	
 	// Notify listener of response
 	protected void onPostExecute(JSONObject response) {
-		mProgress.dismiss();
+		mProgress.hide();
 		mListener.onDatabaseResponse(response);
+	}
+	
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		this.cancel(true);
 	}
 }

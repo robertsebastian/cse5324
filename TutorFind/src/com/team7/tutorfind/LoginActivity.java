@@ -9,16 +9,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 public class LoginActivity extends Activity implements DatabaseRequest.Listener {
-	DatabaseRequest mDatabaseReq = null;
-	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().hide(); //TODO: Should be some way to do this in the layout XML file
+        //getActionBar().hide(); //TODO: Should be some way to do this in the layout XML file
         setContentView(R.layout.activity_login);
         //TODO: If already logged in, automatically proceed to main activity
     }
@@ -61,7 +62,6 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 		} catch(JSONException e) {
 			Log.e("login", e.toString());
 		}
-		mDatabaseReq = null;
 	}
 	
 	// Send the appropriate request type containing email/password fields
@@ -83,8 +83,31 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 			Log.e("login", "Error handling JSON input");
 		}
 		
-		mDatabaseReq = new DatabaseRequest(j, this, this);	
+		new DatabaseRequest(j, this, this);
 	}
+	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.login, menu);
+        
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+    	case R.id.action_settings:
+    		startActivity(new Intent(this, SettingsActivity.class));
+    		break;
+    	case R.id.action_logout:
+    		break;
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    	
+    	return true;
+    }
 	
 	public void onRegisterButtonClicked(View v)
 	{
