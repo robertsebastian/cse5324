@@ -23,6 +23,7 @@ public class MainActivity extends Activity implements
 
 	//private ProfileViewFragment   mProfileViewFragment;
 	private ProfileEditFragment   mProfileEditFragment;
+	private ProfileViewFragment   mProfileViewFragment;
 	private FavoritesFragment     mFavoritesFragment;
 	
 	// Set content area to selected fragment
@@ -43,11 +44,11 @@ public class MainActivity extends Activity implements
 			
 			ft.replace(android.R.id.content, mFavoritesFragment, tag);
 		}
-		//else if(tag == ProfileViewFragment.TAG) {
-			//if(mProfileViewFragment == null) mProfileViewFragment = new ProfileViewFragment();
+		else if(tag == ProfileViewFragment.TAG) {
+			if(mProfileViewFragment == null) mProfileViewFragment = new ProfileViewFragment();
 			
-			//ft.replace(android.R.id.content, mProfileViewFragment, tag);
-		//}
+			ft.replace(android.R.id.content, mProfileViewFragment, tag);
+		}
 	}
 	
     // Select fragment associated with the tab
@@ -73,9 +74,9 @@ public class MainActivity extends Activity implements
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        //Tab profileTab = actionBar.newTab().setText("Profile").setTag(ProfileViewFragment.TAG).setTabListener(this);
+        Tab profileTab = actionBar.newTab().setText("Profile").setTag(ProfileViewFragment.TAG).setTabListener(this);
         Tab favoritesTab = actionBar.newTab().setText("Favorites").setTag(FavoritesFragment.TAG).setTabListener(this);
-        //actionBar.addTab(profileTab);
+        actionBar.addTab(profileTab);
         actionBar.addTab(favoritesTab);
     }
 
