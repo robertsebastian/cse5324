@@ -41,18 +41,20 @@ public final class R {
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f0a001f;
-        public static final int action_filter=0x7f0a002f;
-        public static final int action_filter_by_distance=0x7f0a0030;
-        public static final int action_filter_by_price=0x7f0a0031;
-        public static final int action_filter_by_rating=0x7f0a0032;
-        public static final int action_logout=0x7f0a002d;
-        public static final int action_search=0x7f0a002e;
-        public static final int action_settings=0x7f0a002c;
+        public static final int action_filter=0x7f0a0043;
+        public static final int action_filter_by_distance=0x7f0a0044;
+        public static final int action_filter_by_price=0x7f0a0045;
+        public static final int action_filter_by_rating=0x7f0a0046;
+        public static final int action_logout=0x7f0a0041;
+        public static final int action_search=0x7f0a0042;
+        public static final int action_settings=0x7f0a0040;
+        public static final int bioData=0x7f0a0037;
         public static final int bioEdit=0x7f0a001b;
         public static final int bioText=0x7f0a001a;
         public static final int button1=0x7f0a001c;
         public static final int categoriesText=0x7f0a0014;
         public static final int dataEdit=0x7f0a0016;
+        public static final int emailData=0x7f0a0029;
         public static final int emailEdit=0x7f0a000d;
         public static final int emailText=0x7f0a000c;
         public static final int email_textbox=0x7f0a0023;
@@ -69,28 +71,46 @@ public final class R {
         public static final int login_button=0x7f0a0004;
         public static final int login_error_text=0x7f0a0003;
         public static final int login_field=0x7f0a0001;
+        public static final int meetingData=0x7f0a002d;
         public static final int meetingEdit=0x7f0a0011;
         public static final int meetingText=0x7f0a0010;
         public static final int password_field=0x7f0a0002;
+        public static final int phoneData=0x7f0a002b;
         public static final int phoneEdit=0x7f0a000f;
         public static final int phoneText=0x7f0a000e;
         public static final int phonenumber_textbox=0x7f0a0020;
+        public static final int priceData=0x7f0a0035;
         public static final int priceEdit=0x7f0a0019;
         public static final int priceText=0x7f0a0018;
+        public static final int profileNameText=0x7f0a0026;
+        public static final int profilePicture=0x7f0a0025;
         public static final int register_button=0x7f0a0005;
+        public static final int reviewButton=0x7f0a0038;
         public static final int search_results_list=0x7f0a001d;
+        public static final int starbutton=0x7f0a0027;
+        public static final int tagData=0x7f0a0031;
         public static final int tagEdit=0x7f0a0015;
-        public static final int test_search_results=0x7f0a0025;
+        public static final int test_search_results=0x7f0a0039;
+        public static final int timesData=0x7f0a0033;
         public static final int timesEdit=0x7f0a0017;
         public static final int titleText=0x7f0a0007;
+        public static final int travelData=0x7f0a002f;
         public static final int travelEcit=0x7f0a0013;
         public static final int travelText=0x7f0a0012;
-        public static final int user_summary_distance=0x7f0a0029;
-        public static final int user_summary_name=0x7f0a0027;
-        public static final int user_summary_num_reviews=0x7f0a002b;
-        public static final int user_summary_price=0x7f0a0028;
-        public static final int user_summary_row=0x7f0a0026;
-        public static final int user_summary_score=0x7f0a002a;
+        public static final int user_summary_distance=0x7f0a003f;
+        public static final int user_summary_name=0x7f0a003b;
+        public static final int user_summary_num_reviews=0x7f0a003d;
+        public static final int user_summary_price=0x7f0a003e;
+        public static final int user_summary_row=0x7f0a003a;
+        public static final int user_summary_score=0x7f0a003c;
+        public static final int viewBioText=0x7f0a0036;
+        public static final int viewEmailText=0x7f0a0028;
+        public static final int viewMeetingText=0x7f0a002c;
+        public static final int viewPhoneText=0x7f0a002a;
+        public static final int viewPriceText=0x7f0a0034;
+        public static final int viewTagText=0x7f0a0030;
+        public static final int viewTimesText=0x7f0a0032;
+        public static final int viewTravelText=0x7f0a002e;
     }
     public static final class layout {
         public static final int activity_all_favorites=0x7f030000;
@@ -104,8 +124,9 @@ public final class R {
         public static final int activity_search=0x7f030008;
         public static final int fragment_edit_profile=0x7f030009;
         public static final int fragment_favorites=0x7f03000a;
-        public static final int profile_view_item=0x7f03000b;
-        public static final int user_summary_row=0x7f03000c;
+        public static final int fragment_profile_view=0x7f03000b;
+        public static final int profile_view_item=0x7f03000c;
+        public static final int user_summary_row=0x7f03000d;
     }
     public static final class menu {
         public static final int all_favorites=0x7f090000;
@@ -114,7 +135,8 @@ public final class R {
         public static final int login=0x7f090003;
         public static final int main=0x7f090004;
         public static final int profile_view=0x7f090005;
-        public static final int search_results=0x7f090006;
+        public static final int program_view=0x7f090006;
+        public static final int search_results=0x7f090007;
     }
     public static final class string {
         public static final int BioText=0x7f060023;

@@ -1,108 +1,99 @@
 package com.team7.tutorfind;
 
-import org.json.JSONObject;
-import java.lang.String;
+import java.util.Locale;
 
-import android.os.Bundle;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 public class ProfileViewFragment extends Fragment implements DatabaseRequest.Listener {
 
-	static final String TAG = "ProfileView";
+	static final String TAG = "ProfileViewFragment";
 	
-	//Temporary test data until the database interface is implemented
-	private String firstName = "John",
-				   lastName = "Doe",
-				   emailTest = "something@email.com",
-				   phoneTest = "123-456-7890",
-				   meetTest = "1234 SomeStreet Here",
-				   travelTest = "25 Miles",
-				   catTest = "Biology, Math, Chemestry",
-				   timesTest = "Monday 2:00PM",
-				   priceTest = "$25/hr",
-				   BioTest = "Tell me More";
-	
-	private TextView emText, phoneText, meetingText, travelText,
-	 catText, timesText, priceText, bioText;
-    private TextView nameData, emData, phoneData, meetingData, travelData,
-	 catData, timesData, priceData, bioData;
-    private ToggleButton starButton; 
-	
-	private boolean updateTextFields()
-	{
-		String concatName = firstName + " " + lastName;
-		nameData.setText(concatName);
-		emData.setText(emailTest);
-		phoneData.setText(phoneTest);
-		meetingData.setText(meetTest);
-		travelData.setText(travelTest);
-		catData.setText(catTest);
-		timesData.setText(timesTest);
-		priceData.setText(priceTest);
-		bioData.setText(BioTest);
+	// Apply text to a piece of this view or hide the label and text boxes
+	private void mapTextData(String fieldText, int labelId, int textId) {
+		TextView labelView = (TextView)getView().findViewById(labelId);
+		TextView textView = (TextView)getView().findViewById(textId);
 		
-		return true;
+		if(fieldText == null || fieldText.equals("null")) {
+			labelView.setVisibility(View.GONE);
+			textView.setVisibility(View.GONE);
+		} else {
+			labelView.setVisibility(View.VISIBLE);
+			textView.setVisibility(View.VISIBLE);
+			textView.setText(fieldText);
+		}		
 	}
 	
-	public void initFields(View view)
+	// mapTextData using a field from a user object
+	private void mapTextData(JSONObject user, String fieldName, int labelId, int textId) {
+		mapTextData(user.optString(fieldName, null), labelId, textId);
+	}	
+	
+	private void updateFields(JSONObject user)
 	{
-		emText = (TextView)view.findViewById(R.id.viewEmailText);
-		phoneText = (TextView)view.findViewById(R.id.viewPhoneText);
-		meetingText = (TextView)view.findViewById(R.id.viewMeetingText);
-		travelText = (TextView)view.findViewById(R.id.viewTravelText);
-		catText = (TextView)view.findViewById(R.id.viewTagText);
-		timesText = (TextView)view.findViewById(R.id.viewTimesText);
-		priceText = (TextView)view.findViewById(R.id.viewPriceText);
-		bioText = (TextView)view.findViewById(R.id.viewBioText);
+		// Variable fields
+		String price = null;
+		if(user.has("price_per_hour")) {
+			String.format(Locale.US, "$%.2f/hr", user.optDouble("price_per_hour", 999.0));
+		}
 		
-		nameData = (TextView)view.findViewById(R.id.profileNameText);
-		emData = (TextView)view.findViewById(R.id.emailData);
-		phoneData = (TextView)view.findViewById(R.id.phoneData);
-		meetingData = (TextView)view.findViewById(R.id.meetingData);
-		travelData = (TextView)view.findViewById(R.id.travelData);
-		catData = (TextView)view.findViewById(R.id.tagData);
-		timesData = (TextView)view.findViewById(R.id.timesData);
-		priceData = (TextView)view.findViewById(R.id.priceData);
-		bioData = (TextView)view.findViewById(R.id.bioData);
+		String email = user.optString("public_email_address", user.optString("account_email", null));
 		
-		starButton = (ToggleButton)view.findViewById(R.id.starbutton);
+		// Fill in available data
+		mapTextData(email, R.id.viewEmailText, R.id.emailData);
+		mapTextData(user, "phone", R.id.viewPhoneText, R.id.phoneData);
+		mapTextData(user, "loc_address", R.id.viewMeetingText, R.id.meetingData);
+		mapTextData(user, "subject_tags", R.id.viewTagText, R.id.tagData);
+		// Add meeting times
+		mapTextData(price, R.id.viewPriceText, R.id.priceData);
+		mapTextData(user, "about_me", R.id.viewBioText, R.id.bioData);
+		
+		//starButton = (ToggleButton)view.findViewById(R.id.starbutton);
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 			Bundle savedInstanceState)	{	
 		View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
-		//Setup connections for TextView on page
-		
-		//Link information for each text field
-		initFields(view);
-		updateTextFields();
-		
-		//add the click listener
-		starButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				//TODO: add button code here!!!
-			}
-		});
 		return view;
+	}
+	
+	public void showUser(int userId, Context context)
+	{
+		JSONObject j = new JSONObject();
+		try {
+			j.put("action", "get_user");
+			j.put("user_id", userId);
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		}
+		new DatabaseRequest(j, this, context);
 	}
 	
 	public void onStarButtonClick(View v)
 	{
+		// Send request to toggle favorite
 	}
 
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
-		// TODO Auto-generated method stub
-		
+		try {
+			if(response.getBoolean("success") && response.getString("action").equals("get_user")) {
+				updateFields(response);
+			}
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		} catch(NullPointerException e) {
+			Log.e(TAG, e.toString());
+		}
 	}
 }

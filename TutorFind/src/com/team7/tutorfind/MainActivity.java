@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +46,11 @@ public class MainActivity extends Activity implements
 			ft.replace(android.R.id.content, mFavoritesFragment, tag);
 		}
 		else if(tag == ProfileViewFragment.TAG) {
-			if(mProfileViewFragment == null) mProfileViewFragment = new ProfileViewFragment();
+			if(mProfileViewFragment == null) {
+				mProfileViewFragment = new ProfileViewFragment();
+				int userId = PreferenceManager.getDefaultSharedPreferences(this).getInt("user_id", -1);
+				mProfileViewFragment.showUser(userId, this);
+			}
 			
 			ft.replace(android.R.id.content, mProfileViewFragment, tag);
 		}

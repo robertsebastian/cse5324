@@ -53,11 +53,11 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 					errorText.setText(error);
 				}
 			} else {
-				// Success -- Save session ID
-				String sessionId = response.getString("session_id");
+				// Success -- Save session and user IDs
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 				SharedPreferences.Editor edit = pref.edit();
-				edit.putString("session_id", sessionId);
+				edit.putString("session_id", response.getString("session_id"));
+				edit.putInt("user_id",  response.getInt("user_id"));
 				edit.commit();	
 				
 				// Go to main activity
