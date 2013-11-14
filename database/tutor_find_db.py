@@ -75,7 +75,11 @@ class DbTable:
       values -- dict of column names mapped to their new values (e.g. {'name': 'Alice'})
       """
 
-      insert_vals = {k: values[k] for k in (set(values.keys()) & self.col_set)}
+      #insert_vals = {k: values[k] for k in (set(values.keys()) & self.col_set)}
+      insert_vals = {}
+      for k in set(values.keys()) & self.col_set:
+         insert_vals[k] = values[k]
+
       key_str = ','.join(insert_vals.keys())
       val_str = ','.join('?' * len(insert_vals))
 
@@ -94,7 +98,12 @@ class DbTable:
       """
 
       selected_set = self.col_editable_set if editable_only else self.col_set
-      update_vals = {k: changes[k] for k in (set(changes.keys()) & selected_set)}
+
+      #update_vals = {k: changes[k] for k in (set(changes.keys()) & selected_set)}
+      update_vals = {}
+      for k in set(changes.keys()) & selected_set:
+         update_vals[k] = update_vals[k]
+
       update_str = ','.join((k + '=?' for k in update_vals.keys()))
 
       query = 'update %s set %s where %s=?' % (self.name, update_str, self.id_col.name)
@@ -224,8 +233,12 @@ def register(req):
       raise RequestError('duplicate_user')
 
    # Add user and return session ID
-   hashed_pw  = hashlib.sha1(req['password']).hexdigest()
-   user_id    = users_table.insert({'account_email': req['email'], 'password_hash': hashed_pw})
+   user_id    = users_table.insert({
+      'account_email':        req['email'],
+      'public_email_address': req['email'],
+      'name':                 req['email'],
+      'password_hash':        hashlib.sha1(req['password']).hexdigest(),
+   })
    session_id = sessions_table.insert({'user_id': user_id})
    db.commit()
 
