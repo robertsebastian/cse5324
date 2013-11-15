@@ -9,11 +9,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.app.ListFragment;
+import android.content.Context;
 
 public class FavoritesFragment extends ListFragment {
 	public static final String TAG = "favorites";
 
     private ArrayList<Favorite> favoriteList;
+    
+    private Context applicationContext;
+    
+	private static FavoritesFragment favoritesFragment;
     
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -112,7 +117,28 @@ public class FavoritesFragment extends ListFragment {
     ArrayAdapter<Number> adapter = new ArrayAdapter<Number>(getActivity(),
         android.R.layout.simple_list_item_1, values);
     setListAdapter(adapter); */
+	
+	/*private FavoritesFragment(Context applicationContext){
 
+		this.applicationContext = applicationContext;
+
+	}*/
+	
+	public static FavoritesFragment get(Context context){
+
+		if(favoritesFragment == null){
+
+			// getApplicationContext returns the global Application object
+			// This Context is global to every part of the application
+
+			//favoritesFragment = new FavoritesFragment(context.getApplicationContext());
+
+		}
+
+		return favoritesFragment;
+
+	}
+	
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
 	    

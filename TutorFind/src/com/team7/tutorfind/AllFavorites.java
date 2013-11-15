@@ -2,10 +2,27 @@ package com.team7.tutorfind;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-public class AllFavorites {
-
+public class AllFavorites extends Activity implements DatabaseRequest.Listener {
+	
+	DatabaseRequest mDatabaseReq = null;
+	
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActionBar().hide(); //TODO: Should be some way to do this in the layout XML file
+        setContentView(R.layout.activity_login);
+        //TODO: If already logged in, automatically proceed to main activity
+    }
+	
 	// This class will only have one instance that will
 	// contain an arraylist with all contacts in it.
 	// Singleton
@@ -39,24 +56,7 @@ public class AllFavorites {
 		// then we will loop through it like below until
 		// all favorites are added, 
 		// the rest is already in place
-
-		Favorite paulSmith = new Favorite();
 		
-		for (int i = 0; i < 25; i++)
-		{
-			paulSmith.setLastName("Smith");
-			paulSmith.setfirstName("Paul");
-			paulSmith.setPhoneNumber("555-555-5555");
-			paulSmith.setEmailAddressy("paulsmith@example.com");
-			favoriteList.add(paulSmith);
-		}
-
-		Favorite dude9 = new Favorite();
-		dude9.setLastName("The");
-		dude9.setfirstName("End");
-		dude9.setPhoneNumber("555-555-5555");
-		dude9.setEmailAddressy("paulsmith1234567890@example.com");
-		favoriteList.add(dude9);
 	}
 
 	// Checks if an instance of allContacts exists. If it does
@@ -80,8 +80,51 @@ public class AllFavorites {
 
 	public ArrayList<Favorite> getFavoriteList(){
 
+		sendDatabaseRequest();
 		return favoriteList;
+		
 
+	}
+	
+	public void sendDatabaseRequest() {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(applicationContext);		
+		
+		JSONObject j = new JSONObject();
+		try {						
+			j.put("action",  "get_favorites"); 
+		    String[] keyValue = pref.getString("session_id", null).split(",");
+	        //j.put("session_id", keyValue[1]);
+					
+		} catch(JSONException e) {
+			Log.e("login", "Error handling JSON input");
+		}
+
+		mDatabaseReq = new DatabaseRequest(j, this, applicationContext);
+	}
+
+	@Override
+	public void onDatabaseResponse(JSONObject response) {
+		// TODO Auto-generated method stub
+		
+		Favorite paulSmith = new Favorite();
+		
+		for (int i = 0; i < 25; i++)
+		{
+			paulSmith.setLastName("Smith");
+			paulSmith.setfirstName("Paul");
+			paulSmith.setPhoneNumber("555-555-5555");
+			paulSmith.setEmailAddressy("paulsmith@example.com");
+			favoriteList.add(paulSmith);
+		}
+
+		Favorite dude9 = new Favorite();
+		dude9.setLastName("The");
+		dude9.setfirstName("End");
+		dude9.setPhoneNumber("555-555-5555");
+		dude9.setEmailAddressy("paulsmith1234567890@example.com");
+		favoriteList.add(dude9);
+		
+		mDatabaseReq = null;
 	}
 
 }
