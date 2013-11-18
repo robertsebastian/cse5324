@@ -60,7 +60,7 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 		mProgress.setCancelable(true);
 		mProgress.setIndeterminate(true);
 		mProgress.setOnDismissListener(this);		
-		mProgress.show();
+		mProgress.show(); //TODO CHRIS
 	}
 	
 	// Make HTTP request to database
