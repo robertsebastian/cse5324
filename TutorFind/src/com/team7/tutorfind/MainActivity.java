@@ -22,8 +22,6 @@ public class MainActivity extends Activity implements
 {
 	public static final String TAG = "main";
 
-	//private ProfileViewFragment   mProfileViewFragment;
-	private ProfileEditFragment   mProfileEditFragment;
 	private ProfileViewFragment   mProfileViewFragment;
 	private FavoritesFragment     mFavoritesFragment;
 	
@@ -36,11 +34,7 @@ public class MainActivity extends Activity implements
 	
 	public void selectFragment(String tag, FragmentTransaction ft) {
 		// TODO: Probably a better way to do this
-		if(tag == ProfileEditFragment.TAG) {
-			if(mProfileEditFragment == null) mProfileEditFragment = new ProfileEditFragment();
-			//ft.add(android.R.id.content, mProfileEditFragment, tag);
-			ft.replace(android.R.id.content, mProfileEditFragment, tag);
-		} else if(tag == FavoritesFragment.TAG) {
+		if(tag == FavoritesFragment.TAG) {
 			if(mFavoritesFragment == null) mFavoritesFragment = new FavoritesFragment();
 			//ft.add(android.R.id.content, mFavoritesFragment, tag);
 			mFavoritesFragment.CreateFavorites(this);
@@ -133,5 +127,9 @@ public class MainActivity extends Activity implements
     
     public void onLogoutOption(MenuItem item) {
     	startActivity(new Intent(this, LoginActivity.class));
+    }
+    
+    public void onProfileEditOption(MenuItem item) {
+    	startActivity(new Intent(this, ProfileEditActivity.class));
     }
 }
