@@ -66,6 +66,8 @@ for name in names:
 
 for user in users:
    review(alice, user, random.randrange(0, 50) / 10.0, 'I have no real opinion about this tutor')
+   for i in range(1, 5):
+      favorite(user, users[random.randrange(0, len(users))], True)
 
 review(alice, bob, 5.0, 'good')
 review(bob, alice, 4.0, 'decent')
@@ -75,6 +77,6 @@ review(bob, cindy, 0.0, 'awful')
 favorite(alice, bob, True)
 favorite(alice, cindy, True)
 
-update_user(alice, 'Alice Example', 'math,calculus,math2013')
-update_user(bob,   'Bob Example', 'math,physics,phys1302')
-update_user(cindy, 'Cindy Someone', 'physics,english,eng3110,phys1302')
+update_user(alice, 'Alice Example', 'Math, Calculus, MATH-2013')
+update_user(bob,   'Bob Example', 'MATH, PHYSICS, PHYS1302')
+update_user(cindy, 'Cindy Someone', 'physics, english, eng-3110,phys-1302')

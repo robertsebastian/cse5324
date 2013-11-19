@@ -102,7 +102,7 @@ class DbTable:
       #update_vals = {k: changes[k] for k in (set(changes.keys()) & selected_set)}
       update_vals = {}
       for k in set(changes.keys()) & selected_set:
-         update_vals[k] = update_vals[k]
+         update_vals[k] = changes[k]
 
       update_str = ','.join((k + '=?' for k in update_vals.keys()))
 
@@ -141,39 +141,40 @@ class RequestError(Exception):
 ################################################################################
 # Table definitions for the database
 users_table = DbTable('users', (
-      ('user_id',              False, 'integer primary key autoincrement'),
-      ('password_hash',        False, 'text'),
-      ('account_email',        False, 'text'),
-      ('name',                 True,  'text'),
-      ('name_normalized',      True,  'text'),
-      ('phone',                True,  'text'),
-      ('about_me',             True,  'text'),
-      ('public_email_address', True,  'text'),
-      ('loc_address',          True,  'text'),
-      ('loc_lat',              True,  'real'),
-      ('loc_lon',              True,  'real'),
-      ('loc_max_dist',         True,  'real'),
-      ('tutor_flag',           True,  'integer'),
-      ('preferred_flag',       False, 'integer'),
-      ('subject_tags',         True,  'text'),
-      ('available_days',       True,  'text'),
-      ('available_times',      True,  'text'),
-      ('price_per_hour',       True,  'real'),
-      ('score',                False, 'real'),
-      ('num_reviews',          False, 'integer')))
+      ('user_id',                 False, 'integer primary key autoincrement'),
+      ('password_hash',           False, 'text'),
+      ('account_email',           False, 'text'),
+      ('name',                    True,  'text'),
+      ('name_normalized',         True,  'text'),
+      ('phone',                   True,  'text'),
+      ('about_me',                True,  'text'),
+      ('public_email_address',    True,  'text'),
+      ('loc_address',             True,  'text'),
+      ('loc_lat',                 True,  'real'),
+      ('loc_lon',                 True,  'real'),
+      ('loc_max_dist',            True,  'real'),
+      ('tutor_flag',              True,  'integer'),
+      ('preferred_flag',          False, 'integer'),
+      ('subject_tags',            True,  'text'),
+      ('subject_tags_normalized', True,  'text'),
+      ('available_days',          True,  'text'),
+      ('available_times',         True,  'text'),
+      ('price_per_hour',          True,  'real'),
+      ('score',                   False, 'real'),
+      ('num_reviews',             False, 'integer')))
 reviews_table = DbTable('reviews', (
-      ('review_id',            False, 'integer primary key autoincrement'),
-      ('submitter_id',         False, 'integer'),
-      ('subject_id',           False, 'integer'),
-      ('score',                True,  'real'),
-      ('text',                 True,  'text')))
+      ('review_id',               False, 'integer primary key autoincrement'),
+      ('submitter_id',            False, 'integer'),
+      ('subject_id',              False, 'integer'),
+      ('score',                   True,  'real'),
+      ('text',                    True,  'text')))
 sessions_table = DbTable('sessions', (
-      ('session_id',           False, 'integer primary key autoincrement'),
-      ('user_id',              False, 'integer')))
+      ('session_id',              False, 'integer primary key autoincrement'),
+      ('user_id',                 False, 'integer')))
 favorites_table = DbTable('favorites', (
-      ('row_id',               False, 'integer primary key autoincrement'),
-      ('user_id',              True,  'integer'),
-      ('subject_id',           True,  'integer')))
+      ('row_id',                  False, 'integer primary key autoincrement'),
+      ('user_id',                 True,  'integer'),
+      ('subject_id',              True,  'integer')))
 
 ################################################################################
 # Handler functions for user requests
@@ -266,6 +267,11 @@ def update_user(req):
    if 'name_normalized' in req: del req['name_normalized']
    if 'name' in req:
       req['name_normalized'] = normalize_search_string(req['name'])
+
+   # Add normalized subject tags for searching
+   if 'subject_tags_normalized' in req: del req['subject_tags_normalized']
+   if 'subject_tags' in req:
+      req['subject_tags_normalized'] = normalize_search_string(req['subject_tags'])
 
    # Update editable fields with request data
    users_table.update(session.user_id, req, True)
@@ -369,7 +375,7 @@ def sanitize_user(user):
    return user
 
 def normalize_search_string(string):
-   return re.sub('[^0-9a-zA-Z]+', '', string).lower()
+   return re.sub('[^0-9a-zA-Z,]+', '', string).lower()
 
 def search(req):
    """Search database for a tutor"""
@@ -379,7 +385,7 @@ def search(req):
    query = normalize_search_string(req['query'])
    query_glob = '*%s*' % query
 
-   results = users_table.select_many( 'comp_tags(subject_tags, ?) or name_normalized glob ?', [query, query_glob])
+   results = users_table.select_many( 'comp_tags(subject_tags_normalized, ?) or name_normalized glob ?', [query, query_glob])
    results = [sanitize_user(u) for u in results]
 
    # Calculate distance from querying user
