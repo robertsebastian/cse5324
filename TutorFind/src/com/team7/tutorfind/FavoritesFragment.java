@@ -2,31 +2,43 @@ package com.team7.tutorfind;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.app.ListFragment;
+import android.content.Context;
 
-public class FavoritesFragment extends ListFragment {
+public class FavoritesFragment extends ListFragment implements DatabaseRequest.Listener {
+	DatabaseRequest mDatabaseReq = null;
 	public static final String TAG = "favorites";
 
     private ArrayList<Favorite> favoriteList;
     
+   	private static AllFavorites allFavorites;
+    
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		// Get the ArrayList from AllFavorites
-		
-		favoriteList = AllFavorites.get(getActivity()).getFavoriteList();
-		
-		FavoriteAdapter contactAdapter = new FavoriteAdapter(favoriteList);
-		
-		// Provides the data for the ListView by setting the Adapter 
-		
-		setListAdapter(contactAdapter);		
+	}
+	
+	public void CreateFavorites(Context context)
+	{
+		JSONObject j = new JSONObject();
+		try {
+			j.put("action", "get_favorites");
+			//String[] keyValue = pref.getString("session_id", null).split(",");
+			// j.put("session_id", keyValue[1]);
+
+		} catch (JSONException e) {
+			Log.e("login", "Error handling JSON input");
+		}
+		new DatabaseRequest(j, this, context);
 	}
 	
 	private class FavoriteAdapter extends ArrayAdapter<Favorite> {
@@ -101,20 +113,95 @@ public class FavoritesFragment extends ListFragment {
 		
 	}
 
-    /*String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-        "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-        "Linux", "OS/2" }; 
-    Number values[] = new Number[10];
-    for (int i = 0; i < 10; i++)
-    {
-    	values[i] = i;
-    }
-    ArrayAdapter<Number> adapter = new ArrayAdapter<Number>(getActivity(),
-        android.R.layout.simple_list_item_1, values);
-    setListAdapter(adapter); */
+	/*public void sendDatabaseRequest() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(applicationContext);
 
+		JSONObject j = new JSONObject();
+		try {
+			j.put("action", "get_favorites");
+			String[] keyValue = pref.getString("session_id", null).split(",");
+			// j.put("session_id", keyValue[1]);
+
+		} catch (JSONException e) {
+			Log.e("login", "Error handling JSON input");
+		}
+
+		// FavoritesFragment favoritesFragment = new FavoritesFragment(this);
+		// DetailFragment fragment = (DetailFragment) getFragmentManager()
+		// .findFragmentById(R.id.detailFragment);
+		// Context cont;
+		// cont=getApplicationContext();
+		// ProfileViewFragment().getActivity();
+
+		// AllFavorites.get(getActivity())
+		
+		//FavoritesFragment favoritesFragment;
+		//favoritesFragment = new FavoritesFragment();
+		//favoritesFragment.getActivity()
+		
+		//Context context;
+		//ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+		//ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+		
+		mDatabaseReq = new DatabaseRequest(j, this, context);
+
+		// setContentView(R.layout.activity_login
+		// ProfileViewFragment profileViewFragment = null;
+		// profileViewFragment.getActivity()
+		// getActivity()
+		// getApplicationContext()
+	}*/
+
+	public static AllFavorites get(Context context) {
+
+		if (allFavorites == null) {
+
+			// getApplicationContext returns the global Application object
+			// This Context is global to every part of the application
+
+			allFavorites = new AllFavorites(context.getApplicationContext());
+
+		}
+
+		return allFavorites;
+
+	}
+	public ArrayList<Favorite> getFavoriteList() {
+		
+		return favoriteList;
+	}
+
+	public void onDatabaseResponse(JSONObject response) {
+		// TODO Auto-generated method stub
+		
+		favoriteList = new ArrayList<Favorite>();
+		Favorite paulSmith = new Favorite();
+
+		for (int i = 0; i < 5; i++) {
+			paulSmith.setLastName("Smith");
+			paulSmith.setfirstName("Paul");
+			paulSmith.setPhoneNumber("555-555-5555");
+			paulSmith.setEmailAddressy("paulsmith@example.com");
+			favoriteList.add(paulSmith);
+		}
+
+		Favorite dude9 = new Favorite();
+		dude9.setLastName("The");
+		dude9.setfirstName("End");
+		dude9.setPhoneNumber("555-555-5555");
+		dude9.setEmailAddressy("paulsmith1234567890@example.com");
+		favoriteList.add(dude9);
+		
+		FavoriteAdapter contactAdapter = new FavoriteAdapter(favoriteList);
+		
+		setListAdapter(contactAdapter);	
+
+		mDatabaseReq = null;
+	}
+	
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
-	    
+	  //sendDatabaseRequest();
   }
 }

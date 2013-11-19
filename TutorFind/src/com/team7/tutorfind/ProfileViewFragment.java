@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -45,11 +46,10 @@ public class ProfileViewFragment extends Fragment implements DatabaseRequest.Lis
 		if(user.has("price_per_hour")) {
 			String.format(Locale.US, "$%.2f/hr", user.optDouble("price_per_hour", 999.0));
 		}
-		
-		String email = user.optString("public_email_address", user.optString("account_email", null));
-		
+
 		// Fill in available data
-		mapTextData(email, R.id.viewEmailText, R.id.emailData);
+		mapTextData(user, "name", R.id.profileNameText, R.id.profileNameText);
+		mapTextData(user, "public_email_address", R.id.viewEmailText, R.id.emailData);
 		mapTextData(user, "phone", R.id.viewPhoneText, R.id.phoneData);
 		mapTextData(user, "loc_address", R.id.viewMeetingText, R.id.meetingData);
 		mapTextData(user, "subject_tags", R.id.viewTagText, R.id.tagData);
