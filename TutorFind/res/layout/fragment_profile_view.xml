@@ -81,19 +81,6 @@
             android:ems="10" />
 
         <TextView
-            android:id="@+id/viewTravelText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/travelText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/travelData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
-
-        <TextView
             android:id="@+id/viewTagText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,12 +136,34 @@
             android:layout_height="wrap_content"
             android:ems="10" />
 
-        <Button
-            android:id="@+id/reviewButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/add_review_text" />
+            style="?android:attr/buttonBarStyle"
+            android:layout_gravity="center" >
+
+            <Button
+                android:id="@+id/editProfileButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Profile" />
+
+            <Button
+                android:id="@+id/showReviewsButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/showReviewsButton" />
+
+            <Button
+                android:id="@+id/reviewButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_review_text" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

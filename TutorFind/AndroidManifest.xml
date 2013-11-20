@@ -62,6 +62,10 @@
             android:name="com.team7.tutorfind.ProfileView"
             android:label="@string/title_activity_profile_view" >
         </activity>
+        <activity
+            android:name="com.team7.tutorfind.ProfileEditActivity"
+            android:label="@string/title_activity_profile_edit" >
+        </activity>
     </application>
 
 </manifest>

@@ -27,6 +27,13 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 		super.onCreate(savedInstanceState);
 	}
 	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		
+		CreateFavorites(getActivity());			
+	}
+	
 	public void CreateFavorites(Context context)
 	{
 		JSONObject j = new JSONObject();

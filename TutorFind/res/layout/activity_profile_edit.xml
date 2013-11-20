@@ -174,7 +174,7 @@
             android:inputType="textMultiLine" />
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/editProfileButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

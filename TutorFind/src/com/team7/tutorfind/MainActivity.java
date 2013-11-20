@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,51 +18,37 @@ import android.widget.SearchView;
 
 public class MainActivity extends Activity implements
 	SearchView.OnQueryTextListener,
-	DatabaseRequest.Listener,
-	ActionBar.TabListener
+	DatabaseRequest.Listener
 {
 	public static final String TAG = "main";
 
-	private ProfileViewFragment   mProfileViewFragment;
-	private FavoritesFragment     mFavoritesFragment;
-	
-	// Set content area to selected fragment
-	public void selectFragment(String tag) {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		selectFragment(tag, ft);
-		ft.commit();
-	}
-	
-	public void selectFragment(String tag, FragmentTransaction ft) {
-		// TODO: Probably a better way to do this
-		if(tag == FavoritesFragment.TAG) {
-			if(mFavoritesFragment == null) mFavoritesFragment = new FavoritesFragment();
-			//ft.add(android.R.id.content, mFavoritesFragment, tag);
-			mFavoritesFragment.CreateFavorites(this);
-			ft.replace(android.R.id.content, mFavoritesFragment, tag);
-		}
-		else if(tag == ProfileViewFragment.TAG) {
-			if(mProfileViewFragment == null) {
-				mProfileViewFragment = new ProfileViewFragment();
-				int userId = PreferenceManager.getDefaultSharedPreferences(this).getInt("user_id", -1);
-				mProfileViewFragment.showUser(userId, this);
-			}
-			
-			ft.replace(android.R.id.content, mProfileViewFragment, tag);
-		}
-	}
-	
-    // Select fragment associated with the tab
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-    	selectFragment((String)tab.getTag(), ft);
-    }
+	// Class to manage selecting different fragments for the tabbed interface
+    private class TabSelector implements ActionBar.TabListener {
+    	Fragment mFragment;
+    	boolean mIsAdded = false;
+    	
+    	TabSelector(Fragment frag) {
+    		mFragment = frag;
+    	}
+    	
+        // Select fragment associated with the tab
+        public void onTabSelected(Tab tab, FragmentTransaction ft) {
+        	if(mIsAdded) {
+        		ft.show(mFragment);
+        	} else {
+        		ft.add(android.R.id.content, mFragment);
+        		mIsAdded = true;
+        	}
+        }
 
-    // Nothing to do on tab unselected
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-    }
+        // Nothing to do on tab unselected
+        public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+        	ft.hide(mFragment);
+        }
 
-    // Nothing to do if the tag is already selected
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+        // Nothing to do if the tag is already selected
+        public void onTabReselected(Tab tab, FragmentTransaction ft) {
+        } 	
     }
 	
 	@Override
@@ -73,11 +60,15 @@ public class MainActivity extends Activity implements
         // setup action bar for tabs
         ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
+        int userId = PreferenceManager.getDefaultSharedPreferences(this).getInt("user_id", -1);
 
-        Tab profileTab = actionBar.newTab().setText("Profile").setTag(ProfileViewFragment.TAG).setTabListener(this);
-        Tab favoritesTab = actionBar.newTab().setText("Favorites").setTag(FavoritesFragment.TAG).setTabListener(this);
-        actionBar.addTab(profileTab);
-        actionBar.addTab(favoritesTab);
+        actionBar.addTab(actionBar.newTab()
+        		.setText("Profile")
+        		.setTabListener(new TabSelector(ProfileViewFragment.create(userId))));
+        actionBar.addTab(actionBar.newTab()
+        		.setText("Favorites")
+        		.setTabListener(new TabSelector(new FavoritesFragment())));
     }
 
 	@Override
@@ -127,9 +118,5 @@ public class MainActivity extends Activity implements
     
     public void onLogoutOption(MenuItem item) {
     	startActivity(new Intent(this, LoginActivity.class));
-    }
-    
-    public void onProfileEditOption(MenuItem item) {
-    	startActivity(new Intent(this, ProfileEditActivity.class));
     }
 }
