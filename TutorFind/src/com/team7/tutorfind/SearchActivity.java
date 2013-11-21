@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -24,15 +23,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.SearchView;
 import android.widget.TextView;
 
-public class SearchActivity extends Activity implements
-SearchView.OnQueryTextListener,
-DatabaseRequest.Listener
+public class SearchActivity extends TutorFindActivity implements OnItemClickListener
 {
 	public static final String TAG = "search_activity";
 	public static final String SEARCH_QUERY = "com.team7.tutorfind.SEARCH_QUERY";
@@ -105,6 +103,14 @@ DatabaseRequest.Listener
 		}
 	}
 	
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		JSONObject user = mAdapter.getItem(position);
+		Intent i = new Intent(this, ProfileViewActivity.class);
+		i.putExtra("user_id", user.optInt("user_id", -1));
+		startActivity(i);
+	}
+	
 	// Get Simple method to grab the last known location. Warning: Can return null
 	protected Location getLastLocation()
 	{
@@ -142,6 +148,7 @@ DatabaseRequest.Listener
 
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
+		super.onDatabaseResponse(response);
 		try {
 			updateResults(response.getJSONArray("results"));
 		} catch(JSONException e) {
@@ -166,6 +173,7 @@ DatabaseRequest.Listener
 			mAdapter = new UserSummaryArrayAdapter(this, results);
 			
 			list.setAdapter(mAdapter);
+			list.setOnItemClickListener(this);
 			
 		} catch(JSONException e) {
 			Log.e("search", e.toString());
@@ -173,26 +181,15 @@ DatabaseRequest.Listener
 	}
 	
 	@Override
-	public boolean onQueryTextChange(String newText) {
-		return true;
-	}
-	
-	@Override
 	public boolean onQueryTextSubmit(String query) {
 		doSearch(query);
 		return true;
 	}
-    
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+    	super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.search_results, menu);
-        
-        // Listen to search entries
-        SearchView searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
-        searchView.setOnQueryTextListener(this);
-        
         return true;
     }
     
@@ -217,13 +214,5 @@ DatabaseRequest.Listener
     	}
     	
     	return true;
-    }
-
-    public void onSettingsOption(MenuItem item) {
-    	startActivity(new Intent(this, SettingsActivity.class));
-    }
-    
-    public void onLogoutOption(MenuItem item) {
-    	startActivity(new Intent(this, LoginActivity.class));
     }
 }
