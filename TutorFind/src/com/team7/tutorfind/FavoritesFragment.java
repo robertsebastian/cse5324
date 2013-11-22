@@ -1,7 +1,9 @@
 package com.team7.tutorfind;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -182,7 +184,15 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 	public void onDatabaseResponse(JSONObject response) {
 		// TODO Auto-generated method stub
 		
-		favoriteList = new ArrayList<Favorite>();
+		try {
+			updateResults(response.getJSONArray("favorites"));
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		} catch(NullPointerException e) {
+			Log.e(TAG, e.toString());
+		}
+		
+		/*favoriteList = new ArrayList<Favorite>();
 		Favorite paulSmith = new Favorite();
 
 		for (int i = 0; i < 5; i++) {
@@ -204,7 +214,58 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 		
 		setListAdapter(contactAdapter);	
 
-		mDatabaseReq = null;
+		mDatabaseReq = null;*/
+	}
+	
+	public void updateResults(JSONArray resultArray) {
+		try {
+			favoriteList = new ArrayList<Favorite>();
+						
+			// Build a list of results
+			int k = resultArray.length();
+			JSONObject results = new JSONObject();
+			for(int i = 0; i < resultArray.length(); i++) {
+				Favorite addFavorite = new Favorite();
+				results = resultArray.getJSONObject(i);
+				String Name = (String)results.get("name");
+				addFavorite.setfirstName(Name);
+				if(results.get("phone") == null)
+				{
+				}
+				else
+				{
+					//Number phoneNumber = (Number)results.get("phone");
+					//addFavorite.setPhoneNumber(phoneNumber);
+				}				
+				String emailAddress = (String)results.get("public_email_address");
+				addFavorite.setEmailAddressy(emailAddress);
+				favoriteList.add(addFavorite);
+			}
+			
+			FavoriteAdapter contactAdapter = new FavoriteAdapter(favoriteList);
+			
+			setListAdapter(contactAdapter);	
+
+			mDatabaseReq = null;
+			
+			// Fill in available data
+			/*mapTextData(user, "name", R.id.profileNameText, R.id.profileNameText);
+			mapTextData(user, "public_email_address", R.id.viewEmailText, R.id.emailData);
+			mapTextData(user, "phone", R.id.viewPhoneText, R.id.phoneData);
+			mapTextData(user, "loc_address", R.id.viewMeetingText, R.id.meetingData);
+			mapTextData(null, R.id.viewTimesText, R.id.timesData);
+			mapTextData(user, "subject_tags", R.id.viewTagText, R.id.tagData);*/
+			
+			// Create new adapter using the list as its data source
+			/*Collections.sort(results, new DistanceComparator());
+			mAdapter = new UserSummaryArrayAdapter(this, results);
+			
+			list.setAdapter(mAdapter);
+			list.setOnItemClickListener(this);*/
+			
+		} catch(JSONException e) {
+			Log.e("search", e.toString());
+		}			
 	}
 	
   @Override
