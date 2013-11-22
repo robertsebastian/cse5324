@@ -41,14 +41,14 @@ public final class R {
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f0a001f;
-        public static final int action_filter=0x7f0a0043;
-        public static final int action_filter_by_distance=0x7f0a0044;
-        public static final int action_filter_by_price=0x7f0a0045;
-        public static final int action_filter_by_rating=0x7f0a0046;
-        public static final int action_logout=0x7f0a0040;
-        public static final int action_profile_edit=0x7f0a0041;
-        public static final int action_search=0x7f0a0042;
-        public static final int action_settings=0x7f0a003f;
+        public static final int action_filter=0x7f0a0042;
+        public static final int action_filter_by_distance=0x7f0a0043;
+        public static final int action_filter_by_price=0x7f0a0044;
+        public static final int action_filter_by_rating=0x7f0a0045;
+        public static final int action_logout=0x7f0a003f;
+        public static final int action_profile_edit=0x7f0a0040;
+        public static final int action_search=0x7f0a0041;
+        public static final int action_settings=0x7f0a003e;
         public static final int bioData=0x7f0a0035;
         public static final int bioEdit=0x7f0a001b;
         public static final int bioText=0x7f0a001a;
@@ -92,18 +92,17 @@ public final class R {
         public static final int starbutton=0x7f0a0027;
         public static final int tagData=0x7f0a002f;
         public static final int tagEdit=0x7f0a0015;
-        public static final int test_search_results=0x7f0a0038;
         public static final int timesData=0x7f0a0031;
         public static final int timesEdit=0x7f0a0017;
         public static final int titleText=0x7f0a0007;
         public static final int travelEdit=0x7f0a0013;
         public static final int travelText=0x7f0a0012;
-        public static final int user_summary_distance=0x7f0a003e;
-        public static final int user_summary_name=0x7f0a003a;
-        public static final int user_summary_num_reviews=0x7f0a003c;
-        public static final int user_summary_price=0x7f0a003d;
-        public static final int user_summary_row=0x7f0a0039;
-        public static final int user_summary_score=0x7f0a003b;
+        public static final int user_summary_distance=0x7f0a003d;
+        public static final int user_summary_name=0x7f0a0039;
+        public static final int user_summary_num_reviews=0x7f0a003b;
+        public static final int user_summary_price=0x7f0a003c;
+        public static final int user_summary_row=0x7f0a0038;
+        public static final int user_summary_score=0x7f0a003a;
         public static final int viewBioText=0x7f0a0034;
         public static final int viewEmailText=0x7f0a0028;
         public static final int viewMeetingText=0x7f0a002c;

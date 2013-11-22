@@ -54,7 +54,7 @@ public class MainActivity extends TutorFindActivity
 
         actionBar.addTab(actionBar.newTab()
         		.setText("Profile")
-        		.setTabListener(new TabSelector(ProfileViewFragment.create(userId))));
+        		.setTabListener(new TabSelector(ProfileViewFragment.create(userId, null))));
         actionBar.addTab(actionBar.newTab()
         		.setText("Favorites")
         		.setTabListener(new TabSelector(new FavoritesFragment())));

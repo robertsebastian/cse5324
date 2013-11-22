@@ -21,9 +21,10 @@ public class ProfileViewFragment extends Fragment implements
 
 	static final String TAG = "ProfileViewFragment";
 	
-	static ProfileViewFragment create(int userId) {		
+	static ProfileViewFragment create(int userId, String user) {		
 		Bundle args = new Bundle();
 		args.putInt("user_id", userId);
+		if(user != null) args.putString("user", user);
 		
 		ProfileViewFragment frag = new ProfileViewFragment();
 		frag.setArguments(args);
@@ -72,7 +73,6 @@ public class ProfileViewFragment extends Fragment implements
 		
 		
 		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);
-		//int userId = getArguments().getInt("user_id");
 		
 		if(getArguments().getInt("user_id") == ourUser) {
 			getView().findViewById(R.id.editProfileButton).setVisibility(View.VISIBLE);
@@ -115,9 +115,20 @@ public class ProfileViewFragment extends Fragment implements
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		showUser(getArguments().getInt("user_id"), getActivity());			
+		try {
+			if(getArguments().containsKey("user")) {
+				// Use pre-fetched user data from search results if available			
+				updateFields(new JSONObject(getArguments().getString("user")));
+			} else {
+				// Otherwise kick of database request to retrieve user
+				showUser(getArguments().getInt("user_id"), getActivity());
+			}
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		}
 	}
 	
+	// Send database request for userId
 	public void showUser(int userId, Context context)
 	{
 		JSONObject j = new JSONObject();

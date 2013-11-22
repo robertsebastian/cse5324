@@ -10,7 +10,9 @@ public class ProfileViewActivity extends TutorFindActivity {
 		
         if (savedInstanceState == null) {
         	// TODO: Also handle user content to avoid another database request
-            ProfileViewFragment f = ProfileViewFragment.create(getIntent().getIntExtra("user_id", -1));
+            ProfileViewFragment f = ProfileViewFragment.create(
+            		getIntent().getIntExtra("user_id", -1),
+            		getIntent().getStringExtra("user"));
             getFragmentManager().beginTransaction().add(android.R.id.content, f).commit();
         }
 	}

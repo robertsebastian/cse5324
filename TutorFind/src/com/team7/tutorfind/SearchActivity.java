@@ -108,6 +108,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		JSONObject user = mAdapter.getItem(position);
 		Intent i = new Intent(this, ProfileViewActivity.class);
 		i.putExtra("user_id", user.optInt("user_id", -1));
+		i.putExtra("user", user.toString());
 		startActivity(i);
 	}
 	
