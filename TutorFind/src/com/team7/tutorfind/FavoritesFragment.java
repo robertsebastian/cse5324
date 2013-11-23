@@ -43,8 +43,6 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 		JSONObject j = new JSONObject();
 		try {
 			j.put("action", "get_favorites");
-			//String[] keyValue = pref.getString("session_id", null).split(",");
-			// j.put("session_id", keyValue[1]);
 
 		} catch (JSONException e) {
 			Log.e("login", "Error handling JSON input");
@@ -124,46 +122,6 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 		
 	}
 
-	/*public void sendDatabaseRequest() {
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(applicationContext);
-
-		JSONObject j = new JSONObject();
-		try {
-			j.put("action", "get_favorites");
-			String[] keyValue = pref.getString("session_id", null).split(",");
-			// j.put("session_id", keyValue[1]);
-
-		} catch (JSONException e) {
-			Log.e("login", "Error handling JSON input");
-		}
-
-		// FavoritesFragment favoritesFragment = new FavoritesFragment(this);
-		// DetailFragment fragment = (DetailFragment) getFragmentManager()
-		// .findFragmentById(R.id.detailFragment);
-		// Context cont;
-		// cont=getApplicationContext();
-		// ProfileViewFragment().getActivity();
-
-		// AllFavorites.get(getActivity())
-		
-		//FavoritesFragment favoritesFragment;
-		//favoritesFragment = new FavoritesFragment();
-		//favoritesFragment.getActivity()
-		
-		//Context context;
-		//ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
-		//ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-		
-		mDatabaseReq = new DatabaseRequest(j, this, context);
-
-		// setContentView(R.layout.activity_login
-		// ProfileViewFragment profileViewFragment = null;
-		// profileViewFragment.getActivity()
-		// getActivity()
-		// getApplicationContext()
-	}*/
-
 	public static AllFavorites get(Context context) {
 
 		if (allFavorites == null) {
@@ -185,16 +143,18 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 
 	public void onDatabaseResponse(JSONObject response) {
 		
-		/*
-		Intent i = new Intent(getActivity(), ProfileViewActivity.class);
-		i.putExtra("user_id", user.optInt("user_id", -1));
-		i.putExtra("user", user.toString());
-		startActivity(i);
-		 */
-		
-		// right here
 		try {
-			updateResults(response.getJSONArray("favorites"));
+			if(response.getBoolean("success") && response.getString("action").equals("get_favorites")) {
+				updateResults(response.getJSONArray("favorites"));
+			}
+			else if (response.getBoolean("success") && response.getString("action").equals("get_user"))
+			{
+				String userID = (String)response.getString("user_id");
+				Intent i = new Intent(getActivity(), ProfileViewActivity.class);
+				i.putExtra("user_id", userID);
+				i.putExtra("user", response.toString());
+				startActivity(i);
+			}			
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString());
 		} catch(NullPointerException e) {
