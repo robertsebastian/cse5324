@@ -1,28 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/test_search_results"
+        android:id="@+id/profile_view_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/textPlaceHolder"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:text="&lt;Title>"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="bold"
+        android:typeface="normal" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="4dp"
+        android:background="#CCCCCC" />
+
+    <TextView
+        android:id="@+id/profile_view_item_content"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:autoLink="email"
+        android:text="&lt;Content>"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/phonenumber_textbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/test_search_results"
-        android:layout_below="@+id/test_search_results"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="14dp"
-        android:text="@string/textPlaceHolder"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-</RelativeLayout>
+</LinearLayout>

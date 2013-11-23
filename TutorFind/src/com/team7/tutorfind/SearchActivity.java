@@ -16,7 +16,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -121,14 +120,23 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	}
 	
 	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		doSearch(getIntent().getStringExtra(SEARCH_QUERY));
+	}
+	
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        
-        doSearch(getIntent().getStringExtra(SEARCH_QUERY));
     }
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		doSearch(getIntent().getStringExtra(SEARCH_QUERY));
+	}
 	
 	protected void doSearch(String query) {
 		JSONObject j = new JSONObject();
@@ -142,7 +150,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 			j.put("lat", loc != null ? loc.getLatitude() : 32.715278);
 			j.put("lon", loc != null ? loc.getLongitude() : -97.016944);
 		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		}
 		new DatabaseRequest(j, this, this);
 	}
@@ -153,9 +161,9 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		try {
 			updateResults(response.getJSONArray("results"));
 		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		} catch(NullPointerException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		}
 	}
 	
@@ -177,7 +185,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 			list.setOnItemClickListener(this);
 			
 		} catch(JSONException e) {
-			Log.e("search", e.toString());
+			Log.e("search", e.toString(), e);
 		}		
 	}
 	
@@ -198,9 +206,6 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
-        case android.R.id.home:
-            NavUtils.navigateUpFromSameTask(this);
-            break;
     	case R.id.action_filter_by_distance:
     		mAdapter.sort(new DistanceComparator());
     		break;

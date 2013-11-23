@@ -5,8 +5,10 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,13 +16,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class ProfileViewFragment extends Fragment implements
 	DatabaseRequest.Listener, View.OnClickListener {
 
 	static final String TAG = "ProfileViewFragment";
 	
+	private JSONObject mUser = null;
+	private int mUserId = -1;
+	
+	// Create a fragment with user_id and an optional user data argument
 	static ProfileViewFragment create(int userId, String user) {		
 		Bundle args = new Bundle();
 		args.putInt("user_id", userId);
@@ -32,57 +40,77 @@ public class ProfileViewFragment extends Fragment implements
 		return frag;
 	}
 	
-	// Apply text to a piece of this view or hide the label and text boxes
-	private void mapTextData(String fieldText, int labelId, int textId) {
-		TextView labelView = (TextView)getView().findViewById(labelId);
-		TextView textView = (TextView)getView().findViewById(textId);
-		
-		if(fieldText == null || fieldText.equals("null")) {
-			labelView.setVisibility(View.GONE);
-			textView.setVisibility(View.GONE);
-		} else {
-			labelView.setVisibility(View.VISIBLE);
-			textView.setVisibility(View.VISIBLE);
-			textView.setText(fieldText);
-		}
+	// Append a profile text field to the content list from a user object
+	private void addTextField(ViewGroup root, String title, JSONObject user, String field) {
+		if(user.isNull(field)) return;
+		addTextField(root, title, user.optString(field));
 	}
 	
-	// mapTextData using a field from a user object
-	private void mapTextData(JSONObject user, String fieldName, int labelId, int textId) {
-		mapTextData(user.optString(fieldName, null), labelId, textId);
-	}	
+	// Append a profile text field to the content list
+	private void addTextField(ViewGroup root, String title, String content) {
+		if(content == null) return;
+		
+		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+		View field = inflater.inflate(R.layout.profile_view_item, null);	
+		((TextView)field.findViewById(R.id.profile_view_item_title)).setText(title);
+		((TextView)field.findViewById(R.id.profile_view_item_content)).setText(content);
+
+		root.addView(field);
+	}
 	
-	private void updateFields(JSONObject user)
+	private void addRatingField(ViewGroup root, String title, float rating, int numRatings) {
+		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		String numRatingsStr = String.format(Locale.US, "(%d)", numRatings);
+		String ratingStr = String.format(Locale.US, "%.1f", rating);
+		
+		View field = inflater.inflate(R.layout.profile_view_item_rating, null);	
+		((TextView)field.findViewById(R.id.profile_view_item_title)).setText(title);
+		((RatingBar)field.findViewById(R.id.profile_view_item_rating_stars)).setRating(rating);
+		((TextView)field.findViewById(R.id.profile_view_item_num_ratings)).setText(numRatingsStr);
+		((TextView)field.findViewById(R.id.profile_view_item_rating)).setText(ratingStr);
+
+		root.addView(field);		
+	}
+	
+	// Initialize views with values from a user object
+	private void onUserUpdated()
 	{
+		if(mUser == null) return;
+		
+		Log.d(TAG, mUser.toString());
 		// Variable fields
 		String price = null;
-		if(user.has("price_per_hour")) {
-			String.format(Locale.US, "$%.2f/hr", user.optDouble("price_per_hour", 999.0));
+		if(!mUser.isNull("price_per_hour")) {
+			String.format(Locale.US, "$%.2f/hr", mUser.optDouble("price_per_hour", 999.0));
 		}
-
-		// Fill in available data
-		mapTextData(user, "name", R.id.profileNameText, R.id.profileNameText);
-		mapTextData(user, "public_email_address", R.id.viewEmailText, R.id.emailData);
-		mapTextData(user, "phone", R.id.viewPhoneText, R.id.phoneData);
-		mapTextData(user, "loc_address", R.id.viewMeetingText, R.id.meetingData);
-		mapTextData(null, R.id.viewTimesText, R.id.timesData);
-		mapTextData(user, "subject_tags", R.id.viewTagText, R.id.tagData);
-		// Add meeting times
-		mapTextData(price, R.id.viewPriceText, R.id.priceData);
-		mapTextData(user, "about_me", R.id.viewBioText, R.id.bioData);
 		
+		((TextView)getView().findViewById(R.id.profileNameText)).setText(mUser.optString("name"));
 		
-		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);
+		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
+		root.removeAllViews();
 		
+		addTextField(root, "EMAIL",            mUser, "public_email_address");
+		addTextField(root, "PHONE",            mUser, "phone");
+		addTextField(root, "MEETING LOCATION", mUser, "loc_address");
+		addTextField(root, "SUBJECTS",         mUser, "subject_tags");
+		addTextField(root, "RATE", price);
+		addTextField(root, "ABOUT ME",         mUser, "about_me");
+		
+		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"));
+		
+		// Show/hide elements as appropriate for view us vs another user
+		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
 		if(getArguments().getInt("user_id") == ourUser) {
 			getView().findViewById(R.id.editProfileButton).setVisibility(View.VISIBLE);
 			getView().findViewById(R.id.reviewButton).setVisibility(View.GONE);
+			getView().findViewById(R.id.starbutton).setVisibility(View.GONE);
 		} else {
 			getView().findViewById(R.id.editProfileButton).setVisibility(View.GONE);
 			getView().findViewById(R.id.reviewButton).setVisibility(View.VISIBLE);
+			getView().findViewById(R.id.starbutton).setVisibility(View.VISIBLE);
 		}
-		
-		//starButton = (ToggleButton)view.findViewById(R.id.starbutton);
 	}
 	
 	@Override
@@ -92,6 +120,7 @@ public class ProfileViewFragment extends Fragment implements
 		view.findViewById(R.id.editProfileButton).setOnClickListener(this);
 		view.findViewById(R.id.reviewButton).setOnClickListener(this);
 		view.findViewById(R.id.showReviewsButton).setOnClickListener(this);
+		view.findViewById(R.id.starbutton).setOnClickListener(this);
 		
 		return view;
 	}
@@ -103,10 +132,14 @@ public class ProfileViewFragment extends Fragment implements
 			startActivity(new Intent(getActivity(), ProfileEditActivity.class));
 			break;
 		case R.id.reviewButton:
+			showAddReviewDialog();
 			// TODO: Actually launch an activity
 			break;
 		case R.id.showReviewsButton:
 			// TODO: Actually launch an activity
+			break;
+		case R.id.starbutton:
+			setFavorite(((ToggleButton)v).isChecked());
 			break;
 		}
 	}
@@ -114,48 +147,110 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
+	
 		try {
-			if(getArguments().containsKey("user")) {
-				// Use pre-fetched user data from search results if available			
-				updateFields(new JSONObject(getArguments().getString("user")));
+			String user = getArguments().getString("user");
+			
+			if(user != null) {
+				// Use pre-fetched user data from search results if available
+				mUser = new JSONObject(user);
+				mUserId = mUser.optInt("user_id", -1);
+				onUserUpdated();
 			} else {
 				// Otherwise kick of database request to retrieve user
-				showUser(getArguments().getInt("user_id"), getActivity());
+				mUserId = getArguments().getInt("user_id");
+				fetchUser();
 			}
 		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		}
 	}
 	
 	// Send database request for userId
-	public void showUser(int userId, Context context)
+	public void fetchUser()
 	{
 		JSONObject j = new JSONObject();
 		try {
 			j.put("action", "get_user");
-			j.put("user_id", userId);
+			j.put("user_id", mUserId);
 		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		}
-		new DatabaseRequest(j, this, context);
+		new DatabaseRequest(j, this, getActivity());
 	}
 	
-	public void onStarButtonClick(View v)
+	// Send database request to set favorite status for the viewed user
+	public void setFavorite(boolean favorited)
 	{
-		// Send request to toggle favorite
+		JSONObject j = new JSONObject();
+		try {
+			mUser.put("favorited", favorited);
+			
+			j.put("action",     "set_favorite");
+			j.put("subject_id", mUserId);
+			j.put("favorited",  favorited);
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString(), e);
+		}
+		new DatabaseRequest(j, this, getActivity(), false);		
+	}
+	
+	// Send database request to review this user
+	public void review(float score, String text)
+	{
+		JSONObject j = new JSONObject();
+		try {
+			mUser.put("my_score", score);
+			mUser.put("my_comment", text);
+			
+			j.put("action",     "submit_review");
+			j.put("subject_id", mUserId);
+			j.put("score",      score);
+			j.put("text",       text);
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString(), e);
+		}
+		new DatabaseRequest(j, this, getActivity(), false);		
 	}
 
+	// Update display with requested user data
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
 		try {
 			if(response.getBoolean("success") && response.getString("action").equals("get_user")) {
-				updateFields(response);
+				mUser = response;
+				onUserUpdated();
 			}
 		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		} catch(NullPointerException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		}
+	}
+	
+	private void showAddReviewDialog() {
+		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.dialog_add_review, null);
+		
+		final TextView text = (TextView)layout.findViewById(R.id.comment);
+		final RatingBar rating = (RatingBar)layout.findViewById(R.id.rating);
+		
+		if(!mUser.isNull("my_comment")) text.setText(mUser.optString("my_comment"));		
+		if(!mUser.isNull("my_score")) rating.setRating((float)mUser.optDouble("my_score"));
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());		
+		builder.setTitle(R.string.review_title)
+			.setView(layout)
+		    .setCancelable(true)
+		    .setNegativeButton(R.string.review_cancel, null)
+		    .setPositiveButton(R.string.review_ok, new DialogInterface.OnClickListener() {
+		    	@Override
+		    	public void onClick(DialogInterface dialog, int which) {
+		    		review(rating.getRating(), text.getText().toString());
+		    	}
+		    });
+		
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 }

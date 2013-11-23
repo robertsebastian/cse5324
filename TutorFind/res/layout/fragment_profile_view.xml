@@ -1,172 +1,84 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"    
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp" >
+        android:layout_height="wrap_content" >
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <ImageView
-                android:id="@+id/profilePicture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher" />
-
-            <TextView
-                android:id="@+id/profileNameText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <ToggleButton
-                android:id="@+id/starbutton"
-                style="@style/StarButton_Style"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:onClick="onStarButtonClick" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/viewEmailText"
+        <ImageView
+            android:id="@+id/profilePicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/emailText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:src="@drawable/ic_launcher" />
 
         <TextView
-            android:id="@+id/emailData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
-
-        <TextView
-            android:id="@+id/viewPhoneText"
+            android:id="@+id/profileNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/phoneText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <TextView
-            android:id="@+id/phoneData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
-
-        <TextView
-            android:id="@+id/viewMeetingText"
+        <ToggleButton
+            android:id="@+id/starbutton"
+            style="@style/StarButton_Style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/meetingText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_alignParentRight="true"
+            android:minHeight="48dp"
+            android:minWidth="48dp" />
+    </RelativeLayout>
 
-        <TextView
-            android:id="@+id/meetingData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
-
-        <TextView
-            android:id="@+id/viewTagText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/tagText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/tagData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
-
-        <TextView
-            android:id="@+id/viewTimesText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/timesText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/timesData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
-
-        <TextView
-            android:id="@+id/viewPriceText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/priceText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/priceData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
-
-        <TextView
-            android:id="@+id/viewBioText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/BioText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/bioData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
 
         <LinearLayout
+            android:id="@+id/profile_content_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+    
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        android:background="#CCCCCC" />
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" >
+
+        <Button
+            android:id="@+id/editProfileButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?android:attr/buttonBarStyle"
-            android:layout_gravity="center" >
+            android:text="Edit Profile" />
 
-            <Button
-                android:id="@+id/editProfileButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Edit Profile" />
+        <Button
+            android:id="@+id/showReviewsButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/showReviewsButton" />
 
-            <Button
-                android:id="@+id/showReviewsButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/showReviewsButton" />
-
-            <Button
-                android:id="@+id/reviewButton"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add_review_text" />
-
-        </LinearLayout>
-
+        <Button
+            android:id="@+id/reviewButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_review_text" />
     </LinearLayout>
 
-</ScrollView>
-
-
+</LinearLayout>

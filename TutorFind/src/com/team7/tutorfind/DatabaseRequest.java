@@ -32,10 +32,16 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 	protected int mPort;
 	protected Context mContext;
 	protected ProgressDialog mProgress;
+	protected boolean mShowProgress;
 	
 	public DatabaseRequest(JSONObject request, Listener listener, Context context) {
+		this(request, listener, context, true);
+	}
+	
+	public DatabaseRequest(JSONObject request, Listener listener, Context context, boolean showProgress) {
 		mListener = listener;
 		mContext = context;
+		mShowProgress = showProgress;
 		
 		// Read address and port from preferences
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -54,13 +60,17 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 	@Override
 	protected void onPreExecute() {
 		// Show progress dialog while request is in progress
-		mProgress = new ProgressDialog(mContext);
-		mProgress.setTitle("Processing...");
-		mProgress.setMessage("Please wait.");
-		mProgress.setCancelable(true);
-		mProgress.setIndeterminate(true);
-		mProgress.setOnDismissListener(this);		
-		mProgress.show(); //TODO CHRIS
+		if(mShowProgress) {
+			mProgress = new ProgressDialog(mContext);
+			mProgress.setTitle("Processing...");
+			mProgress.setMessage("Please wait.");
+			mProgress.setCancelable(true);
+			mProgress.setIndeterminate(true);
+			mProgress.setOnDismissListener(this);		
+			mProgress.show();
+		} else {
+			mProgress = null;
+		}
 	}
 	
 	// Make HTTP request to database
@@ -106,7 +116,9 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 	
 	// Notify listener of response
 	protected void onPostExecute(JSONObject response) {
-		mProgress.hide();
+		if(mProgress != null) {
+			mProgress.dismiss();
+		}
 		mListener.onDatabaseResponse(response);
 	}
 	

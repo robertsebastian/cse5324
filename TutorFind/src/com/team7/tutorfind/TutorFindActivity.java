@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
@@ -12,7 +14,13 @@ import android.widget.SearchView;
 public class TutorFindActivity extends Activity implements
 	SearchView.OnQueryTextListener,
 	DatabaseRequest.Listener
-{
+{        
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+	
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		return true;
@@ -40,6 +48,19 @@ public class TutorFindActivity extends Activity implements
 			// TODO: Error message
 		}
 	}
+	
+    // Handle result filtering options
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+        case android.R.id.home:
+            NavUtils.navigateUpFromSameTask(this);
+            break;
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    	return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
