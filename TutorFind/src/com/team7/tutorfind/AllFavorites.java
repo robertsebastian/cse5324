@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class AllFavorites extends Activity {
-	DatabaseRequest mDatabaseReq = null;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

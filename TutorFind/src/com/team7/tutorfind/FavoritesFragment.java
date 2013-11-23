@@ -1,12 +1,14 @@
 package com.team7.tutorfind;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ListFragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,9 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.app.ListFragment;
-import android.content.Context;
-import android.content.Intent;
 
 public class FavoritesFragment extends ListFragment implements DatabaseRequest.Listener {
 	DatabaseRequest mDatabaseReq = null;
@@ -185,8 +184,15 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 	}
 
 	public void onDatabaseResponse(JSONObject response) {
-		// TODO Auto-generated method stub
 		
+		/*
+		Intent i = new Intent(getActivity(), ProfileViewActivity.class);
+		i.putExtra("user_id", user.optInt("user_id", -1));
+		i.putExtra("user", user.toString());
+		startActivity(i);
+		 */
+		
+		// right here
 		try {
 			updateResults(response.getJSONArray("favorites"));
 		} catch(JSONException e) {
@@ -272,10 +278,17 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 	
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
-		Favorite favorite = favoriteAdapter.getItem(position);
-		Intent i = new Intent();
-		i.putExtra("user_id", favorite.getUserID());
-		i.putExtra("user", favorite.getLastName());
-		startActivity(i);
+	  
+	    JSONObject j = new JSONObject();
+	    Favorite favorite = favoriteAdapter.getItem(position);
+		String dude = favorite.getUserID();
+		int Num = Integer.parseInt(dude);
+	    try {
+			j.put("action", "get_user");
+			j.put("user_id", Num);
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		}
+		new DatabaseRequest(j, this, getActivity());
   }
 }
