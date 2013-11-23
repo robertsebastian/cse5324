@@ -149,7 +149,7 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 			}
 			else if (response.getBoolean("success") && response.getString("action").equals("get_user"))
 			{
-				String userID = (String)response.getString("user_id");
+				int userID = response.optInt("user_id", -1);
 				Intent i = new Intent(getActivity(), ProfileViewActivity.class);
 				i.putExtra("user_id", userID);
 				i.putExtra("user", response.toString());

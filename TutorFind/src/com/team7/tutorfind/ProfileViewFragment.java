@@ -88,6 +88,8 @@ public class ProfileViewFragment extends Fragment implements
 		
 		((TextView)getView().findViewById(R.id.profileNameText)).setText(mUser.optString("name"));
 		
+		((ToggleButton)getView().findViewById(R.id.starbutton)).setChecked(mUser.optBoolean("favorited"));
+		
 		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
 		root.removeAllViews();
 		
