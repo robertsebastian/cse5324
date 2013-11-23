@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.Intent;
 
 public class FavoritesFragment extends ListFragment implements DatabaseRequest.Listener {
 	DatabaseRequest mDatabaseReq = null;
@@ -24,6 +25,8 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
     private ArrayList<Favorite> favoriteList;
     
    	private static AllFavorites allFavorites;
+   	
+   	private FavoriteAdapter favoriteAdapter;
     
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -227,24 +230,23 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 			for(int i = 0; i < resultArray.length(); i++) {
 				Favorite addFavorite = new Favorite();
 				results = resultArray.getJSONObject(i);
+				String userID = (String)results.getString("user_id");
+				addFavorite.setUserID(userID);
 				String Name = (String)results.get("name");
-				addFavorite.setfirstName(Name);
-				if(results.get("phone") == null)
+				addFavorite.setLastName(Name);
+				if(results.getString("phone") != "null")
 				{
+					String phoneNumber = (String)results.getString("phone");
+					addFavorite.setPhoneNumber(phoneNumber);
 				}
-				else
-				{
-					//Number phoneNumber = (Number)results.get("phone");
-					//addFavorite.setPhoneNumber(phoneNumber);
-				}				
 				String emailAddress = (String)results.get("public_email_address");
 				addFavorite.setEmailAddressy(emailAddress);
 				favoriteList.add(addFavorite);
 			}
 			
-			FavoriteAdapter contactAdapter = new FavoriteAdapter(favoriteList);
+			favoriteAdapter = new FavoriteAdapter(favoriteList);
 			
-			setListAdapter(contactAdapter);	
+			setListAdapter(favoriteAdapter);	
 
 			mDatabaseReq = null;
 			
@@ -270,6 +272,10 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 	
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
-	  //sendDatabaseRequest();
+		Favorite favorite = favoriteAdapter.getItem(position);
+		Intent i = new Intent();
+		i.putExtra("user_id", favorite.getUserID());
+		i.putExtra("user", favorite.getLastName());
+		startActivity(i);
   }
 }
