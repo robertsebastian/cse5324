@@ -49,7 +49,7 @@ def update_user(user, name, tags):
 
 def register(email, name):
    u = request({'action': 'register', 'email': email, 'password': 'password'})
-   update_user(u, name, 'subject1,subject2')
+   update_user(u, name, 'Subject1, Subject-2, History, Math, English, MATH-2310, Calculus, Phsyics, Physics 1, Physics 2')
    return u
 
 if os.access('tutor.db', os.R_OK):
@@ -67,7 +67,11 @@ for name in names:
 for user in users:
    review(alice, user, random.randrange(0, 50) / 10.0, 'I have no real opinion about this tutor')
    for i in range(1, 5):
-      favorite(user, users[random.randrange(0, len(users))], True)
+      subject = users[random.randrange(0, len(users))]
+      favorite(user, subject, True)
+      review(user, subject, 3.0, 'A very average tutor. More review text. More review Text.'
+         'More review Text. More review Text. More review Text. More review Text.'
+         'More review Text. More review Text. More review Text. More review Text.')
 
 review(alice, bob, 5.0, 'good')
 review(bob, alice, 4.0, 'decent')

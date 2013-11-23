@@ -8,7 +8,7 @@ import imp
 import sys
 import tutor_find_db
 
-direct_requests = False
+direct_requests = True
 
 ################################################################################
 def request(text):

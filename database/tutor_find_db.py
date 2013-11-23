@@ -278,7 +278,7 @@ def update_user(req):
    db.commit()
 
    # Return updated data
-   return sanitize_user(users_table.get(session.user_id))
+   return sanitize_user(session, users_table.get(session.user_id))
 
 def submit_review(req):
    """Add a new review for a tutor or update an existing one"""
@@ -328,10 +328,11 @@ def get_user(req):
    user = users_table.get(req['user_id'])
    if not user:
       raise RequestError('invalid_user')
-   user = sanitize_user(user)
+   user = sanitize_user(session, user)
 
    # Append calculated values
-   user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, req['user_id']]) != None
+   #user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, req['user_id']]) != None
+   #user['my_review'] = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, req['user_id']])
 
    return user
 
@@ -360,17 +361,28 @@ def get_favorites(req):
       subject = users_table.get(fav.subject_id)
       if not subject: continue
 
-      subject = sanitize_user(subject)
+      subject = sanitize_user(session, subject)
       subject['favorited'] = True
       
       favorites.append(subject)
 
    return {'favorites': favorites}
 
-def sanitize_user(user):
+def sanitize_user(session, user):
    """Remove private fields from a user object and convert to dictionary"""
 
    user = dict(user._asdict())
+   uid = user['user_id']
+
+   # Append calculated values
+   user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, uid]) != None
+
+   my_review = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, uid]);
+   if my_review:
+      user['my_score'] = my_review.score
+      user['my_comment'] = my_review.text
+
+   # Clean up fields we don't want to send
    del user['password_hash']
    return user
 
@@ -386,7 +398,7 @@ def search(req):
    query_glob = '*%s*' % query
 
    results = users_table.select_many( 'comp_tags(subject_tags_normalized, ?) or name_normalized glob ?', [query, query_glob])
-   results = [sanitize_user(u) for u in results]
+   results = [sanitize_user(session, u) for u in results]
 
    # Calculate distance from querying user
    for u in results:
@@ -432,7 +444,7 @@ def handle_request(req_str):
       result['action'] = req['action']
       return json.dumps(result)
    except RequestError as e:
-      return json.dumps({'success': False, 'error': e.message})
+      return json.dumps({'success': False, 'error': e.args[0]})
 
 if __name__ == "__main__":
    open_db()
