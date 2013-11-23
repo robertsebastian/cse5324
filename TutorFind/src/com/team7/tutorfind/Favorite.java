@@ -8,6 +8,7 @@ public class Favorite {
 	private String firstName;
 	private String phoneNumber;
 	private String emailAddress;
+	private String userID;
 	
 	public String getLastName() {
 		return lastName;
@@ -53,5 +54,16 @@ public class Favorite {
 		
 		this.emailAddress = emailAddress;
 	}
+
+	public String getUserID() {
+		return userID;
+	}
+	
+	public void setUserID(String userID) {
+		
+		Log.e("Favorite", userID);
+		
+		this.userID = userID;
+	}	
 
 }
