@@ -42,6 +42,7 @@
     <string name="travelText">Max Travel Distance:</string>
     <string name="pictureContentText">Tutor Profile Picture</string>
     <string name="textPlaceHolder">Text Place Holder</string>
+
     <string-array name="profile_items">
         <item>Email</item>
         <item>Phone Number</item>
@@ -54,19 +55,22 @@
         <item>@string/action_list_my_profile</item>
         <item>@string/action_list_favorites</item>
     </string-array>
-	 <string name="action_list_my_profile">My Profile</string>
-	 <string name="action_list_favorites">Favorites</string>
-	 <string name="filter_by_distance">Distance</string>
-	 <string name="filter_by_price">Price</string>
-	 <string name="filter_by_rating">Rating</string>
-	 <string name="action_filter">Filter</string>
+
+    <string name="action_list_my_profile">My Profile</string>
+    <string name="action_list_favorites">Favorites</string>
+    <string name="filter_by_distance">Distance</string>
+    <string name="filter_by_price">Price</string>
+    <string name="filter_by_rating">Rating</string>
+    <string name="action_filter">Filter</string>
     <string name="title_activity_custom_favorites_adapter">CustomFavoritesAdapter</string>
     <string name="title_activity_favorites">Favorites</string>
     <string name="title_activity_all_favorites">AllFavorites</string>
     <string name="title_activity_favorite">Favorite</string>
     <string name="add_review_text">Add Review</string>
     <string name="showReviewsButton">Show Reviews</string>
-    <string name="review_title">Add Review</string>    
+    <string name="review_title">Add Review</string>
     <string name="review_ok">OK</string>
     <string name="review_cancel">Cancel</string>
+    <string name="title_activity_map">MapActivity</string>
+
 </resources>

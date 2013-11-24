@@ -44,18 +44,15 @@ public class ProfileViewFragment extends Fragment implements
 	
 	// Attach an ACTION_VIEW intent with a uri parameter. Used to handle phone,
 	// text, and e-mail address fields with the correct application
-	private void uriAction(View v, final String uri) {
-		if(uri == null) return;
+	private void uriAction(View v, final Intent intent) {
+		if(intent == null) return;
 		
 		v.setVisibility(View.VISIBLE);
 		v.setClickable(true);
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(Intent.ACTION_VIEW);
-				Log.d("TEST", uri);
-				i.setData(Uri.parse(uri));
-				startActivity(i);
+				startActivity(intent);
 			}
 		});
 	}
@@ -68,7 +65,7 @@ public class ProfileViewFragment extends Fragment implements
 		addTextField(root, title, content, null, null);
 	}
 	
-	private void addTextField(ViewGroup root, String title, String content, String action, String smsAction) {
+	private void addTextField(ViewGroup root, String title, String content, Intent action, Intent smsAction) {
 		if(content == null) return;
 		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);		
@@ -121,15 +118,15 @@ public class ProfileViewFragment extends Fragment implements
 		
 		addTextField(root, "EMAIL",
 				mUser.optString("public_email_address", null), 
-				"mailto:" + mUser.optString("public_email_address"),
+				new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + mUser.optString("public_email_address"))),
 				null);
 		addTextField(root, "PHONE",
 				mUser.optString("phone", null),
-				"tel:" + mUser.optString("phone"),
-				"sms:" + mUser.optString("phone"));
+				new Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + mUser.optString("phone"))),
+				new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + mUser.optString("phone"))));
 		addTextField(root, "MEETING LOCATION",
 				mUser.optString("loc_address", null),
-				"geo:0,0?q=" + mUser.optString("loc_address"),
+				new Intent(getActivity(), MapActivity.class),
 				null);
 		addTextField(root, "SUBJECTS", mUser.optString("subject_tags", null));
 		addTextField(root, "RATE", price);
@@ -164,6 +161,10 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
+		case R.id.meetingText:
+			startActivity(new Intent(getActivity(), MapActivity.class));
+		case R.id.meetingEdit:
+			startActivity(new Intent(getActivity(), MapActivity.class));
 		case R.id.editProfileButton:
 			startActivity(new Intent(getActivity(), ProfileEditActivity.class));
 			break;
