@@ -6,5 +6,6 @@
             <item android:id="@+id/action_filter_by_rating" android:title="@string/filter_by_rating"/>
         </menu>
     </item>
+    <item android:id="@+id/action_map" android:showAsAction="always" android:title="@string/action_map" android:icon="@android:drawable/ic_menu_mapmode" android:orderInCategory="1"></item>
 
 </menu>

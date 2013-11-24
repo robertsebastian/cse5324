@@ -35,6 +35,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	public static final String SEARCH_QUERY = "com.team7.tutorfind.SEARCH_QUERY";
 	
 	private UserSummaryArrayAdapter mAdapter;
+	private JSONArray mResults;
 	
 	// Array adapter to manage the search results ListView. Populates user
 	// summary views and handles sorting of the data set.
@@ -159,7 +160,8 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	public void onDatabaseResponse(JSONObject response) {
 		super.onDatabaseResponse(response);
 		try {
-			updateResults(response.getJSONArray("results"));
+			mResults = response.getJSONArray("results");
+			onNewResults();
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);
 		} catch(NullPointerException e) {
@@ -167,14 +169,14 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		}
 	}
 	
-	public void updateResults(JSONArray resultArray) {
+	public void onNewResults() {
 		try {
 			ListView list = (ListView)findViewById(R.id.search_results_list);
 			
 			// Build a list of results
 			ArrayList<JSONObject> results = new ArrayList<JSONObject>();
-			for(int i = 0; i < resultArray.length(); i++) {
-				results.add(resultArray.getJSONObject(i));
+			for(int i = 0; i < mResults.length(); i++) {
+				results.add(mResults.getJSONObject(i));
 			}
 			
 			// Create new adapter using the list as its data source
@@ -202,7 +204,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
         return true;
     }
     
-    // Handle result filtering options
+    // Handle result filtering options and map view action
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
@@ -214,6 +216,11 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     		break;
     	case R.id.action_filter_by_rating:
     		mAdapter.sort(new ScoreComparator());
+    		break;
+    	case R.id.action_map:
+    		if(mResults != null) {
+    			startActivity(new Intent(this, MapActivity.class).putExtra("users", mResults.toString()));
+    		}
     		break;
     	default:
     		return super.onOptionsItemSelected(item);

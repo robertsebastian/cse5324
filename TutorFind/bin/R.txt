@@ -74,13 +74,13 @@ int drawable login_edit_box 0x7f020024
 int drawable profile_view_item_selector 0x7f020025
 int drawable starbutton 0x7f020026
 int id RelativeLayout1 0x7f060027
-int id action_filter 0x7f060043
-int id action_filter_by_distance 0x7f060044
-int id action_filter_by_price 0x7f060045
-int id action_filter_by_rating 0x7f060046
+int id action_filter 0x7f060042
+int id action_filter_by_distance 0x7f060043
+int id action_filter_by_price 0x7f060044
+int id action_filter_by_rating 0x7f060045
 int id action_logout 0x7f060040
-int id action_profile_edit 0x7f060041
-int id action_search 0x7f060042
+int id action_map 0x7f060046
+int id action_search 0x7f060041
 int id action_settings 0x7f06003f
 int id bioEdit 0x7f060021
 int id bioText 0x7f060020
@@ -178,6 +178,7 @@ int string action_filter 0x7f070048
 int string action_list_favorites 0x7f070044
 int string action_list_my_profile 0x7f070043
 int string action_logout 0x7f070026
+int string action_map 0x7f070053
 int string action_profile_edit 0x7f07001c
 int string action_search 0x7f070027
 int string action_settings 0x7f07001b

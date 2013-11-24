@@ -227,13 +227,13 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f060027;
-        public static final int action_filter=0x7f060043;
-        public static final int action_filter_by_distance=0x7f060044;
-        public static final int action_filter_by_price=0x7f060045;
-        public static final int action_filter_by_rating=0x7f060046;
+        public static final int action_filter=0x7f060042;
+        public static final int action_filter_by_distance=0x7f060043;
+        public static final int action_filter_by_price=0x7f060044;
+        public static final int action_filter_by_rating=0x7f060045;
         public static final int action_logout=0x7f060040;
-        public static final int action_profile_edit=0x7f060041;
-        public static final int action_search=0x7f060042;
+        public static final int action_map=0x7f060046;
+        public static final int action_search=0x7f060041;
         public static final int action_settings=0x7f06003f;
         public static final int bioEdit=0x7f060021;
         public static final int bioText=0x7f060020;
@@ -339,6 +339,7 @@ containing a value of this type.
         public static final int action_list_favorites=0x7f070044;
         public static final int action_list_my_profile=0x7f070043;
         public static final int action_logout=0x7f070026;
+        public static final int action_map=0x7f070053;
         public static final int action_profile_edit=0x7f07001c;
         public static final int action_search=0x7f070027;
         public static final int action_settings=0x7f07001b;
