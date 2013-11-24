@@ -27,7 +27,7 @@ public class MapActivity extends Activity {
 		setContentView(R.layout.activity_map);
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.the_map)).getMap();
 		
-		Geocoder geoCoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+		Geocoder geoCoder = new Geocoder(this);
 		
 		try
 	    {
