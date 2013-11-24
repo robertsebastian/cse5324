@@ -227,14 +227,14 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f060027;
-        public static final int action_filter=0x7f060042;
-        public static final int action_filter_by_distance=0x7f060043;
-        public static final int action_filter_by_price=0x7f060044;
-        public static final int action_filter_by_rating=0x7f060045;
-        public static final int action_logout=0x7f06003f;
-        public static final int action_profile_edit=0x7f060040;
-        public static final int action_search=0x7f060041;
-        public static final int action_settings=0x7f06003e;
+        public static final int action_filter=0x7f060043;
+        public static final int action_filter_by_distance=0x7f060044;
+        public static final int action_filter_by_price=0x7f060045;
+        public static final int action_filter_by_rating=0x7f060046;
+        public static final int action_logout=0x7f060040;
+        public static final int action_profile_edit=0x7f060041;
+        public static final int action_search=0x7f060042;
+        public static final int action_settings=0x7f06003f;
         public static final int bioEdit=0x7f060021;
         public static final int bioText=0x7f060020;
         public static final int categoriesText=0x7f06001a;
@@ -272,9 +272,10 @@ containing a value of this type.
         public static final int profile_content_list=0x7f060030;
         public static final int profile_view_item_content=0x7f060034;
         public static final int profile_view_item_message_button=0x7f06002c;
-        public static final int profile_view_item_num_ratings=0x7f060037;
-        public static final int profile_view_item_rating=0x7f060036;
-        public static final int profile_view_item_rating_stars=0x7f060035;
+        public static final int profile_view_item_num_ratings=0x7f060038;
+        public static final int profile_view_item_rating=0x7f060037;
+        public static final int profile_view_item_rating_layout=0x7f060035;
+        public static final int profile_view_item_rating_stars=0x7f060036;
         public static final int profile_view_item_title=0x7f060033;
         public static final int rating=0x7f060024;
         public static final int register_button=0x7f06000a;
@@ -290,12 +291,12 @@ containing a value of this type.
         public static final int titleText=0x7f06000d;
         public static final int travelEdit=0x7f060019;
         public static final int travelText=0x7f060018;
-        public static final int user_summary_distance=0x7f06003d;
-        public static final int user_summary_name=0x7f060039;
-        public static final int user_summary_num_reviews=0x7f06003b;
-        public static final int user_summary_price=0x7f06003c;
-        public static final int user_summary_row=0x7f060038;
-        public static final int user_summary_score=0x7f06003a;
+        public static final int user_summary_distance=0x7f06003e;
+        public static final int user_summary_name=0x7f06003a;
+        public static final int user_summary_num_reviews=0x7f06003c;
+        public static final int user_summary_price=0x7f06003d;
+        public static final int user_summary_row=0x7f060039;
+        public static final int user_summary_score=0x7f06003b;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f080000;

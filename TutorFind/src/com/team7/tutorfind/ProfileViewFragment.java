@@ -2,6 +2,7 @@ package com.team7.tutorfind;
 
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,7 +45,7 @@ public class ProfileViewFragment extends Fragment implements
 	
 	// Attach an ACTION_VIEW intent with a uri parameter. Used to handle phone,
 	// text, and e-mail address fields with the correct application
-	private void uriAction(View v, final Intent intent) {
+	private void addAction(View v, final Intent intent) {
 		if(intent == null) return;
 		
 		v.setVisibility(View.VISIBLE);
@@ -58,9 +59,9 @@ public class ProfileViewFragment extends Fragment implements
 	}
 	
 	// Append a profile text field to the content list. This contains a title,
-	// a text content area, and a hidden SMS button. An optional URI action for
+	// a text content area, and a hidden SMS button. An optional intent for
 	// content area and SMS buttons may be provided. The SMS button is shown
-	// only if an action is provided.
+	// only if an intent is provided.
 	private void addTextField(ViewGroup root, String title, String content) {
 		addTextField(root, title, content, null, null);
 	}
@@ -77,23 +78,27 @@ public class ProfileViewFragment extends Fragment implements
 		
 		titleView.setText(title);
 		contentView.setText(content);
-		uriAction(contentView, action);
-		uriAction(smsView, smsAction);
+		addAction(contentView, action);
+		addAction(smsView, smsAction);
 
 		root.addView(field);
 	}
 	
-	private void addRatingField(ViewGroup root, String title, float rating, int numRatings) {
+	// Initialize rating bar activity with an optional intent to launch on click
+	private void addRatingField(ViewGroup root, String title, float rating, int numRatings, Intent action) {
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		String numRatingsStr = String.format(Locale.US, "(%d)", numRatings);
 		String ratingStr = String.format(Locale.US, "%.1f", rating);
 		
 		View field = inflater.inflate(R.layout.profile_view_item_rating, null);	
+		
 		((TextView)field.findViewById(R.id.profile_view_item_title)).setText(title);
 		((RatingBar)field.findViewById(R.id.profile_view_item_rating_stars)).setRating(rating);
 		((TextView)field.findViewById(R.id.profile_view_item_num_ratings)).setText(numRatingsStr);
 		((TextView)field.findViewById(R.id.profile_view_item_rating)).setText(ratingStr);
+		
+		addAction(field.findViewById(R.id.profile_view_item_rating_layout), action);
 
 		root.addView(field);		
 	}
@@ -103,18 +108,23 @@ public class ProfileViewFragment extends Fragment implements
 	{
 		if(mUser == null) return;
 		
-		Log.d(TAG, mUser.toString());
-		// Variable fields
+		// Build price string
 		String price = null;
 		if(!mUser.isNull("price_per_hour")) {
 			String.format(Locale.US, "$%.2f/hr", mUser.optDouble("price_per_hour", 999.0));
 		}
 		
+		// Build list of users to show on map when address is clicked
+		JSONArray mapUsers = new JSONArray();
+		mapUsers.put(mUser);
+		
+		// Set text for non-variable fields
 		((TextView)getView().findViewById(R.id.profileNameText)).setText(mUser.optString("name"));
 		((ToggleButton)getView().findViewById(R.id.starbutton)).setChecked(mUser.optBoolean("favorited"));
 		
+		// Add all variable user fields to the view
 		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
-		root.removeAllViews();
+		root.removeAllViews(); // Delete existing fields for a refresh
 		
 		addTextField(root, "EMAIL",
 				mUser.optString("public_email_address", null), 
@@ -126,12 +136,13 @@ public class ProfileViewFragment extends Fragment implements
 				new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + mUser.optString("phone"))));
 		addTextField(root, "MEETING LOCATION",
 				mUser.optString("loc_address", null),
-				new Intent(getActivity(), MapActivity.class),
+				new Intent(getActivity(), MapActivity.class).putExtra("users", mapUsers.toString()),
 				null);
 		addTextField(root, "SUBJECTS", mUser.optString("subject_tags", null));
 		addTextField(root, "RATE", price);
 		addTextField(root, "ABOUT ME", mUser.optString("about_me", null));
-		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"));
+		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"),
+				null); // TODO: Link to reviews activity
 		
 		// Show/hide elements as appropriate for view us vs another user
 		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
@@ -161,13 +172,6 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-		case R.id.meetingText:
-			startActivity(new Intent(getActivity(), MapActivity.class));
-		case R.id.meetingEdit:
-			startActivity(new Intent(getActivity(), MapActivity.class));
-		case R.id.editProfileButton:
-			startActivity(new Intent(getActivity(), ProfileEditActivity.class));
-			break;
 		case R.id.reviewButton:
 			showAddReviewDialog();
 			// TODO: Actually launch an activity
