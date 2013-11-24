@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -41,22 +42,41 @@ public class ProfileViewFragment extends Fragment implements
 	}
 	
 	// Append a profile text field to the content list from a user object
-	private void addTextField(ViewGroup root, String title, JSONObject user, String field) {
-		if(user.isNull(field)) return;
-		addTextField(root, title, user.optString(field));
+	private View addTextField(ViewGroup root, String title, JSONObject user, String field) {
+		if(user.isNull(field)) return null;
+		return addTextField(root, title, user.optString(field));
 	}
 	
 	// Append a profile text field to the content list
-	private void addTextField(ViewGroup root, String title, String content) {
-		if(content == null) return;
+	private View addTextField(ViewGroup root, String title, String content) {
+		if(content == null) return null;
 		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
-		View field = inflater.inflate(R.layout.profile_view_item, null);	
-		((TextView)field.findViewById(R.id.profile_view_item_title)).setText(title);
-		((TextView)field.findViewById(R.id.profile_view_item_content)).setText(content);
+		View field = inflater.inflate(R.layout.profile_view_item, null);
+		TextView titleView = (TextView)field.findViewById(R.id.profile_view_item_title);		
+		TextView contentView = (TextView)field.findViewById(R.id.profile_view_item_content);		
+		titleView.setText(title);
+		contentView.setText(content);
 
 		root.addView(field);
+		
+		return contentView;
+	}
+	
+	private void uriAction(View v, final String uri) {
+		if(v == null) return;
+		
+		v.setClickable(true);
+		v.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				Log.d("TEST", uri);
+				i.setData(Uri.parse(uri));
+				startActivity(i);
+			}
+		});
 	}
 	
 	private void addRatingField(ViewGroup root, String title, float rating, int numRatings) {
@@ -93,14 +113,18 @@ public class ProfileViewFragment extends Fragment implements
 		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
 		root.removeAllViews();
 		
-		addTextField(root, "EMAIL",            mUser, "public_email_address");
-		addTextField(root, "PHONE",            mUser, "phone");
-		addTextField(root, "MEETING LOCATION", mUser, "loc_address");
-		addTextField(root, "SUBJECTS",         mUser, "subject_tags");
-		addTextField(root, "RATE", price);
-		addTextField(root, "ABOUT ME",         mUser, "about_me");
+		View mailView     = addTextField(root, "EMAIL",            mUser, "public_email_address");
+		View phoneView    = addTextField(root, "PHONE",            mUser, "phone");
+		View locationView = addTextField(root, "MEETING LOCATION", mUser, "loc_address");
 		
+		addTextField(root, "SUBJECTS", mUser, "subject_tags");
+		addTextField(root, "RATE", price);
+		addTextField(root, "ABOUT ME", mUser, "about_me");
 		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"));
+		
+		uriAction(mailView, "mailto:" + mUser.optString("public_email_address"));
+		uriAction(phoneView, "tel:" + mUser.optString("phone"));
+		uriAction(locationView, "geo:" + mUser.optDouble("loc_lat") + ":" + mUser.optDouble("loc_lon"));
 		
 		// Show/hide elements as appropriate for view us vs another user
 		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
