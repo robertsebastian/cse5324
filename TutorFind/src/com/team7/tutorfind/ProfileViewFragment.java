@@ -17,7 +17,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -154,12 +156,9 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-		case R.id.meetingText:
-			startActivity(new Intent(getActivity(), MapActivity.class));
-		case R.id.meetingEdit:
-			startActivity(new Intent(getActivity(), MapActivity.class));
 		case R.id.editProfileButton:
-			startActivity(new Intent(getActivity(), ProfileEditActivity.class));
+			//startActivity(new Intent(getActivity(), ProfileEditActivity.class));
+			startActivity(new Intent(getActivity(), MapActivity.class));
 			break;
 		case R.id.reviewButton:
 			showAddReviewDialog();
@@ -173,7 +172,7 @@ public class ProfileViewFragment extends Fragment implements
 			break;
 		}
 	}
-
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
