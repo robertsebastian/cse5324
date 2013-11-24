@@ -1,82 +1,77 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"    
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <RelativeLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"         
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <ImageView
-            android:id="@+id/profilePicture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher" />
-
-        <TextView
-            android:id="@+id/profileNameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <ToggleButton
-            android:id="@+id/starbutton"
-            style="@style/StarButton_Style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:minHeight="48dp"
-            android:minWidth="48dp" />
-    </RelativeLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical" >
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical" >
 
+	    <RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	
+	        <ImageView
+	            android:id="@+id/profilePicture"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:src="@drawable/ic_launcher" />
+	
+	        <TextView
+	            android:id="@+id/profileNameText"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerHorizontal="true"
+	            android:layout_centerVertical="true"
+	            android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+	        <ToggleButton
+	            android:id="@+id/starbutton"
+	            style="@style/StarButton_Style"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentRight="true"
+	            android:minHeight="48dp"
+	            android:minWidth="48dp" />
+	    </RelativeLayout>
+	
         <LinearLayout
             android:id="@+id/profile_content_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp" >
+
         </LinearLayout>
-    </ScrollView>
-    
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider_color" />
-
-    <LinearLayout
-        style="?android:attr/buttonBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal" >
-
-        <Button
-            android:id="@+id/editProfileButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit Profile" />
-
-        <Button
-            android:id="@+id/showReviewsButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/showReviewsButton" />
-
-        <Button
-            android:id="@+id/reviewButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_review_text" />
-    </LinearLayout>
-
-</LinearLayout>
+	
+	    <LinearLayout
+	        style="?android:attr/buttonBarStyle"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="bottom|center_horizontal" >
+	
+	        <Button
+	            android:id="@+id/editProfileButton"
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Edit Profile" />
+	
+	        <Button
+	            android:id="@+id/showReviewsButton"
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/showReviewsButton" />
+	
+	        <Button
+	            android:id="@+id/reviewButton"
+	            style="?android:attr/buttonBarButtonStyle"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/add_review_text" />
+	    </LinearLayout>
+	</LinearLayout>
+</ScrollView>

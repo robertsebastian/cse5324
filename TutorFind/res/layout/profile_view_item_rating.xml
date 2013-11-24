@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:divider="@drawable/divider_horizontal"
+    android:orientation="vertical"
+    android:showDividers="middle" >
 
     <TextView
         android:id="@+id/profile_view_item_title"
@@ -13,11 +15,6 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold"
         android:typeface="normal" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider_color" />
 
     <RelativeLayout
         android:layout_width="match_parent"

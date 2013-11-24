@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:divider="@drawable/divider_horizontal"
+    android:orientation="vertical"
+    android:showDividers="middle" >
 
     <TextView
         android:id="@+id/profile_view_item_title"
@@ -15,22 +17,38 @@
         android:textStyle="bold"
         android:typeface="normal" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider_color" />
-
-    <TextView
-        android:id="@+id/profile_view_item_content"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="10dp"
-        android:autoLink="none"
-        android:background="@drawable/profile_view_item_selector"
-        android:text="&lt;Content>"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:divider="@drawable/divider_vertical"
+        android:dividerPadding="8dp"
+        android:showDividers="middle" >
+
+        <TextView
+            android:id="@+id/profile_view_item_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autoLink="none"
+            android:background="@drawable/profile_view_item_selector"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:text="&lt;Content>"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/profile_view_item_message_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/profile_view_item_selector"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_text_holo_light"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </LinearLayout>

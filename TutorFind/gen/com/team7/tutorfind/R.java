@@ -35,10 +35,13 @@ public final class R {
         public static final int btn_rating_star_off_pressed_holo_dark=0x7f020001;
         public static final int btn_rating_star_on_normal_holo_dark=0x7f020002;
         public static final int btn_rating_star_on_pressed_holo_dark=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int login_edit_box=0x7f020005;
-        public static final int profile_view_item_selector=0x7f020006;
-        public static final int starbutton=0x7f020007;
+        public static final int divider_horizontal=0x7f020004;
+        public static final int divider_vertical=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
+        public static final int ic_text_holo_light=0x7f020007;
+        public static final int login_edit_box=0x7f020008;
+        public static final int profile_view_item_selector=0x7f020009;
+        public static final int starbutton=0x7f02000a;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f0b0021;
@@ -64,7 +67,6 @@ public final class R {
         public static final int firstname_textbox=0x7f0b0024;
         public static final int fragment_container=0x7f0b0006;
         public static final int fragment_edit_profile=0x7f0b0020;
-        public static final int imageView1=0x7f0b0026;
         public static final int lastEdit=0x7f0b000b;
         public static final int lastText=0x7f0b000a;
         public static final int lastname_textbox=0x7f0b0023;
@@ -84,6 +86,7 @@ public final class R {
         public static final int profilePicture=0x7f0b0027;
         public static final int profile_content_list=0x7f0b002a;
         public static final int profile_view_item_content=0x7f0b002e;
+        public static final int profile_view_item_message_button=0x7f0b0026;
         public static final int profile_view_item_num_ratings=0x7f0b0031;
         public static final int profile_view_item_rating=0x7f0b0030;
         public static final int profile_view_item_rating_stars=0x7f0b002f;

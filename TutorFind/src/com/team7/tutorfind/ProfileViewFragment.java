@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -41,32 +42,12 @@ public class ProfileViewFragment extends Fragment implements
 		return frag;
 	}
 	
-	// Append a profile text field to the content list from a user object
-	private View addTextField(ViewGroup root, String title, JSONObject user, String field) {
-		if(user.isNull(field)) return null;
-		return addTextField(root, title, user.optString(field));
-	}
-	
-	// Append a profile text field to the content list
-	private View addTextField(ViewGroup root, String title, String content) {
-		if(content == null) return null;
-		
-		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			
-		View field = inflater.inflate(R.layout.profile_view_item, null);
-		TextView titleView = (TextView)field.findViewById(R.id.profile_view_item_title);		
-		TextView contentView = (TextView)field.findViewById(R.id.profile_view_item_content);		
-		titleView.setText(title);
-		contentView.setText(content);
-
-		root.addView(field);
-		
-		return contentView;
-	}
-	
+	// Attach an ACTION_VIEW intent with a uri parameter. Used to handle phone,
+	// text, and e-mail address fields with the correct application
 	private void uriAction(View v, final String uri) {
-		if(v == null) return;
+		if(uri == null) return;
 		
+		v.setVisibility(View.VISIBLE);
 		v.setClickable(true);
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -77,6 +58,32 @@ public class ProfileViewFragment extends Fragment implements
 				startActivity(i);
 			}
 		});
+	}
+	
+	// Append a profile text field to the content list. This contains a title,
+	// a text content area, and a hidden SMS button. An optional URI action for
+	// content area and SMS buttons may be provided. The SMS button is shown
+	// only if an action is provided.
+	private void addTextField(ViewGroup root, String title, String content) {
+		addTextField(root, title, content, null, null);
+	}
+	
+	private void addTextField(ViewGroup root, String title, String content, String action, String smsAction) {
+		if(content == null) return;
+		
+		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);		
+		View field = inflater.inflate(R.layout.profile_view_item, null);
+		
+		TextView titleView   = (TextView)field.findViewById(R.id.profile_view_item_title);		
+		TextView contentView = (TextView)field.findViewById(R.id.profile_view_item_content);
+		ImageView smsView    = (ImageView)field.findViewById(R.id.profile_view_item_message_button);
+		
+		titleView.setText(title);
+		contentView.setText(content);
+		uriAction(contentView, action);
+		uriAction(smsView, smsAction);
+
+		root.addView(field);
 	}
 	
 	private void addRatingField(ViewGroup root, String title, float rating, int numRatings) {
@@ -107,24 +114,27 @@ public class ProfileViewFragment extends Fragment implements
 		}
 		
 		((TextView)getView().findViewById(R.id.profileNameText)).setText(mUser.optString("name"));
-		
 		((ToggleButton)getView().findViewById(R.id.starbutton)).setChecked(mUser.optBoolean("favorited"));
 		
 		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
 		root.removeAllViews();
 		
-		View mailView     = addTextField(root, "EMAIL",            mUser, "public_email_address");
-		View phoneView    = addTextField(root, "PHONE",            mUser, "phone");
-		View locationView = addTextField(root, "MEETING LOCATION", mUser, "loc_address");
-		
-		addTextField(root, "SUBJECTS", mUser, "subject_tags");
+		addTextField(root, "EMAIL",
+				mUser.optString("public_email_address", null), 
+				"mailto:" + mUser.optString("public_email_address"),
+				null);
+		addTextField(root, "PHONE",
+				mUser.optString("phone", null),
+				"tel:" + mUser.optString("phone"),
+				"sms:" + mUser.optString("phone"));
+		addTextField(root, "MEETING LOCATION",
+				mUser.optString("loc_address", null),
+				"geo:0,0?q=" + mUser.optString("loc_address"),
+				null);
+		addTextField(root, "SUBJECTS", mUser.optString("subject_tags", null));
 		addTextField(root, "RATE", price);
-		addTextField(root, "ABOUT ME", mUser, "about_me");
+		addTextField(root, "ABOUT ME", mUser.optString("about_me", null));
 		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"));
-		
-		uriAction(mailView, "mailto:" + mUser.optString("public_email_address"));
-		uriAction(phoneView, "tel:" + mUser.optString("phone"));
-		uriAction(locationView, "geo:" + mUser.optDouble("loc_lat") + ":" + mUser.optDouble("loc_lon"));
 		
 		// Show/hide elements as appropriate for view us vs another user
 		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
