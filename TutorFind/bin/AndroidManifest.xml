@@ -8,9 +8,21 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
 
+    <permission
+        android:name="com.team7.tutorfind.package.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.team7.tutorfind.package.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -30,8 +42,8 @@
         </activity>
         <activity
             android:name="com.team7.tutorfind.MainActivity"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <activity
             android:name="com.team7.tutorfind.DisplayMessageActivity"
@@ -39,8 +51,8 @@
         </activity>
         <activity
             android:name="com.team7.tutorfind.SettingsActivity"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <activity
             android:name="com.team7.tutorfind.CustomFavoritesAdapter"
@@ -48,18 +60,18 @@
         </activity>
         <activity
             android:name="com.team7.tutorfind.Favorites"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/title_activity_favorites" >
+            android:label="@string/title_activity_favorites"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <activity
             android:name="com.team7.tutorfind.AllFavorites"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/title_activity_all_favorites" >
+            android:label="@string/title_activity_all_favorites"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <activity
             android:name="com.team7.tutorfind.Favorite"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/title_activity_favorite" >
+            android:label="@string/title_activity_favorite"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <activity
             android:name="com.team7.tutorfind.SearchActivity"
@@ -67,19 +79,29 @@
         </activity>
         <activity
             android:name="com.team7.tutorfind.ProfileView"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/title_activity_profile_view" >
+            android:label="@string/title_activity_profile_view"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <activity
             android:name="com.team7.tutorfind.ProfileEditActivity"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/title_activity_profile_edit" >
+            android:label="@string/title_activity_profile_edit"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <activity
             android:name="com.team7.tutorfind.ProfileViewActivity"
-            android:parentActivityName="com.team7.tutorfind.MainActivity"
-            android:label="@string/title_activity_profile_view" >
+            android:label="@string/title_activity_profile_view"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
+        <activity
+            android:name="com.team7.tutorfind.MapActivity"
+            android:label="@string/title_activity_map" >
+        </activity>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyA7hXqMpLDhYMgR_q1dq5w-bxOdEhnpQ8w" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

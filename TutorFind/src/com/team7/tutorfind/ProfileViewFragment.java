@@ -154,6 +154,10 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
+		case R.id.meetingText:
+			startActivity(new Intent(getActivity(), MapActivity.class));
+		case R.id.meetingEdit:
+			startActivity(new Intent(getActivity(), MapActivity.class));
 		case R.id.editProfileButton:
 			startActivity(new Intent(getActivity(), ProfileEditActivity.class));
 			break;
