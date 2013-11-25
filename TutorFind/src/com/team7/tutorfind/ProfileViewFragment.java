@@ -11,9 +11,12 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,6 +111,15 @@ public class ProfileViewFragment extends Fragment implements
 	{
 		if(mUser == null) return;
 		
+		// Build picture
+		if(!mUser.isNull("picture")) {
+			byte[] pictureBytes = Base64.decode(mUser.optString("picture").getBytes(), Base64.DEFAULT);
+			Bitmap picture = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
+			
+			ImageView img = (ImageView)getView().findViewById(R.id.profilePicture);
+			img.setImageBitmap(picture);
+		}
+		
 		// Build price string
 		String price = null;
 		if(!mUser.isNull("price_per_hour")) {
@@ -151,6 +163,7 @@ public class ProfileViewFragment extends Fragment implements
 			getView().findViewById(R.id.reviewButton).setVisibility(View.GONE);
 			getView().findViewById(R.id.starbutton).setVisibility(View.GONE);
 		} else {
+			getActivity().getActionBar().setTitle(mUser.optString("name"));
 			getView().findViewById(R.id.editProfileButton).setVisibility(View.GONE);
 			getView().findViewById(R.id.reviewButton).setVisibility(View.VISIBLE);
 			getView().findViewById(R.id.starbutton).setVisibility(View.VISIBLE);
@@ -163,7 +176,6 @@ public class ProfileViewFragment extends Fragment implements
 		
 		view.findViewById(R.id.editProfileButton).setOnClickListener(this);
 		view.findViewById(R.id.reviewButton).setOnClickListener(this);
-		view.findViewById(R.id.showReviewsButton).setOnClickListener(this);
 		view.findViewById(R.id.starbutton).setOnClickListener(this);
 		
 		return view;
@@ -174,9 +186,6 @@ public class ProfileViewFragment extends Fragment implements
 		switch(v.getId()) {
 		case R.id.reviewButton:
 			showAddReviewDialog();
-			// TODO: Actually launch an activity
-			break;
-		case R.id.showReviewsButton:
 			// TODO: Actually launch an activity
 			break;
 		case R.id.starbutton:
@@ -197,6 +206,7 @@ public class ProfileViewFragment extends Fragment implements
 				mUser = new JSONObject(user);
 				mUserId = mUser.optInt("user_id", -1);
 				onUserUpdated();
+				fetchUser();
 			} else {
 				// Otherwise kick of database request to retrieve user
 				mUserId = getArguments().getInt("user_id");
