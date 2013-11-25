@@ -8,6 +8,7 @@ import imp
 import sys
 import random
 import tutor_find_db
+import base64
 
 def request(text):
    """Make a request to the database's HTTP server"""
@@ -42,10 +43,20 @@ def update_user(user, name, tags):
       'action':         'update_user',
       'name':           name,
       'subject_tags':   tags,
+      'phone':          '555-555-5555',
       'price_per_hour': random.randrange(1, 999) / 10.0,
+      'loc_address':    '701 S Nedderman Dr\nArlington, TX 76019',
       'loc_lat':        32.715278 + (random.randrange(0, 1000) - 500) / 10000.0,
       'loc_lon':        -97.016944 + (random.randrange(0, 1000) - 500) / 10000.0,
+      'about_me':       (name + " ") * 20,
       'session_id':     user['session_id']})
+
+def set_picture(user, image):
+   return request({
+      'action':     'set_picture',
+      'session_id': user['session_id'],
+      'picture':    base64.b64encode(open(image).read()),
+   })
 
 def register(email, name):
    u = request({'action': 'register', 'email': email, 'password': 'password'})
@@ -59,6 +70,8 @@ alice = register('alice@example.org', 'Alice Example')
 bob   = register('bob@example.org', 'Bob Example')
 cindy = register('cindy@example.org', 'Cindy Someone')
 
+print set_picture(alice, 'sample_images/1.jpg')
+
 names = ('Dan', 'Eve', 'Fran', 'Gary', 'Hanna', 'Isis', 'Jon', 'Kyle', 'Lana', 'Matt', 'Nancy', 'Ophelia', 'Peter', 'Quara', 'Robert', 'Steve')
 users = []
 for name in names:
@@ -66,12 +79,15 @@ for name in names:
 
 for user in users:
    review(alice, user, random.randrange(0, 50) / 10.0, 'I have no real opinion about this tutor')
+
+   set_picture(user, 'sample_images/1.jpg')
    for i in range(1, 5):
       subject = users[random.randrange(0, len(users))]
       favorite(user, subject, True)
       review(user, subject, 3.0, 'A very average tutor. More review text. More review Text.'
          'More review Text. More review Text. More review Text. More review Text.'
          'More review Text. More review Text. More review Text. More review Text.')
+
 
 review(alice, bob, 5.0, 'good')
 review(bob, alice, 4.0, 'decent')

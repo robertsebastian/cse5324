@@ -11,6 +11,7 @@ import cgitb
 import sys
 import time
 import re
+import base64
 
 cgitb.enable()
 
@@ -175,6 +176,10 @@ favorites_table = DbTable('favorites', (
       ('row_id',                  False, 'integer primary key autoincrement'),
       ('user_id',                 True,  'integer'),
       ('subject_id',              True,  'integer')))
+pictures_table = DbTable('pictures', (
+      ('row_id',                  False, 'integer primary key autoincrement'),
+      ('user_id',                 False, 'integer'),
+      ('picture',                 True,  'blob')))
 
 ################################################################################
 # Handler functions for user requests
@@ -191,6 +196,7 @@ def open_db():
       reviews_table.create()
       sessions_table.create()
       favorites_table.create()
+      pictures_table.create()
       db.commit()
 
    # Store search functions -- has to be done fresh every time
@@ -330,6 +336,10 @@ def get_user(req):
       raise RequestError('invalid_user')
    user = sanitize_user(session, user)
 
+   picture = pictures_table.select_one('user_id=?', [req['user_id']])
+   if picture:
+      user['picture'] = picture.picture
+
    # Append calculated values
    #user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, req['user_id']]) != None
    #user['my_review'] = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, req['user_id']])
@@ -405,7 +415,24 @@ def search(req):
       u['distance'] = geo_dist(u['loc_lat'], u['loc_lon'], req['lat'], req['lon'])
 
    return {'results': results}
-   
+
+# Store  a user profile picture in the database
+def set_picture(req):
+   session = validate_session(req)
+
+   #image = base64.b64decode(req['picture'])
+   image = req['picture']
+
+   # Make sure user id doesn't already exist
+   picture = pictures_table.select_one('user_id=?', [session.user_id])
+   if picture:
+      pictures_table.update(picture.row_id, {'picture': image})
+   else:
+      pictures_table.insert({'user_id': session.user_id, 'picture': image})
+   db.commit()
+
+   return {}
+
 ################################################################################
 # Table mapping request names to handler functions and required arguments
 RequestHandler = collections.namedtuple('RequestHandler', 'func required')
@@ -418,6 +445,7 @@ request_table = {
    'get_reviews':   RequestHandler(get_reviews,   set(['session_id', 'subject_id'])),
    'set_favorite':  RequestHandler(set_favorite,  set(['session_id', 'subject_id', 'favorited'])),
    'get_favorites': RequestHandler(get_favorites, set(['session_id'])),
+   'set_picture':   RequestHandler(set_picture,   set(['session_id', 'picture'])),
    'search':        RequestHandler(search,        set(['session_id', 'query', 'lat', 'lon'])),
 }
 
