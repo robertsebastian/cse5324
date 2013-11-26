@@ -70,7 +70,7 @@ public class ProfileViewFragment extends Fragment implements
 	}
 	
 	private void addTextField(ViewGroup root, String title, String content, Intent action, Intent smsAction) {
-		if(content == null) return;
+		if(content == null || content.equals("null")) return;
 		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);		
 		View field = inflater.inflate(R.layout.profile_view_item, null);
@@ -89,6 +89,8 @@ public class ProfileViewFragment extends Fragment implements
 	
 	// Initialize rating bar activity with an optional intent to launch on click
 	private void addRatingField(ViewGroup root, String title, float rating, int numRatings, Intent action) {
+		if(numRatings <= 0) return; // Nothing to show if no ratings
+		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		String numRatingsStr = String.format(Locale.US, "(%d)", numRatings);
@@ -103,7 +105,7 @@ public class ProfileViewFragment extends Fragment implements
 		
 		addAction(field.findViewById(R.id.profile_view_item_rating_layout), action);
 
-		root.addView(field);		
+		root.addView(field);
 	}
 	
 	// Initialize views with values from a user object
@@ -153,6 +155,7 @@ public class ProfileViewFragment extends Fragment implements
 		addTextField(root, "SUBJECTS", mUser.optString("subject_tags", null));
 		addTextField(root, "RATE", price);
 		addTextField(root, "ABOUT ME", mUser.optString("about_me", null));
+		
 		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"),
 				null); // TODO: Link to reviews activity
 		

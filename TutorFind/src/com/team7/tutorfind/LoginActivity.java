@@ -9,8 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -74,12 +72,19 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 		TextView errorText = (TextView)findViewById(R.id.login_error_text);
 		errorText.setText("");
 		
+		TextView login = (TextView)findViewById(R.id.login_field);
+		TextView password = (TextView)findViewById(R.id.password_field);
+		
+		// Backdoor to settings so we don't have to leave the ActionBar enabled
+		// change the database URL
+		if(login.getText().toString().equals("settings") && password.getText().toString().equals("settings")) {
+			startActivity(new Intent(this, SettingsActivity.class));
+			return;
+		}
+		
 		// Send request
 		JSONObject j = new JSONObject();
 		try {
-			TextView login = (TextView)findViewById(R.id.login_field);
-			TextView password = (TextView)findViewById(R.id.password_field);
-			
 			j.put("action",   action);
 			j.put("email",    login.getText());
 			j.put("password", password.getText());
@@ -89,16 +94,6 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 		
 		new DatabaseRequest(j, this, this);
 	}
-	
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.login, menu);     
-        return true;
-    }
-    
-    public void onSettingsOption(MenuItem menu) {
-    	startActivity(new Intent(this, SettingsActivity.class));
-    }
 	
 	public void onRegisterButtonClicked(View v)
 	{

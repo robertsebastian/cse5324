@@ -3,16 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#30618D"
     android:orientation="vertical"
     android:windowActionBar="false" >
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/tf1"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="50dp"
         android:orientation="vertical" >
 
         <EditText
@@ -24,7 +32,10 @@
             android:ems="10"
             android:hint="@string/enter_login"
             android:padding="5dp"
-            android:text="alice@example.org" />
+            android:text="alice@example.org" >
+
+            <requestFocus />
+        </EditText>
 
         <EditText
             android:id="@+id/password_field"
@@ -63,9 +74,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="onRegisterButtonClicked"
                 android:text="@string/button_register" />
-
         </LinearLayout>
-
     </LinearLayout>
 
 </RelativeLayout>

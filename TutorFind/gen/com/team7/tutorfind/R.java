@@ -224,6 +224,7 @@ containing a value of this type.
         public static final int login_edit_box=0x7f020024;
         public static final int profile_view_item_selector=0x7f020025;
         public static final int starbutton=0x7f020026;
+        public static final int tf1=0x7f020027;
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f060027;

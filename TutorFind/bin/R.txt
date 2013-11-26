@@ -73,6 +73,7 @@ int drawable ic_text_holo_light 0x7f020023
 int drawable login_edit_box 0x7f020024
 int drawable profile_view_item_selector 0x7f020025
 int drawable starbutton 0x7f020026
+int drawable tf1 0x7f020027
 int id RelativeLayout1 0x7f060027
 int id action_filter 0x7f060042
 int id action_filter_by_distance 0x7f060043
