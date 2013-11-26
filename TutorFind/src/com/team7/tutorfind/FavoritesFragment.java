@@ -47,7 +47,7 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 		} catch (JSONException e) {
 			Log.e("login", "Error handling JSON input");
 		}
-		new DatabaseRequest(j, this, context);
+		new DatabaseRequest(j, this, context, false);
 	}
 	
 	private class FavoriteAdapter extends ArrayAdapter<Favorite> {

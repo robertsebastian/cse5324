@@ -228,12 +228,13 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f060027;
-        public static final int action_filter=0x7f060042;
-        public static final int action_filter_by_distance=0x7f060043;
-        public static final int action_filter_by_price=0x7f060044;
-        public static final int action_filter_by_rating=0x7f060045;
+        public static final int action_filter=0x7f060043;
+        public static final int action_filter_by_distance=0x7f060044;
+        public static final int action_filter_by_price=0x7f060045;
+        public static final int action_filter_by_rating=0x7f060046;
         public static final int action_logout=0x7f060040;
-        public static final int action_map=0x7f060046;
+        public static final int action_map=0x7f060047;
+        public static final int action_profile_edit=0x7f060042;
         public static final int action_search=0x7f060041;
         public static final int action_settings=0x7f06003f;
         public static final int bioEdit=0x7f060021;
@@ -340,11 +341,11 @@ containing a value of this type.
         public static final int action_list_favorites=0x7f070044;
         public static final int action_list_my_profile=0x7f070043;
         public static final int action_logout=0x7f070026;
-        public static final int action_map=0x7f070053;
+        public static final int action_map=0x7f070054;
         public static final int action_profile_edit=0x7f07001c;
         public static final int action_search=0x7f070027;
         public static final int action_settings=0x7f07001b;
-        public static final int add_review_text=0x7f07004d;
+        public static final int add_review_text=0x7f07004e;
         public static final int app_name=0x7f07001a;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -467,10 +468,10 @@ containing a value of this type.
         public static final int profile_edit_title=0x7f070031;
         public static final int profile_placeholder=0x7f070032;
         public static final int questionTutorText=0x7f07003c;
-        public static final int review_cancel=0x7f070051;
-        public static final int review_ok=0x7f070050;
-        public static final int review_title=0x7f07004f;
-        public static final int showReviewsButton=0x7f07004e;
+        public static final int review_cancel=0x7f070052;
+        public static final int review_ok=0x7f070051;
+        public static final int review_title=0x7f070050;
+        public static final int showReviewsButton=0x7f07004f;
         public static final int tagText=0x7f07003d;
         public static final int textPlaceHolder=0x7f070042;
         public static final int timesText=0x7f07003a;
@@ -480,44 +481,23 @@ containing a value of this type.
         public static final int title_activity_favorite=0x7f07004c;
         public static final int title_activity_favorites=0x7f07004a;
         public static final int title_activity_main=0x7f070020;
-        public static final int title_activity_map=0x7f070052;
+        public static final int title_activity_map=0x7f070053;
         public static final int title_activity_profile_edit=0x7f070033;
         public static final int title_activity_profile_view=0x7f070034;
+        public static final int title_activity_search=0x7f07004d;
         public static final int title_activity_settings=0x7f070025;
         public static final int travelText=0x7f070040;
     }
     public static final class style {
-        /** 
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
-
-        Base application theme for API 11+. This theme completely replaces
-        AppBaseTheme from res/values/styles.xml on API 11+ devices.
-    
- API 11 theme customizations can go here. 
-
-        Base application theme for API 14+. This theme completely replaces
-        AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 14+ devices.
-    
- API 14 theme customizations can go here. 
-         */
-        public static final int AppBaseTheme=0x7f0b0000;
         /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f0b0001;
-        /**      <style name="CustomActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse"> 
+        public static final int AppTheme=0x7f0b0000;
+        /**  Blue ActionBar theme 
          */
-        public static final int CustomActionBar=0x7f0b0003;
-        public static final int CustomActionBarTheme=0x7f0b0002;
-        public static final int StarButton_Style=0x7f0b0004;
+        public static final int BlueActionBar=0x7f0b0001;
+        /**   Star button 
+         */
+        public static final int StarButton_Style=0x7f0b0002;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;

@@ -26,10 +26,10 @@
 	            android:layout_centerHorizontal="true"
 	            android:layout_centerVertical="true"
 	            android:textAppearance="?android:attr/textAppearanceLarge" />
-	
+
 	        <ToggleButton
 	            android:id="@+id/starbutton"
-	            style="@style/StarButton_Style"
+	            style="@style/StarButton_Style"	
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentRight="true"
@@ -52,13 +52,6 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="bottom|center_horizontal" >
-	
-	        <Button
-	            android:id="@+id/editProfileButton"
-	            style="?android:attr/buttonBarButtonStyle"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="Edit Profile" />
 	
 	        <Button
 	            android:id="@+id/showReviewsButton"

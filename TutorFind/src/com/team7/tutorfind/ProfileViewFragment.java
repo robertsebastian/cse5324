@@ -16,9 +16,13 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NavUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -162,26 +166,37 @@ public class ProfileViewFragment extends Fragment implements
 		// Show/hide elements as appropriate for view us vs another user
 		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
 		if(getArguments().getInt("user_id") == ourUser) {
-			getView().findViewById(R.id.editProfileButton).setVisibility(View.VISIBLE);
 			getView().findViewById(R.id.reviewButton).setVisibility(View.GONE);
 			getView().findViewById(R.id.starbutton).setVisibility(View.GONE);
 		} else {
 			getActivity().getActionBar().setTitle(mUser.optString("name"));
-			getView().findViewById(R.id.editProfileButton).setVisibility(View.GONE);
 			getView().findViewById(R.id.reviewButton).setVisibility(View.VISIBLE);
 			getView().findViewById(R.id.starbutton).setVisibility(View.VISIBLE);
 		}
 	}
 	
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)	{	
 		View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
 		
-		view.findViewById(R.id.editProfileButton).setOnClickListener(this);
 		view.findViewById(R.id.reviewButton).setOnClickListener(this);
 		view.findViewById(R.id.starbutton).setOnClickListener(this);
 		
 		return view;
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
+		if(getArguments().getInt("user_id") == ourUser) {
+			inflater.inflate(R.menu.profile_view, menu);
+		}
 	}
 	
 	@Override
@@ -218,6 +233,18 @@ public class ProfileViewFragment extends Fragment implements
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+    	switch(item.getItemId()) {
+        case R.id.action_profile_edit:
+            startActivity(new Intent(getActivity(), ProfileEditActivity.class));
+            break;
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    	return true;
 	}
 	
 	// Send database request for userId
@@ -270,6 +297,8 @@ public class ProfileViewFragment extends Fragment implements
 	// Update display with requested user data
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
+		if(getActivity() == null) return; // Make sure we're still active
+		
 		try {
 			if(response.getBoolean("success") && response.getString("action").equals("get_user")) {
 				mUser = response;

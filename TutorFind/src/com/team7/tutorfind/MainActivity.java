@@ -1,44 +1,21 @@
 package com.team7.tutorfind;
 
+import java.util.ArrayList;
+
 import android.app.ActionBar;
-import android.app.ActionBar.Tab;
+import android.app.ActionBar.OnNavigationListener;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.ArrayAdapter;
 
-public class MainActivity extends TutorFindActivity
-{
+public class MainActivity extends TutorFindActivity implements OnNavigationListener {
 	public static final String TAG = "main";
-
-	// Class to manage selecting different fragments for the tabbed interface
-    private class TabSelector implements ActionBar.TabListener {
-    	Fragment mFragment;
-    	boolean mIsAdded = false;
-    	
-    	TabSelector(Fragment frag) {
-    		mFragment = frag;
-    	}
-    	
-        // Select fragment associated with the tab
-        public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        	if(mIsAdded) {
-        		ft.show(mFragment);
-        	} else {
-        		ft.add(android.R.id.content, mFragment);
-        		mIsAdded = true;
-        	}
-        }
-
-        // Nothing to do on tab unselected
-        public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-        	ft.hide(mFragment);
-        }
-
-        // Nothing to do if the tag is already selected
-        public void onTabReselected(Tab tab, FragmentTransaction ft) {
-        } 	
-    }
+	
+	ProfileViewFragment mProfileFragment;
+	FavoritesFragment   mFavoritesFragment;
+	Fragment mSelectedFragment;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +25,45 @@ public class MainActivity extends TutorFindActivity
         
         // setup action bar for tabs
         ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setHomeButtonEnabled(false);
         
+        // Create dropdown navigation list
+        ArrayList<String> itemList = new ArrayList<String>();
+        itemList.add("My Profile");
+        itemList.add("Favorites");
+        ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(actionBar.getThemedContext(), android.R.layout.simple_list_item_1, android.R.id.text1, itemList);
+        actionBar.setListNavigationCallbacks(aAdpt, this);
+        
+        // Initialize fragments
         int userId = PreferenceManager.getDefaultSharedPreferences(this).getInt("user_id", -1);
-
-        actionBar.addTab(actionBar.newTab()
-        		.setText("Profile")
-        		.setTabListener(new TabSelector(ProfileViewFragment.create(userId, null))));
-        actionBar.addTab(actionBar.newTab()
-        		.setText("Favorites")
-        		.setTabListener(new TabSelector(new FavoritesFragment())));
+        
+        mProfileFragment   = ProfileViewFragment.create(userId, null);       
+        mFavoritesFragment = new FavoritesFragment();
+        
+        // Add fragments to content view
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.add(android.R.id.content, mProfileFragment);
+        ft.detach(mProfileFragment);
+        ft.add(android.R.id.content, mFavoritesFragment);
+        ft.detach(mFavoritesFragment);
+        ft.commit();
     }
+
+	@Override
+	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+		// Only two fragments, so just select the opposite one when we get this notification
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		if(mSelectedFragment != null) ft.detach(mSelectedFragment);
+		if(itemId == 0) {
+			mSelectedFragment = mProfileFragment;
+		} else {
+			mSelectedFragment = mFavoritesFragment;
+		}
+		ft.attach(mSelectedFragment);
+		ft.commit();
+		return false;
+	}
 }

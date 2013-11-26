@@ -66,6 +66,7 @@
     <string name="title_activity_favorites">Favorites</string>
     <string name="title_activity_all_favorites">AllFavorites</string>
     <string name="title_activity_favorite">Favorite</string>
+    <string name="title_activity_search">Results</string>
     <string name="add_review_text">Add Review</string>
     <string name="showReviewsButton">Show Reviews</string>
     <string name="review_title">Add Review</string>
