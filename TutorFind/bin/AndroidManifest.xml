@@ -92,7 +92,13 @@
         </activity>
         <activity
             android:name="com.team7.tutorfind.MapActivity"
-            android:label="@string/title_activity_map" >
+            android:label="@string/title_activity_map"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
+        </activity>
+        <activity
+            android:name="com.team7.tutorfind.ReviewActivity"
+            android:label="@string/title_activity_reviews"
+            android:parentActivityName="com.team7.tutorfind.MainActivity" >
         </activity>
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

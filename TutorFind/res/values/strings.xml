@@ -67,6 +67,7 @@
     <string name="title_activity_all_favorites">AllFavorites</string>
     <string name="title_activity_favorite">Favorite</string>
     <string name="title_activity_search">Results</string>
+    <string name="title_activity_reviews">Reviews</string>
     <string name="add_review_text">Add Review</string>
     <string name="showReviewsButton">Show Reviews</string>
     <string name="review_title">Add Review</string>
@@ -74,5 +75,6 @@
     <string name="review_cancel">Cancel</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="action_map">Map</string>
+    <string name="action_add_review">Add Review</string>
 
 </resources>

@@ -6,17 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,12 +90,16 @@ public class ProfileViewFragment extends Fragment implements
 	
 	// Initialize rating bar activity with an optional intent to launch on click
 	private void addRatingField(ViewGroup root, String title, float rating, int numRatings, Intent action) {
-		if(numRatings <= 0) return; // Nothing to show if no ratings
-		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		String numRatingsStr = String.format(Locale.US, "(%d)", numRatings);
 		String ratingStr = String.format(Locale.US, "%.1f", rating);
+		
+		// Show no rating if unrated
+		if(numRatings == 0) {
+			ratingStr = "-.-";
+			rating = 0.0f;
+		}
 		
 		View field = inflater.inflate(R.layout.profile_view_item_rating, null);	
 		
@@ -159,18 +160,15 @@ public class ProfileViewFragment extends Fragment implements
 		addTextField(root, "SUBJECTS", mUser.optString("subject_tags", null));
 		addTextField(root, "RATE", price);
 		addTextField(root, "ABOUT ME", mUser.optString("about_me", null));
-		
 		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"),
-				null); // TODO: Link to reviews activity
+				new Intent(getActivity(), ReviewActivity.class).putExtra("user_id", mUser.optInt("user_id")));
 		
 		// Show/hide elements as appropriate for view us vs another user
 		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
 		if(getArguments().getInt("user_id") == ourUser) {
-			getView().findViewById(R.id.reviewButton).setVisibility(View.GONE);
 			getView().findViewById(R.id.starbutton).setVisibility(View.GONE);
 		} else {
 			getActivity().getActionBar().setTitle(mUser.optString("name"));
-			getView().findViewById(R.id.reviewButton).setVisibility(View.VISIBLE);
 			getView().findViewById(R.id.starbutton).setVisibility(View.VISIBLE);
 		}
 	}
@@ -185,7 +183,6 @@ public class ProfileViewFragment extends Fragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)	{	
 		View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
 		
-		view.findViewById(R.id.reviewButton).setOnClickListener(this);
 		view.findViewById(R.id.starbutton).setOnClickListener(this);
 		
 		return view;
@@ -202,10 +199,6 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-		case R.id.reviewButton:
-			showAddReviewDialog();
-			// TODO: Actually launch an activity
-			break;
 		case R.id.starbutton:
 			setFavorite(((ToggleButton)v).isChecked());
 			break;
@@ -275,24 +268,6 @@ public class ProfileViewFragment extends Fragment implements
 		}
 		new DatabaseRequest(j, this, getActivity(), false);		
 	}
-	
-	// Send database request to review this user
-	public void review(float score, String text)
-	{
-		JSONObject j = new JSONObject();
-		try {
-			mUser.put("my_score", score);
-			mUser.put("my_comment", text);
-			
-			j.put("action",     "submit_review");
-			j.put("subject_id", mUserId);
-			j.put("score",      score);
-			j.put("text",       text);
-		} catch(JSONException e) {
-			Log.e(TAG, e.toString(), e);
-		}
-		new DatabaseRequest(j, this, getActivity(), false);		
-	}
 
 	// Update display with requested user data
 	@Override
@@ -309,31 +284,5 @@ public class ProfileViewFragment extends Fragment implements
 		} catch(NullPointerException e) {
 			Log.e(TAG, e.toString(), e);
 		}
-	}
-	
-	private void showAddReviewDialog() {
-		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.dialog_add_review, null);
-		
-		final TextView text = (TextView)layout.findViewById(R.id.comment);
-		final RatingBar rating = (RatingBar)layout.findViewById(R.id.rating);
-		
-		if(!mUser.isNull("my_comment")) text.setText(mUser.optString("my_comment"));		
-		if(!mUser.isNull("my_score")) rating.setRating((float)mUser.optDouble("my_score"));
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());		
-		builder.setTitle(R.string.review_title)
-			.setView(layout)
-		    .setCancelable(true)
-		    .setNegativeButton(R.string.review_cancel, null)
-		    .setPositiveButton(R.string.review_ok, new DialogInterface.OnClickListener() {
-		    	@Override
-		    	public void onClick(DialogInterface dialog, int which) {
-		    		review(rating.getRating(), text.getText().toString());
-		    	}
-		    });
-		
-		AlertDialog alert = builder.create();
-		alert.show();
 	}
 }
