@@ -76,5 +76,6 @@
     <string name="title_activity_map">MapActivity</string>
     <string name="action_map">Map</string>
     <string name="action_add_review">Add Review</string>
+    <string name="action_toggle_favorite">Toggle Favorite</string>
 
 </resources>

@@ -19,13 +19,6 @@ public class ProfileEditActivity extends Activity implements DatabaseRequest.Lis
 		
 		//TODO: Need to get the user data from the login to add to the database
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.profile_view, menu);
-		return true; 
-	}
 	
 	public void sendDatabaseData ()
 	{

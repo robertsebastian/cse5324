@@ -47,6 +47,13 @@ public class ProfileViewFragment extends Fragment implements
 		return frag;
 	}
 	
+	// Return true if this fragment is displaying our user -- Don't call this
+	// until onViewCreated or getActivity() will return null
+	public boolean isOurUser() {
+		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);
+		return mUserId == ourUser;
+	}
+	
 	// Attach an ACTION_VIEW intent with a uri parameter. Used to handle phone,
 	// text, and e-mail address fields with the correct application
 	private void addAction(View v, final Intent intent) {
@@ -118,6 +125,9 @@ public class ProfileViewFragment extends Fragment implements
 	{
 		if(mUser == null) return;
 		
+		// Update favorite start on options menu
+		getActivity().invalidateOptionsMenu();		
+		
 		// Build picture
 		if(!mUser.isNull("picture")) {
 			byte[] pictureBytes = Base64.decode(mUser.optString("picture").getBytes(), Base64.DEFAULT);
@@ -136,10 +146,6 @@ public class ProfileViewFragment extends Fragment implements
 		// Build list of users to show on map when address is clicked
 		JSONArray mapUsers = new JSONArray();
 		mapUsers.put(mUser);
-		
-		// Set text for non-variable fields
-		((TextView)getView().findViewById(R.id.profileNameText)).setText(mUser.optString("name"));
-		((ToggleButton)getView().findViewById(R.id.starbutton)).setChecked(mUser.optBoolean("favorited"));
 		
 		// Add all variable user fields to the view
 		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
@@ -163,14 +169,8 @@ public class ProfileViewFragment extends Fragment implements
 		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"),
 				new Intent(getActivity(), ReviewActivity.class).putExtra("user_id", mUser.optInt("user_id")));
 		
-		// Show/hide elements as appropriate for view us vs another user
-		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
-		if(getArguments().getInt("user_id") == ourUser) {
-			getView().findViewById(R.id.starbutton).setVisibility(View.GONE);
-		} else {
-			getActivity().getActionBar().setTitle(mUser.optString("name"));
-			getView().findViewById(R.id.starbutton).setVisibility(View.VISIBLE);
-		}
+		// Put user's name in the title bar
+		getActivity().getActionBar().setTitle(mUser.optString("name"));		
 	}
 	
 	@Override
@@ -182,29 +182,41 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)	{	
 		View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
-		
-		view.findViewById(R.id.starbutton).setOnClickListener(this);
-		
 		return view;
 	}
 	
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		int ourUser = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt("user_id", -1);		
-		if(getArguments().getInt("user_id") == ourUser) {
-			inflater.inflate(R.menu.profile_view, menu);
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {	
+		super.onCreateOptionsMenu(menu, inflater);
+		
+		if(isOurUser()) {
+			inflater.inflate(R.menu.profile_view_self, menu);
+		} else {
+			inflater.inflate(R.menu.profile_view_other, menu);
 		}
 	}
 	
 	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		
+		// Update favorite status for currently shown user
+		if(!isOurUser() && mUser != null) {
+			ToggleButton b = (ToggleButton)menu.findItem(R.id.action_toggle_favorite).getActionView();
+			b.setOnClickListener(this);
+			b.setChecked(mUser.optBoolean("favorited"));
+		}
+	}
+	
+	// Handle favorite button clicks
+	@Override
 	public void onClick(View v) {
-		switch(v.getId()) {
-		case R.id.starbutton:
+		if(v.getId() == R.id.starbutton) {
 			setFavorite(((ToggleButton)v).isChecked());
-			break;
 		}
 	}
 
+	// Fill in user data if available, otherwise kick off request
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -228,16 +240,14 @@ public class ProfileViewFragment extends Fragment implements
 		}
 	}
 	
+	// Handle edit item click
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-    	switch(item.getItemId()) {
-        case R.id.action_profile_edit:
+		if(item.getItemId() == R.id.action_profile_edit) {
             startActivity(new Intent(getActivity(), ProfileEditActivity.class));
-            break;
-    	default:
-    		return super.onOptionsItemSelected(item);
-    	}
-    	return true;
+            return true;
+		}
+    	return super.onOptionsItemSelected(item);
 	}
 	
 	// Send database request for userId
