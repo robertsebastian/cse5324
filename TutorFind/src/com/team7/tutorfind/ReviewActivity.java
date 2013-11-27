@@ -49,6 +49,7 @@ public class ReviewActivity extends TutorFindActivity
 			String ratingStr = String.format(Locale.US, "%.1f", rating);
 			String comment = review.optString("text", "");
 			
+			((TextView)v.findViewById(R.id.name)).setText(review.optString("submitter_name", ""));
 			((TextView)v.findViewById(R.id.rating)).setText(ratingStr);
 			((RatingBar)v.findViewById(R.id.rating_stars)).setRating(rating);
 			((TextView)v.findViewById(R.id.comment)).setText(comment);
@@ -73,8 +74,8 @@ public class ReviewActivity extends TutorFindActivity
     }
 	
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 		getIntent().getExtras().getString("user");
 		getReviews();
 	}
@@ -85,7 +86,7 @@ public class ReviewActivity extends TutorFindActivity
 			j.put("action",     "get_reviews");
 			j.put("subject_id", getIntent().getExtras().getInt("user_id"));
 			
-			new DatabaseRequest(j, this, this);
+			new DatabaseRequest(j, this, this, false);
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);
 		}
@@ -108,10 +109,9 @@ public class ReviewActivity extends TutorFindActivity
 		}
 		new DatabaseRequest(j, this, this, false);		
 	}
-
-	@Override
-	public void onDatabaseResponse(JSONObject response) {
-		super.onDatabaseResponse(response);
+	
+	// Update displayed reviews from a database response
+	public void updateReviews(JSONObject response) {
 		try {
 			JSONArray reviewsArr = response.getJSONArray("reviews");
 			
@@ -125,6 +125,9 @@ public class ReviewActivity extends TutorFindActivity
 					// Save off our review for later editing if it's present
 					mMyScore = (float)review.optDouble("score", 0.0);
 					mMyComment = review.optString("text", "");
+					
+					// Make sure our review shows up first
+					reviews.add(0, reviewsArr.getJSONObject(i));
 				} else {
 					reviews.add(reviewsArr.getJSONObject(i));
 				}
@@ -135,9 +138,23 @@ public class ReviewActivity extends TutorFindActivity
 			list.setAdapter(new ReviewArrayAdapter(this, reviews));
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);
-		} catch(NullPointerException e) {
-			Log.e(TAG, e.toString(), e);
 		}
+	}
+
+	@Override
+	public void onDatabaseResponse(JSONObject response) {
+		if(response == null) return;
+
+		String action = response.optString("action");
+		if(action.equals("get_reviews")) {
+			// New reviews to post
+			updateReviews(response);
+		} else if(action.equals("submit_review")) {
+			// Re-request views if we just successfully submitted on
+			getReviews();
+		}
+		
+		super.onDatabaseResponse(response);		
 	}
 
 	private void showAddReviewDialog() {

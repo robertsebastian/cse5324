@@ -5,4 +5,5 @@
     <color name="divider_color">#CCC</color>
     <color name="search_result_preferred_background">#55BDCEE0</color>
     <color name="advertisement">#55666666</color>
+    <color name="rating">#555555</color>
 </resources>

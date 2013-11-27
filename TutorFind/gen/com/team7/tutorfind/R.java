@@ -168,10 +168,11 @@ containing a value of this type.
         public static final int common_signin_btn_light_text_disabled=0x7f050006;
         public static final int common_signin_btn_light_text_focused=0x7f050007;
         public static final int common_signin_btn_light_text_pressed=0x7f050005;
-        public static final int common_signin_btn_text_dark=0x7f05000f;
-        public static final int common_signin_btn_text_light=0x7f050010;
+        public static final int common_signin_btn_text_dark=0x7f050010;
+        public static final int common_signin_btn_text_light=0x7f050011;
         public static final int divider_color=0x7f05000c;
         public static final int profile_item_selected=0x7f05000a;
+        public static final int rating=0x7f05000f;
         public static final int search_result_preferred_background=0x7f05000d;
         public static final int transparent=0x7f05000b;
     }
@@ -232,18 +233,18 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f060029;
-        public static final int action_add_review=0x7f060045;
-        public static final int action_filter=0x7f060046;
-        public static final int action_filter_by_distance=0x7f060047;
-        public static final int action_filter_by_price=0x7f060048;
-        public static final int action_filter_by_rating=0x7f060049;
-        public static final int action_logout=0x7f060041;
-        public static final int action_map=0x7f06004a;
-        public static final int action_profile_edit=0x7f060044;
-        public static final int action_search=0x7f060042;
-        public static final int action_settings=0x7f060040;
-        public static final int action_toggle_favorite=0x7f060043;
-        public static final int advertisementText=0x7f06003f;
+        public static final int action_add_review=0x7f060046;
+        public static final int action_filter=0x7f060047;
+        public static final int action_filter_by_distance=0x7f060048;
+        public static final int action_filter_by_price=0x7f060049;
+        public static final int action_filter_by_rating=0x7f06004a;
+        public static final int action_logout=0x7f060042;
+        public static final int action_map=0x7f06004b;
+        public static final int action_profile_edit=0x7f060045;
+        public static final int action_search=0x7f060043;
+        public static final int action_settings=0x7f060041;
+        public static final int action_toggle_favorite=0x7f060044;
+        public static final int advertisementText=0x7f060040;
         public static final int bioEdit=0x7f060022;
         public static final int bioText=0x7f060021;
         public static final int categoriesText=0x7f06001b;
@@ -269,6 +270,7 @@ containing a value of this type.
         public static final int login_field=0x7f060007;
         public static final int meetingEdit=0x7f060018;
         public static final int meetingText=0x7f060017;
+        public static final int name=0x7f060038;
         public static final int none=0x7f060000;
         public static final int normal=0x7f060001;
         public static final int password_field=0x7f060008;
@@ -287,7 +289,7 @@ containing a value of this type.
         public static final int profile_view_item_rating_stars=0x7f060034;
         public static final int profile_view_item_title=0x7f060031;
         public static final int rating=0x7f060026;
-        public static final int rating_stars=0x7f060038;
+        public static final int rating_stars=0x7f060039;
         public static final int register_button=0x7f06000b;
         public static final int reviews_list=0x7f060024;
         public static final int satellite=0x7f060002;
@@ -300,12 +302,12 @@ containing a value of this type.
         public static final int titleText=0x7f06000e;
         public static final int travelEdit=0x7f06001a;
         public static final int travelText=0x7f060019;
-        public static final int user_summary_distance=0x7f06003e;
-        public static final int user_summary_name=0x7f06003a;
-        public static final int user_summary_num_reviews=0x7f06003c;
-        public static final int user_summary_price=0x7f06003d;
-        public static final int user_summary_row=0x7f060039;
-        public static final int user_summary_score=0x7f06003b;
+        public static final int user_summary_distance=0x7f06003f;
+        public static final int user_summary_name=0x7f06003b;
+        public static final int user_summary_num_reviews=0x7f06003d;
+        public static final int user_summary_price=0x7f06003e;
+        public static final int user_summary_row=0x7f06003a;
+        public static final int user_summary_score=0x7f06003c;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f080000;
