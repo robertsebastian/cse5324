@@ -70,7 +70,7 @@ alice = register('alice@example.org', 'Alice Example')
 bob   = register('bob@example.org', 'Bob Example')
 cindy = register('cindy@example.org', 'Cindy Someone')
 
-print set_picture(alice, 'sample_images/1.jpg')
+set_picture(alice, 'sample_images/1.jpg')
 
 names = ('Dan', 'Eve', 'Fran', 'Gary', 'Hanna', 'Isis', 'Jon', 'Kyle', 'Lana', 'Matt', 'Nancy', 'Ophelia', 'Peter', 'Quara', 'Robert', 'Steve')
 users = []

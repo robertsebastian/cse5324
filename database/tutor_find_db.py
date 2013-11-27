@@ -62,6 +62,11 @@ class DbTable:
       if len(results) == 0: return None
       return results[0]
 
+   def count(self, conditions, condition_vals):
+      dbc = db.cursor()
+      db.execute('select 1 from %s where %s' % (self.name, conditions), condition_vals)
+      return len(dbc.fetchall())
+
    def get(self, id_val):
       """Return the row with the matching ID
          
@@ -336,14 +341,6 @@ def get_user(req):
       raise RequestError('invalid_user')
    user = sanitize_user(session, user)
 
-   picture = pictures_table.select_one('user_id=?', [req['user_id']])
-   if picture:
-      user['picture'] = picture.picture
-
-   # Append calculated values
-   #user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, req['user_id']]) != None
-   #user['my_review'] = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, req['user_id']])
-
    return user
 
 def set_favorite(req):
@@ -386,6 +383,7 @@ def sanitize_user(session, user):
 
    # Append calculated values
    user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, uid]) != None
+   user['has_picture'] = favorites_table.count('user_id=?', [session.user_id]) > 0
 
    my_review = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, uid]);
    if my_review:
@@ -416,22 +414,28 @@ def search(req):
 
    return {'results': results}
 
-# Store  a user profile picture in the database
+# Store a user profile picture in the database
 def set_picture(req):
    session = validate_session(req)
 
-   #image = base64.b64decode(req['picture'])
-   image = req['picture']
-
    # Make sure user id doesn't already exist
-   picture = pictures_table.select_one('user_id=?', [session.user_id])
-   if picture:
-      pictures_table.update(picture.row_id, {'picture': image})
+   already_present = pictures_table.count('user_id=?', [session.user_id]) > 0
+   if already_present:
+      pictures_table.update(picture.row_id, {'picture': req['picture']})
    else:
-      pictures_table.insert({'user_id': session.user_id, 'picture': image})
+      pictures_table.insert({'user_id': session.user_id, 'picture': req['picture']})
    db.commit()
 
    return {}
+
+# Retrieve a profile picture
+def get_picture(req):
+   session = validate_session(req)
+
+   picture = pictures_table.select_one('user_id=?', [req['user_id']])
+   if not picture:
+      raise RequestError("no_picture")
+   return {'picture': picture.picture}
 
 ################################################################################
 # Table mapping request names to handler functions and required arguments
@@ -446,6 +450,7 @@ request_table = {
    'set_favorite':  RequestHandler(set_favorite,  set(['session_id', 'subject_id', 'favorited'])),
    'get_favorites': RequestHandler(get_favorites, set(['session_id'])),
    'set_picture':   RequestHandler(set_picture,   set(['session_id', 'picture'])),
+   'get_picture':   RequestHandler(set_picture,   set(['session_id', 'user_id'])),
    'search':        RequestHandler(search,        set(['session_id', 'query', 'lat', 'lon'])),
 }
 
