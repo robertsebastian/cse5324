@@ -3,5 +3,6 @@
     <color name="profile_item_selected">#CCC</color>
     <color name="transparent">#0000</color>
     <color name="divider_color">#CCC</color>
-    
+    <color name="search_result_preferred_background">#55BDCEE0</color>
+    <color name="advertisement">#55666666</color>
 </resources>
