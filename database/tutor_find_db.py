@@ -329,6 +329,11 @@ def get_reviews(req):
    validate_session(req)
 
    reviews = [dict(r._asdict()) for r in reviews_table.select_many('subject_id=?', [req['subject_id']])]
+   for r in reviews:
+      # Really ugly -- this could be a join
+      user = users_table.get(r['submitter_id'])
+      r['submitter_name'] = user.name
+
    return {'reviews': reviews}
 
 def get_user(req):
