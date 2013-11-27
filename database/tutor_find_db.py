@@ -384,6 +384,7 @@ def sanitize_user(session, user):
    # Append calculated values
    user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, uid]) != None
    user['has_picture'] = pictures_table.count('user_id=?', [uid]) > 0
+   user['preferred_flag'] = user['preferred_flag'] == 1 # Convert to boolean
 
    my_review = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, uid]);
    if my_review:
@@ -436,6 +437,13 @@ def get_picture(req):
    if not picture:
       raise RequestError("no_picture")
    return {'picture': picture.picture}
+
+################################################################################
+# Admin functions
+def set_preferred(user_id, flag):
+   flagVal = (0, 1)[flag]
+   users_table.update(user_id, {'preferred_flag': flagVal})
+   db.commit();
 
 ################################################################################
 # Table mapping request names to handler functions and required arguments

@@ -80,6 +80,10 @@ for name in names:
 for user in users:
    review(alice, user, random.randrange(0, 50) / 10.0, 'I have no real opinion about this tutor')
 
+   tutor_find_db.open_db()
+   tutor_find_db.set_preferred(user['user_id'], random.randrange(0, 5) == 0)
+   tutor_find_db.close_db()
+
    set_picture(user, 'sample_images/1.jpg')
    for i in range(1, 5):
       subject = users[random.randrange(0, len(users))]
