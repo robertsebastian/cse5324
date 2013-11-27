@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 public class MainActivity extends TutorFindActivity implements OnNavigationListener {
@@ -37,20 +39,38 @@ public class MainActivity extends TutorFindActivity implements OnNavigationListe
         ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(actionBar.getThemedContext(), android.R.layout.simple_list_item_1, android.R.id.text1, itemList);
         actionBar.setListNavigationCallbacks(aAdpt, this);
         
-        // Initialize fragments
-        int userId = PreferenceManager.getDefaultSharedPreferences(this).getInt("user_id", -1);
+        // See if fragments are already present (this happens after a rotation)
+        FragmentManager fm = getFragmentManager();
+        mProfileFragment = (ProfileViewFragment)fm.findFragmentByTag(ProfileViewFragment.TAG);
+        mFavoritesFragment = (FavoritesFragment)fm.findFragmentByTag(FavoritesFragment.TAG);
         
-        mProfileFragment   = ProfileViewFragment.create(userId, null);       
-        mFavoritesFragment = new FavoritesFragment();
-        
-        // Add fragments to content view
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.add(android.R.id.content, mProfileFragment);
-        ft.detach(mProfileFragment);
-        ft.add(android.R.id.content, mFavoritesFragment);
-        ft.detach(mFavoritesFragment);
+        // Add fragments to container
+        FragmentTransaction ft = fm.beginTransaction();
+        if(mProfileFragment == null) {
+            int userId = PreferenceManager.getDefaultSharedPreferences(this).getInt("user_id", -1);
+        	mProfileFragment   = ProfileViewFragment.create(userId, null);    
+            ft.add(android.R.id.content, mProfileFragment, ProfileViewFragment.TAG);
+            ft.detach(mProfileFragment);      
+        }
+        if(mFavoritesFragment == null) {
+	        mFavoritesFragment = new FavoritesFragment();
+	        ft.add(android.R.id.content, mFavoritesFragment, FavoritesFragment.TAG);
+	        ft.detach(mFavoritesFragment);
+        }
         ft.commit();
+        
+        // Restore selected position if restored
+        if(savedInstanceState != null) {
+        	Log.d(TAG, "Restoring to item " + savedInstanceState.getInt("nav_position"));
+    		getActionBar().setSelectedNavigationItem(savedInstanceState.getInt("nav_position"));       	
+        }
     }
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putInt("nav_position", getActionBar().getSelectedNavigationIndex());
+		Log.d(TAG, "Saved instance state");
+	}
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {

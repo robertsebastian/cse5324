@@ -43,6 +43,24 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 		mContext = context;
 		mShowProgress = showProgress;
 		
+//		// Handle request from cache if possible
+//		String action = request.optString("action");
+//		if(action.equals("get_user")) {
+//			JSONObject user = CacheManager.get(context, "user", "user_id", request);
+//			if(user != null) {
+//				mListener.onDatabaseResponse(user);
+//				return;
+//			}
+//		} else if(action.equals("get_picture")) {
+//			JSONObject picture = CacheManager.get(context, "picture", "user_id", request);
+//			if(picture != null) {
+//				mListener.onDatabaseResponse(picture);
+//				return;
+//			}
+//		} else if(action.equals("update_user")) {
+//			CacheManager.del(context, "user", "user_id", request);
+//		}
+		
 		// Read address and port from preferences
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
 		mAddress = pref.getString("pref_db_address", "team7.dyndns.org");
@@ -119,6 +137,17 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 		if(mProgress != null) {
 			mProgress.dismiss();
 		}
+		
+		if(response == null) return;
+		
+//		// Cache requests
+//		String action = response.optString("action");
+//		if(action.equals("get_user") && response.has("user_id")) {
+//			CacheManager.put(mContext, "user", "user_id", response);
+//		} else if(action.equals("get_picture") && response.has("user_id")) {
+//			CacheManager.put(mContext, "picture", "user_id", response);
+//		}
+		
 		mListener.onDatabaseResponse(response);
 	}
 	
