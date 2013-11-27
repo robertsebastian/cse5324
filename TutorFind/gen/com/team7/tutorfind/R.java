@@ -155,6 +155,7 @@ containing a value of this type.
         public static final int zOrderOnTop=0x7f01000f;
     }
     public static final class color {
+        public static final int advertisement=0x7f05000e;
         public static final int common_action_bar_splitter=0x7f050009;
         /**  Sign-in Button Colors 
          */
@@ -167,10 +168,11 @@ containing a value of this type.
         public static final int common_signin_btn_light_text_disabled=0x7f050006;
         public static final int common_signin_btn_light_text_focused=0x7f050007;
         public static final int common_signin_btn_light_text_pressed=0x7f050005;
-        public static final int common_signin_btn_text_dark=0x7f05000d;
-        public static final int common_signin_btn_text_light=0x7f05000e;
+        public static final int common_signin_btn_text_dark=0x7f05000f;
+        public static final int common_signin_btn_text_light=0x7f050010;
         public static final int divider_color=0x7f05000c;
         public static final int profile_item_selected=0x7f05000a;
+        public static final int search_result_preferred_background=0x7f05000d;
         public static final int transparent=0x7f05000b;
     }
     public static final class dimen {
@@ -230,17 +232,18 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f060029;
-        public static final int action_add_review=0x7f060044;
-        public static final int action_filter=0x7f060045;
-        public static final int action_filter_by_distance=0x7f060046;
-        public static final int action_filter_by_price=0x7f060047;
-        public static final int action_filter_by_rating=0x7f060048;
-        public static final int action_logout=0x7f060040;
-        public static final int action_map=0x7f060049;
-        public static final int action_profile_edit=0x7f060043;
-        public static final int action_search=0x7f060041;
-        public static final int action_settings=0x7f06003f;
-        public static final int action_toggle_favorite=0x7f060042;
+        public static final int action_add_review=0x7f060045;
+        public static final int action_filter=0x7f060046;
+        public static final int action_filter_by_distance=0x7f060047;
+        public static final int action_filter_by_price=0x7f060048;
+        public static final int action_filter_by_rating=0x7f060049;
+        public static final int action_logout=0x7f060041;
+        public static final int action_map=0x7f06004a;
+        public static final int action_profile_edit=0x7f060044;
+        public static final int action_search=0x7f060042;
+        public static final int action_settings=0x7f060040;
+        public static final int action_toggle_favorite=0x7f060043;
+        public static final int advertisementText=0x7f06003f;
         public static final int bioEdit=0x7f060022;
         public static final int bioText=0x7f060021;
         public static final int categoriesText=0x7f06001b;
@@ -357,6 +360,7 @@ containing a value of this type.
         public static final int action_settings=0x7f07001b;
         public static final int action_toggle_favorite=0x7f070057;
         public static final int add_review_text=0x7f07004f;
+        public static final int advertisement=0x7f070058;
         public static final int app_name=0x7f07001a;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 

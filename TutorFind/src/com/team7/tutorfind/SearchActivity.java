@@ -67,6 +67,14 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 			((TextView)v.findViewById(R.id.user_summary_distance)).setText(dist);
 			((TextView)v.findViewById(R.id.user_summary_num_reviews)).setText(reviews);
 			((RatingBar)v.findViewById(R.id.user_summary_score)).setRating(rating);
+			
+			if(user.optBoolean("preferred_flag")) {
+				v.setBackgroundResource(R.color.search_result_preferred_background);
+				v.findViewById(R.id.advertisementText).setVisibility(View.VISIBLE);
+			} else {
+				v.setBackgroundResource(0);
+				v.findViewById(R.id.advertisementText).setVisibility(View.GONE);
+			}
 		}
 		
 		// Build the view for a given row position in the search results list
@@ -81,25 +89,35 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		}
 	}
 	
+	// User comparison function -- always sort preferred users to the top
+	static private int compareUser(String key, JSONObject a, JSONObject b) {
+		boolean aPreferred = a.optBoolean("preferred_flag");
+		boolean bPreferred = b.optBoolean("preferred_flag");
+		
+		if(aPreferred && !bPreferred) return -1;
+		if(!aPreferred && bPreferred) return 1;
+		return Double.compare(a.optDouble(key), b.optDouble(key));
+	}
+	
 	// Comparison functions for sorting search results
 	private class DistanceComparator implements Comparator<JSONObject> {
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			return Double.compare(a.optDouble("distance"), b.optDouble("distance"));
+			return compareUser("distance", a, b);
 		}
 	}
 	
 	private class PriceComparator implements Comparator<JSONObject> {
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			return Double.compare(a.optDouble("price_per_hour"), b.optDouble("price_per_hour"));
+			return compareUser("price_per_hour", a, b);
 		}
 	}
 	
 	private class ScoreComparator implements Comparator<JSONObject> {
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			return Double.compare(b.optDouble("score"), a.optDouble("score"));
+			return compareUser("score", a, b);
 		}
 	}
 	
