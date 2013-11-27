@@ -64,7 +64,7 @@ class DbTable:
 
    def count(self, conditions, condition_vals):
       dbc = db.cursor()
-      db.execute('select 1 from %s where %s' % (self.name, conditions), condition_vals)
+      dbc.execute('select %s from %s where %s' % (self.id_col.name, self.name, conditions), condition_vals)
       return len(dbc.fetchall())
 
    def get(self, id_val):
@@ -383,7 +383,7 @@ def sanitize_user(session, user):
 
    # Append calculated values
    user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, uid]) != None
-   user['has_picture'] = favorites_table.count('user_id=?', [session.user_id]) > 0
+   user['has_picture'] = pictures_table.count('user_id=?', [uid]) > 0
 
    my_review = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, uid]);
    if my_review:
@@ -450,7 +450,7 @@ request_table = {
    'set_favorite':  RequestHandler(set_favorite,  set(['session_id', 'subject_id', 'favorited'])),
    'get_favorites': RequestHandler(get_favorites, set(['session_id'])),
    'set_picture':   RequestHandler(set_picture,   set(['session_id', 'picture'])),
-   'get_picture':   RequestHandler(set_picture,   set(['session_id', 'user_id'])),
+   'get_picture':   RequestHandler(get_picture,   set(['session_id', 'user_id'])),
    'search':        RequestHandler(search,        set(['session_id', 'query', 'lat', 'lon'])),
 }
 

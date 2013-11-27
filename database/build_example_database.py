@@ -100,3 +100,8 @@ favorite(alice, cindy, True)
 update_user(alice, 'Alice Example', 'Math, Calculus, MATH-2013')
 update_user(bob,   'Bob Example', 'MATH, PHYSICS, PHYS1302')
 update_user(cindy, 'Cindy Someone', 'physics, english, eng-3110,phys-1302')
+
+request({
+   'action': 'get_picture',
+   'session_id': alice['session_id'],
+   'user_id': alice['user_id']})
