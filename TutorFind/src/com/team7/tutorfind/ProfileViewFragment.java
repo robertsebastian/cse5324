@@ -34,6 +34,7 @@ public class ProfileViewFragment extends Fragment implements
 	
 	private JSONObject mUser = null;
 	private int mUserId = -1;
+	private Bitmap mPicture = null;
 	
 	// Create a fragment with user_id and an optional user data argument
 	static ProfileViewFragment create(int userId, String user) {		
@@ -129,12 +130,8 @@ public class ProfileViewFragment extends Fragment implements
 		getActivity().invalidateOptionsMenu();		
 		
 		// Build picture
-		if(!mUser.isNull("picture")) {
-			byte[] pictureBytes = Base64.decode(mUser.optString("picture").getBytes(), Base64.DEFAULT);
-			Bitmap picture = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
-			
-			ImageView img = (ImageView)getView().findViewById(R.id.profilePicture);
-			img.setImageBitmap(picture);
+		if(!mUser.optBoolean("has_picture")) {
+			getView().findViewById(R.id.profilePicture).setVisibility(View.GONE);
 		}
 		
 		// Build price string
@@ -173,6 +170,11 @@ public class ProfileViewFragment extends Fragment implements
 		getActivity().getActionBar().setTitle(mUser.optString("name"));		
 	}
 	
+	private void onPictureUpdated() {
+		ImageView img = (ImageView)getView().findViewById(R.id.profilePicture);
+		img.setImageBitmap(mPicture);
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -180,7 +182,7 @@ public class ProfileViewFragment extends Fragment implements
 	}
 	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)	{	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
 		return view;
 	}
@@ -221,23 +223,8 @@ public class ProfileViewFragment extends Fragment implements
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 	
-		try {
-			String user = getArguments().getString("user");
-			
-			if(user != null) {
-				// Use pre-fetched user data from search results if available
-				mUser = new JSONObject(user);
-				mUserId = mUser.optInt("user_id", -1);
-				onUserUpdated();
-				fetchUser();
-			} else {
-				// Otherwise kick of database request to retrieve user
-				mUserId = getArguments().getInt("user_id");
-				fetchUser();
-			}
-		} catch(JSONException e) {
-			Log.e(TAG, e.toString(), e);
-		}
+		mUserId = getArguments().getInt("user_id");
+		fetchUser();
 	}
 	
 	// Handle edit item click
@@ -253,14 +240,21 @@ public class ProfileViewFragment extends Fragment implements
 	// Send database request for userId
 	public void fetchUser()
 	{
-		JSONObject j = new JSONObject();
+
 		try {
-			j.put("action", "get_user");
-			j.put("user_id", mUserId);
+			JSONObject userReq = new JSONObject();
+			userReq.put("action", "get_user");
+			userReq.put("user_id", mUserId);
+			new DatabaseRequest(userReq, this, getActivity(), false);
+			
+			JSONObject picReq = new JSONObject();
+			picReq.put("action", "get_picture");
+			picReq.put("user_id", mUserId);
+			new DatabaseRequest(picReq, this, getActivity(), false);
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);
 		}
-		new DatabaseRequest(j, this, getActivity());
+
 	}
 	
 	// Send database request to set favorite status for the viewed user
@@ -283,16 +277,20 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
 		if(getActivity() == null) return; // Make sure we're still active
+
+		// Nothing to do if failed request
+		if(!response.optBoolean("success")) return;
 		
-		try {
-			if(response.getBoolean("success") && response.getString("action").equals("get_user")) {
-				mUser = response;
-				onUserUpdated();
-			}
-		} catch(JSONException e) {
-			Log.e(TAG, e.toString(), e);
-		} catch(NullPointerException e) {
-			Log.e(TAG, e.toString(), e);
+		// Handle responses
+		String action = response.optString("action");
+		if(action.equals("get_user")) {
+			mUser = response;
+			onUserUpdated();
+			
+		} else if(action.equals("get_picture") && !response.isNull("picture")) {
+			byte[] pictureBytes = Base64.decode(response.optString("picture").getBytes(), Base64.DEFAULT);
+			mPicture = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
+			onPictureUpdated();
 		}
 	}
 }
