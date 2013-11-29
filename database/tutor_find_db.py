@@ -284,9 +284,16 @@ def update_user(req):
    if 'subject_tags' in req:
       req['subject_tags_normalized'] = normalize_search_string(req['subject_tags'])
 
+   if 'tutor_flag' in req:
+      req['tutor_flag'] = (0, 1)[req['tutor_flag']]
+
    # Update editable fields with request data
    users_table.update(session.user_id, req, True)
    db.commit()
+
+   # Optionally add a picture with this request
+   if 'picture' in req:
+      set_picture(req)
 
    # Return updated data
    return sanitize_user(session, users_table.get(session.user_id))
@@ -390,6 +397,7 @@ def sanitize_user(session, user):
    user['favorited'] = favorites_table.select_one('user_id=? and subject_id=?', [session.user_id, uid]) != None
    user['has_picture'] = pictures_table.count('user_id=?', [uid]) > 0
    user['preferred_flag'] = user['preferred_flag'] == 1 # Convert to boolean
+   user['tutor_flag'] = user['tutor_flag'] == 1
 
    my_review = reviews_table.select_one('submitter_id=? and subject_id=?', [session.user_id, uid]);
    if my_review:

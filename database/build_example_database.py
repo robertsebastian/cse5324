@@ -49,6 +49,7 @@ def update_user(user, name, tags):
       'loc_lat':        32.715278 + (random.randrange(0, 1000) - 500) / 10000.0,
       'loc_lon':        -97.016944 + (random.randrange(0, 1000) - 500) / 10000.0,
       'about_me':       (name + " ") * 20,
+      'tutor_flag':     True,
       'session_id':     user['session_id']})
 
 def set_picture(user, image):
