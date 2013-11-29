@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -74,11 +75,11 @@ public class ProfileViewFragment extends Fragment implements
 	// a text content area, and a hidden SMS button. An optional intent for
 	// content area and SMS buttons may be provided. The SMS button is shown
 	// only if an intent is provided.
-	private void addTextField(ViewGroup root, String title, String content) {
+	private void addTextField(ViewGroup root, int title, String content) {
 		addTextField(root, title, content, null, null);
 	}
 	
-	private void addTextField(ViewGroup root, String title, String content, Intent action, Intent smsAction) {
+	private void addTextField(ViewGroup root, int title, String content, Intent action, Intent smsAction) {
 		if(content == null || content.equals("null")) return;
 		
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);		
@@ -97,7 +98,7 @@ public class ProfileViewFragment extends Fragment implements
 	}
 	
 	// Initialize rating bar activity with an optional intent to launch on click
-	private void addRatingField(ViewGroup root, String title, float rating, int numRatings, Intent action) {
+	private void addRatingField(ViewGroup root, int title, float rating, int numRatings, Intent action) {
 		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		String numRatingsStr = String.format(Locale.US, "(%d)", numRatings);
@@ -148,23 +149,26 @@ public class ProfileViewFragment extends Fragment implements
 		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
 		root.removeAllViews(); // Delete existing fields for a refresh
 		
-		addTextField(root, "EMAIL",
+		addTextField(root, R.string.field_email,
 				mUser.optString("public_email_address", null), 
 				new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + mUser.optString("public_email_address"))),
 				null);
-		addTextField(root, "PHONE",
+		addTextField(root, R.string.field_phone,
 				mUser.optString("phone", null),
 				new Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + mUser.optString("phone"))),
 				new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + mUser.optString("phone"))));
-		addTextField(root, "MEETING LOCATION",
-				mUser.optString("loc_address", null),
-				new Intent(getActivity(), MapActivity.class).putExtra("users", mapUsers.toString()),
-				null);
-		addTextField(root, "SUBJECTS", mUser.optString("subject_tags", null));
-		addTextField(root, "RATE", price);
-		addTextField(root, "ABOUT ME", mUser.optString("about_me", null));
-		addRatingField(root, "RATING", (float)mUser.optDouble("score"), mUser.optInt("num_reviews"),
-				new Intent(getActivity(), ReviewActivity.class).putExtra("user_id", mUser.optInt("user_id")));
+		
+		if(mUser.optBoolean("tutor_flag")) {
+			addTextField(root, R.string.field_meeting_location,
+					mUser.optString("loc_address", null),
+					new Intent(getActivity(), MapActivity.class).putExtra("users", mapUsers.toString()),
+					null);
+			addTextField(root, R.string.field_subjects, mUser.optString("subject_tags", null));
+			addTextField(root, R.string.field_rate, price);
+			addTextField(root, R.string.field_about_me, mUser.optString("about_me", null));
+			addRatingField(root, R.string.field_rating, (float)mUser.optDouble("score"), mUser.optInt("num_reviews"),
+					new Intent(getActivity(), ReviewActivity.class).putExtra("user_id", mUser.optInt("user_id")));
+		}
 		
 		// Put user's name in the title bar
 		getActivity().getActionBar().setTitle(mUser.optString("name"));		
@@ -231,7 +235,8 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == R.id.action_profile_edit) {
-            startActivity(new Intent(getActivity(), ProfileEditActivity.class));
+			Intent i = new Intent(getActivity(), ProfileEditActivity.class).putExtra("user", mUser.toString());
+			startActivityForResult(i, 0);
             return true;
 		}
     	return super.onOptionsItemSelected(item);
@@ -240,7 +245,6 @@ public class ProfileViewFragment extends Fragment implements
 	// Send database request for userId
 	public void fetchUser()
 	{
-
 		try {
 			JSONObject userReq = new JSONObject();
 			userReq.put("action", "get_user");
@@ -255,6 +259,11 @@ public class ProfileViewFragment extends Fragment implements
 			Log.e(TAG, e.toString(), e);
 		}
 
+	}
+	
+	public Bitmap decodePicture(String picture) {
+		byte[] pictureBytes = Base64.decode(picture.getBytes(), Base64.DEFAULT);
+		return BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
 	}
 	
 	// Send database request to set favorite status for the viewed user
@@ -288,9 +297,28 @@ public class ProfileViewFragment extends Fragment implements
 			onUserUpdated();
 			
 		} else if(action.equals("get_picture") && !response.isNull("picture")) {
-			byte[] pictureBytes = Base64.decode(response.optString("picture").getBytes(), Base64.DEFAULT);
-			mPicture = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
+			mPicture = decodePicture(response.optString("picture"));
 			onPictureUpdated();
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode != Activity.RESULT_OK) return;
+		
+		if(!data.getExtras().containsKey("user")) return;
+			
+		try {
+			mUser = new JSONObject(data.getExtras().getString("user"));
+			onUserUpdated();
+			
+			if(mUser.has("picture")) {
+				mPicture = decodePicture(mUser.optString("picture"));
+				mUser.remove("picture");
+				onPictureUpdated();
+			}
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
 		}
 	}
 }

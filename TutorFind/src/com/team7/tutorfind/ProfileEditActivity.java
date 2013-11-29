@@ -1,75 +1,175 @@
 package com.team7.tutorfind;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Bundle;
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
+import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
-public class ProfileEditActivity extends Activity implements DatabaseRequest.Listener {
+public class ProfileEditActivity extends Activity implements
+	DatabaseRequest.Listener,
+	OnCheckedChangeListener 
+{
+	public static final String TAG = "profile_edit";
+	
+	private JSONObject mUser;
+	private List<Item> mCommonItems;
+	private List<Item> mTutorItems;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile_edit);
 		
-		//TODO: Need to get the user data from the login to add to the database
+		ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setHomeButtonEnabled(false);
+        
+		setContentView(R.layout.activity_profile_edit);
 	}
 	
-	public void sendDatabaseData ()
-	{
-		//create new JSONObject to send to that database
-		JSONObject j = new JSONObject();
+	// Container for handling an edittext for a profile view item
+	private class Item {
+		String mDbKey;
+		TextView mText;
+		TextView mTitle;
 		
-		try
-		{
-			//Create links to get data from the view
-			TextView firstField = (TextView)findViewById(R.id.firstEdit);
-			TextView lastField = (TextView)findViewById(R.id.lastEdit);
-			TextView emailField = (TextView)findViewById(R.id.emailEdit);
-			TextView phoneField = (TextView)findViewById(R.id.phoneEdit);
-			TextView meetingField = (TextView)findViewById(R.id.meetingEdit);
-			TextView travelField = (TextView)findViewById(R.id.travelEdit);
-			TextView tagField = (TextView)findViewById(R.id.tagEdit);
-			TextView timesField = (TextView)findViewById(R.id.timesEdit);
-			TextView priceField = (TextView)findViewById(R.id.priceEdit);
-			TextView bioField = (TextView)findViewById(R.id.bioEdit);
+		Item(TextView title, TextView text) {
+			mText = text;
+			mTitle = title;
+			mDbKey = (String)text.getTag();
 			
-			//concat the first and last name into one string
-			String name = firstField.getText().toString()+lastField.getText().toString();
-			
-			//put information within a JSONObject to send to the database
-			j.put("name", name);
-			j.put("email", emailField.getText());
-			j.put("phone", phoneField.getText());
-			j.put("meeting", meetingField.getText());
-			j.put("travel", travelField.getText());
-			j.put("tag", tagField.getText());
-			j.put("times", timesField.getText());
-			j.put("price", priceField.getText());
-			j.put("bio", bioField.getText());
-			//TODO: Need to check the field that are in the database.
-		} catch(JSONException e) {
-			Log.e("profileEdit", "Error handling JSON input from view");
+			mText.setText(mUser.isNull(mDbKey) ? "" : mUser.optString(mDbKey));
 		}
 		
-		new DatabaseRequest(j, this, this);
+		// Enable or disable the edit field
+		public void setEnabled(boolean enabled) {
+			int color = getResources().getColor(
+					enabled ? R.color.profile_item_title_normal : R.color.profile_item_title_disabled);
+			mTitle.setTextColor(color);
+			mText.setEnabled(enabled);
+		}
+		
+		// Store text items in user object
+		public void save() {
+			try {
+				mUser.put(mDbKey, mText.getText());
+			} catch(JSONException e) {
+				Log.e(TAG, e.toString());
+			}
+		}
 	}
 	
+	// Save text from all items in user object
+	public void saveAllItems() {
+		for(Item i : mCommonItems) i.save();
+		for(Item i : mTutorItems) i.save();		
+	}
 	
-	public void onSubmitButtonClicked(View v)
+	// Save off text form all items in user object
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		saveAllItems();
+		getIntent().putExtra("user", mUser.toString());
+	}
+	
+	// Search a LinearLayout for profile items and map them to our user object.
+	// This relies on a specific layout format: LinearLayout of LinearLayouts
+	// where the second LinearLayout consists of two views: a title TextView and
+	// an editable field TextView
+	private List<Item> addItemsFromLayout(ViewGroup list) {
+		ArrayList<Item> items = new ArrayList<Item>();
+		for(int i = 0; i < list.getChildCount(); i++) {
+			ViewGroup item = (ViewGroup)list.getChildAt(i);
+			items.add(new Item((TextView)item.getChildAt(0), (TextView)item.getChildAt(1)));
+		}
+		return items;
+	}
+	
+	public void onUserUpdated() {
+		if(mUser == null) return;
+		
+		// Map to the profile view items in the layout
+		mCommonItems = addItemsFromLayout((ViewGroup)findViewById(R.id.common_list));
+		mTutorItems = addItemsFromLayout((ViewGroup)findViewById(R.id.tutor_list));
+		
+		// Enable/disable tutor-only fields based on whether we are a tutor or not
+		CheckBox isTutor = (CheckBox)findViewById(R.id.is_tutor_checkbox);
+		isTutor.setOnCheckedChangeListener(this);
+		isTutor.setChecked(mUser.optBoolean("tutor_flag"));
+	}
+	
+	@Override
+	public void onStart()
 	{
-		sendDatabaseData();
+		super.onStart();
+		
+		try {
+			mUser = new JSONObject(getIntent().getExtras().getString("user"));
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		}
+		onUserUpdated();
 	}
+	
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+		try {
+			mUser.put("tutor_flag", isChecked);
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		}
+		
+		// Enable/disable tutor-only fields based on whether we are a tutor or not
+		for(Item i : mTutorItems) i.setEnabled(isChecked);
+	}
+	
+	// Handle actionbar menu actions
+	public void onSaveButton(MenuItem item) {
+		try {
+			// Save all items to our user object and send it to the database
+			saveAllItems();
+			mUser.put("action", "update_user");
+			new DatabaseRequest(mUser, this, this, true);
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString());
+		}
+	}
+	
+	public void onCancelButton(MenuItem item) {
+		
+	}
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_edit, menu);
+        return true;
+    }
 
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
-		// TODO Auto-generated method stub
+		if(!response.optBoolean("success")) return;
 		
+		String action = response.optString("action");
+		
+		// If user successfully updated, return to calling activity
+		if(action.equals("update_user")) {
+			Intent i = new Intent().putExtra("user", response.toString());
+			setResult(Activity.RESULT_OK, i);
+			finish();
+		}
 	}
-
 }

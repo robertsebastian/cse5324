@@ -26,22 +26,32 @@
     <string name="error_connecting_to_server">Error: Could not connect to server</string>
     <string name="profile_edit_title">Please edit the following Categories</string>
     <string name="profile_placeholder">Profile Name Here</string>
-    <string name="title_activity_profile_edit">Profile_edit</string>
+    
+    <string name="title_activity_profile_edit">My Profile</string>
     <string name="title_activity_profile_view">ProfileView</string>
-    <string name="FirstNameString">First Name:</string>
-    <string name="lastNameText">Last Name:</string>
-    <string name="phoneText">Phone Number:</string>
-    <string name="emailText">Email Address:</string>
-    <string name="meetingText">Meeting Location:</string>
-    <string name="timesText">Meeting Times:</string>
-    <string name="priceText">Price rate:</string>
-    <string name="questionTutorText">Tutor?</string>
-    <string name="tagText">Tutoring Categories:</string>
-    <string name="BioText">Bio Description:</string>
-    <string name="SubmitText">Submit</string>
-    <string name="travelText">Max Travel Distance:</string>
-    <string name="pictureContentText">Tutor Profile Picture</string>
-    <string name="textPlaceHolder">Text Place Holder</string>
+    <string name="title_activity_custom_favorites_adapter">CustomFavoritesAdapter</string>
+    <string name="title_activity_favorites">Favorites</string>
+    <string name="title_activity_all_favorites">AllFavorites</string>
+    <string name="title_activity_favorite">Favorite</string>
+    <string name="title_activity_search">Results</string>
+    <string name="title_activity_reviews">Reviews</string>
+    				
+    <string name="field_name">Name</string>
+    <string name="field_email">Email</string>
+    <string name="field_phone">Phone</string>
+    <string name="field_about_me">About Me</string>
+    <string name="field_subjects">Subjects</string>
+    <string name="field_meeting_location">Meeting Location</string>
+    <string name="field_rate">Rate</string>
+    <string name="field_rating">Rating</string>
+    
+    <string name="hint_name">Your Name</string>
+    <string name="hint_email">you@example.com</string>
+    <string name="hint_phone">555-555-1234</string>
+    <string name="hint_about_me">Additional information about myself&amp;#8230;</string>
+    <string name="hint_subjects">Subject1, Subject2, CLASS-1234, &#8230;</string>
+    <string name="hint_meeting_location">123 Somewhere St.\nSomewhere, TX 12345</string>
+    <string name="hint_rate">$99.00/hr</string>
 
     <string-array name="profile_items">
         <item>Email</item>
@@ -62,21 +72,14 @@
     <string name="filter_by_price">Price</string>
     <string name="filter_by_rating">Rating</string>
     <string name="action_filter">Filter</string>
-    <string name="title_activity_custom_favorites_adapter">CustomFavoritesAdapter</string>
-    <string name="title_activity_favorites">Favorites</string>
-    <string name="title_activity_all_favorites">AllFavorites</string>
-    <string name="title_activity_favorite">Favorite</string>
-    <string name="title_activity_search">Results</string>
-    <string name="title_activity_reviews">Reviews</string>
     <string name="add_review_text">Add Review</string>
     <string name="showReviewsButton">Show Reviews</string>
     <string name="review_title">Add Review</string>
-    <string name="review_ok">OK</string>
-    <string name="review_cancel">Cancel</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="action_map">Map</string>
     <string name="action_add_review">Add Review</string>
     <string name="action_toggle_favorite">Toggle Favorite</string>
     <string name="advertisement">advertisement</string>
-
+    <string name="action_edit_save">Save</string>
+    <string name="action_edit_cancel">Discard</string>
 </resources>

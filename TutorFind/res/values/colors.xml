@@ -6,4 +6,6 @@
     <color name="search_result_preferred_background">#55BDCEE0</color>
     <color name="advertisement">#55666666</color>
     <color name="rating">#555555</color>
+    <color name="profile_item_title_normal">#000</color>
+    <color name="profile_item_title_disabled">#999</color>
 </resources>

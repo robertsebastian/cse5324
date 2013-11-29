@@ -15,4 +15,28 @@
         <item name="android:textOff"></item>
    		<item name="android:textOn"></item>
     </style>
+    
+    <style name="ProfileItemTitleStyle" parent="@android:style/TextAppearance.Small">
+		<item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:text">-Title-</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">normal</item>
+    </style>
+    <style name="ProfileItemLayoutStyle">
+        <item name="android:layout_width">fill_parent</item>
+	    <item name="android:layout_height">wrap_content</item>
+	    <item name="android:divider">@drawable/divider_horizontal</item>
+	    <item name="android:orientation">vertical</item>
+	    <item name="android:showDividers">middle</item>
+    </style>
+    <style name="ProfileItemEditTextStyle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
 </resources>

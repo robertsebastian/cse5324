@@ -40,12 +40,10 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	// Array adapter to manage the search results ListView. Populates user
 	// summary views and handles sorting of the data set.
 	private static class UserSummaryArrayAdapter extends ArrayAdapter<JSONObject> {
-		private final Context mContext;
 		private final List<JSONObject> mUsers;
 		
 		public UserSummaryArrayAdapter(Context context, List<JSONObject> users) {
 			super(context, R.layout.user_summary_row, users);
-			mContext = context;
 			mUsers = users;
 		}
 		
@@ -80,7 +78,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		// Build the view for a given row position in the search results list
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View rowView = inflater.inflate(R.layout.user_summary_row, parent, false);
 			
 			fillUserSummary(mUsers.get(position), rowView);
@@ -117,7 +115,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	private class ScoreComparator implements Comparator<JSONObject> {
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			return compareUser("score", a, b);
+			return compareUser("score", b, a);
 		}
 	}
 	
@@ -152,8 +150,21 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     }
 	
 	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.d(TAG, "SAVE STATE");
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.d(TAG, "RESUME");
+		//doSearch(getIntent().getStringExtra(SEARCH_QUERY));
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		doSearch(getIntent().getStringExtra(SEARCH_QUERY));
 	}
 	

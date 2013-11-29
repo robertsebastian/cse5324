@@ -171,8 +171,8 @@ public class ReviewActivity extends TutorFindActivity
 		builder.setTitle(R.string.review_title)
 			.setView(layout)
 		    .setCancelable(true)
-		    .setNegativeButton(R.string.review_cancel, null)
-		    .setPositiveButton(R.string.review_ok, new DialogInterface.OnClickListener() {
+		    .setNegativeButton(android.R.string.cancel, null)
+		    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 		    	@Override
 		    	public void onClick(DialogInterface dialog, int which) {
 		    		review(rating.getRating(), text.getText().toString());

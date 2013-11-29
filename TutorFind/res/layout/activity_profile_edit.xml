@@ -2,183 +2,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ProfileEdit"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:focusable="true"
+    android:focusableInTouchMode="true" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5dp"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_edit_title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+	    <LinearLayout
+	        android:id="@+id/common_list"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="20dp"
+	        android:orientation="vertical" >
+	        
+	        <LinearLayout style="@style/ProfileItemLayoutStyle">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_name" />
+			    <EditText style="@style/ProfileItemEditTextStyle"
+			        android:tag="name"
+			        android:inputType="text"
+			        android:hint="@string/hint_name" />
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_email" />
+			    <EditText style="@style/ProfileItemEditTextStyle"
+			        android:tag="public_email_address"
+			        android:inputType="text|textEmailAddress"
+			        android:hint="@string/hint_email" />
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_phone" />
+			    <EditText style="@style/ProfileItemEditTextStyle"
+			        android:tag="phone"
+			        android:inputType="phone"
+			        android:hint="@string/hint_phone" />
+			</LinearLayout>
 
-        <TextView
-            android:id="@+id/firstText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/FirstNameString"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+			
+	    </LinearLayout>
 
-        <EditText
-            android:id="@+id/firstEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName" >
+	    <CheckBox
+	        android:id="@+id/is_tutor_checkbox"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="I want to tutor a subject" />
 
-            <requestFocus />
-        </EditText>
+	    <LinearLayout
+	        android:id="@+id/tutor_list"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_subjects" />
+			    <EditText style="@style/ProfileItemEditTextStyle"
+			        android:tag="subject_tags"
+			        android:inputType="text|textMultiLine"
+			        android:hint="@string/hint_subjects" />
+			</LinearLayout>
+			
 
-        <TextView
-            android:id="@+id/lastText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/lastNameText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/lastEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName" />
-
-        <TextView
-            android:id="@+id/emailText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/emailText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/emailEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textEmailAddress" />
-
-        <TextView
-            android:id="@+id/phoneText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/phoneText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/phoneEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="phone" />
-
-        <TextView
-            android:id="@+id/meetingText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/meetingText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/meetingEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPostalAddress" />
-
-        <TextView
-            android:id="@+id/travelText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/travelText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/travelEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="numberSigned" />
-
-        <TextView
-            android:id="@+id/categoriesText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/tagText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/tagEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textMultiLine" />
-
-        <TextView
-            android:id="@+id/dataEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/timesText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/timesEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textMultiLine" />
-
-        <TextView
-            android:id="@+id/priceText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/priceText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/priceEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="numberDecimal" />
-
-        <TextView
-            android:id="@+id/bioText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:text="@string/BioText"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/bioEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textMultiLine" />
-
-        <Button
-            android:id="@+id/editProfileButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/SubmitText" />
+			<LinearLayout style="@style/ProfileItemLayoutStyle">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_meeting_location" />
+			    <EditText style="@style/ProfileItemEditTextStyle"
+			        android:tag="loc_address"
+			        android:inputType="text|textPostalAddress|textMultiLine"
+			        android:hint="@string/hint_meeting_location" />
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_rate" />
+			    <EditText style="@style/ProfileItemEditTextStyle"
+			        android:tag="price_per_hour"
+			        android:inputType="number|numberDecimal"
+			        android:hint="@string/hint_rate" />
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_about_me" />
+			    <EditText style="@style/ProfileItemEditTextStyle"
+			        android:tag="about_me"
+			        android:inputType="text|textMultiLine"
+			        android:hint="@string/hint_about_me" />	        
+			</LinearLayout>
+	    </LinearLayout>
 
     </LinearLayout>
 

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/lastname_textbox"
         android:layout_below="@+id/lastname_textbox"
-        android:text="@string/phoneText" />
+        android:text="&lt;phone>" />
 
     <TextView
         android:id="@+id/firstname_textbox"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/phonenumber_textbox"
         android:layout_alignLeft="@+id/email_textbox"
-        android:text="@string/FirstNameString" />
+        android:text="&lt;first>" />
 
     <TextView
         android:id="@+id/email_textbox"
@@ -29,7 +29,7 @@
         android:layout_alignBottom="@+id/phonenumber_textbox"
         android:layout_marginLeft="30dp"
         android:layout_toRightOf="@+id/phonenumber_textbox"
-        android:text="@string/emailText" />
+        android:text="&lt;email>" />
 
     <TextView
         android:id="@+id/lastname_textbox"
@@ -39,7 +39,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="50dp"
         android:layout_marginTop="16dp"
-        android:text="@string/lastNameText" />
+        android:text="&lt;last>" />
 
     <ImageView
         android:id="@+id/profile_view_item_message_button"
