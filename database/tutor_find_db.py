@@ -163,8 +163,8 @@ users_table = DbTable('users', (
       ('preferred_flag',          False, 'integer'),
       ('subject_tags',            True,  'text'),
       ('subject_tags_normalized', True,  'text'),
-      ('available_days',          True,  'text'),
-      ('available_times',         True,  'text'),
+      ('availability_string',     True,  'text'),
+      ('availability',            True,  'integer'),
       ('price_per_hour',          True,  'real'),
       ('score',                   False, 'real'),
       ('num_reviews',             False, 'integer')))
@@ -419,7 +419,11 @@ def search(req):
    query = normalize_search_string(req['query'])
    query_glob = '*%s*' % query
 
-   results = users_table.select_many( 'comp_tags(subject_tags_normalized, ?) or name_normalized glob ?', [query, query_glob])
+   results = users_table.select_many( """
+      tutor_flag == 1 and (
+         comp_tags(subject_tags_normalized, ?) or
+         name_normalized glob ?
+      )""", [query, query_glob])
    results = [sanitize_user(session, u) for u in results]
 
    # Calculate distance from querying user
