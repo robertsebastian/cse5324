@@ -24,7 +24,127 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="5dp" >
+            
+			<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="public_email_address">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_email" />
+			    <TextView style="@style/ProfileItemViewTextStyle" />
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="phone">
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_phone" />
+			    <LinearLayout
+			            android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:divider="@drawable/divider_vertical"
+				        android:dividerPadding="8dp"
+				        android:showDividers="middle" >
+					    <TextView style="@style/ProfileItemViewTextStyle"
+					        android:layout_width="0dp"
+	        				android:layout_height="wrap_content"
+	        				android:layout_weight="1" />
+					    <ImageView
+				            android:id="@+id/profile_view_item_message_button"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:layout_gravity="center"
+				            android:background="@drawable/profile_view_item_selector"
+				            android:paddingLeft="10dp"
+				            android:paddingRight="10dp"
+				            android:src="@drawable/ic_text_holo_light" />
+			    </LinearLayout>
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="subject_tags" >
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_subjects" />
+			    <TextView style="@style/ProfileItemViewTextStyle" />
+			</LinearLayout>		
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="loc_address" >
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_meeting_location" />
+			    <TextView style="@style/ProfileItemViewTextStyle" />
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="price_per_hour" >
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_rate" />
+			    <TextView style="@style/ProfileItemViewTextStyle" />
+			</LinearLayout>
+			
+			<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="about_me" >
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_about_me" />
+			    <TextView style="@style/ProfileItemViewTextStyle" />
+			</LinearLayout>
 
+			<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="rating" >
+			
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_rating" />
+			
+			    <RelativeLayout
+			        android:id="@+id/profile_view_item_rating_layout"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:background="@drawable/profile_view_item_selector"
+			        android:paddingTop="10dp"
+			        android:paddingBottom="10dp"
+			        android:paddingLeft="5dp"
+			        android:paddingRight="5dp" >
+			
+			        <RatingBar
+			            android:id="@+id/profile_view_item_rating_stars"
+			            style="?android:attr/ratingBarStyleIndicator"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentLeft="true"
+			            android:layout_alignParentTop="true"
+			            android:layout_centerVertical="true"
+			            android:stepSize="0.5" />
+			
+			        <TextView
+			            android:id="@+id/profile_view_item_num_ratings"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_centerVertical="true"
+			            android:layout_toRightOf="@+id/profile_view_item_rating_stars"
+			            android:paddingLeft="5dp"
+			            android:text="(0)"
+			            android:textAppearance="?android:attr/textAppearanceMedium" />
+			
+			        <ImageView
+			            android:id="@+id/imageView1"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_alignParentRight="true"
+			            android:layout_centerVertical="true"
+			            android:src="@drawable/ic_btn_search_go" />
+			
+			        <TextView
+			            android:id="@+id/profile_view_item_rating"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_centerVertical="true"
+			            android:layout_toLeftOf="@+id/imageView1"
+			            android:gravity="center_vertical"
+			            android:text="0.0"
+			            android:textAppearance="?android:attr/textAppearanceLarge"
+			            android:textColor="@color/rating"
+			            android:textSize="35sp"
+			            android:textStyle="bold" />
+			
+			    </RelativeLayout>
+			</LinearLayout>
         </LinearLayout>
 	</LinearLayout>
 </ScrollView>

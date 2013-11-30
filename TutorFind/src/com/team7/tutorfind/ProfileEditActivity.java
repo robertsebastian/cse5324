@@ -46,12 +46,13 @@ public class ProfileEditActivity extends Activity implements
 		TextView mText;
 		TextView mTitle;
 		
-		Item(TextView title, TextView text) {
-			mText = text;
-			mTitle = title;
-			mDbKey = (String)text.getTag();
+		Item(ViewGroup group) {
+			mTitle = (TextView)group.findViewById(R.id.profile_item_title);
+			mText  = (TextView)group.findViewById(R.id.profile_edit_value);
+			mDbKey = (String)mText.getTag();
 			
 			mText.setText(mUser.isNull(mDbKey) ? "" : mUser.optString(mDbKey));
+			mText.setId(Util.generateViewId()); // ID must be unique for rotation to work right
 		}
 		
 		// Enable or disable the edit field
@@ -87,14 +88,12 @@ public class ProfileEditActivity extends Activity implements
 	}
 	
 	// Search a LinearLayout for profile items and map them to our user object.
-	// This relies on a specific layout format: LinearLayout of LinearLayouts
-	// where the second LinearLayout consists of two views: a title TextView and
-	// an editable field TextView
+	// This relies on a specific layout format: LinearLayout of views that
+	// contain title and value resource views
 	private List<Item> addItemsFromLayout(ViewGroup list) {
 		ArrayList<Item> items = new ArrayList<Item>();
 		for(int i = 0; i < list.getChildCount(); i++) {
-			ViewGroup item = (ViewGroup)list.getChildAt(i);
-			items.add(new Item((TextView)item.getChildAt(0), (TextView)item.getChildAt(1)));
+			items.add(new Item((ViewGroup)list.getChildAt(i)));
 		}
 		return items;
 	}
@@ -110,6 +109,7 @@ public class ProfileEditActivity extends Activity implements
 		CheckBox isTutor = (CheckBox)findViewById(R.id.is_tutor_checkbox);
 		isTutor.setOnCheckedChangeListener(this);
 		isTutor.setChecked(mUser.optBoolean("tutor_flag"));
+		for(Item i : mTutorItems) i.setEnabled(mUser.optBoolean("tutor_flag"));
 	}
 	
 	@Override
@@ -147,10 +147,6 @@ public class ProfileEditActivity extends Activity implements
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString());
 		}
-	}
-	
-	public void onCancelButton(MenuItem item) {
-		
 	}
 
     @Override

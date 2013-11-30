@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="profile_item_title"></item>
+    <item type="id" name="profile_edit_value"></item>
+    <item name="profile_view_value" type="id"/>
+    <item name="profile_item_layout" type="id"/>
+    
+</resources>

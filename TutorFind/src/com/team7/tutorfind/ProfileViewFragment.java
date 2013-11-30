@@ -8,14 +8,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -71,35 +68,33 @@ public class ProfileViewFragment extends Fragment implements
 		});
 	}
 	
-	// Append a profile text field to the content list. This contains a title,
-	// a text content area, and a hidden SMS button. An optional intent for
-	// content area and SMS buttons may be provided. The SMS button is shown
-	// only if an intent is provided.
-	private void addTextField(ViewGroup root, int title, String content) {
-		addTextField(root, title, content, null, null);
+	// Find the value field of a profile view item with a given tag
+	private View findValue(String tag) {
+		return getView().findViewWithTag(tag).findViewById(R.id.profile_view_value);
 	}
 	
-	private void addTextField(ViewGroup root, int title, String content, Intent action, Intent smsAction) {
-		if(content == null || content.equals("null")) return;
-		
-		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);		
-		View field = inflater.inflate(R.layout.profile_view_item, null);
-		
-		TextView titleView   = (TextView)field.findViewById(R.id.profile_view_item_title);		
-		TextView contentView = (TextView)field.findViewById(R.id.profile_view_item_content);
-		ImageView smsView    = (ImageView)field.findViewById(R.id.profile_view_item_message_button);
-		
-		titleView.setText(title);
-		contentView.setText(content);
-		addAction(contentView, action);
-		addAction(smsView, smsAction);
-
-		root.addView(field);
+	// Find a profile item view with a given tag and set its text to the mUser
+	// field of the same name
+	private void setText(String tag) {
+		setText(tag, mUser.optString(tag));
 	}
 	
-	// Initialize rating bar activity with an optional intent to launch on click
-	private void addRatingField(ViewGroup root, int title, float rating, int numRatings, Intent action) {
-		LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	// Find a profile item view with a given tag and set its text
+	private void setText(String tag, String text) {
+		ViewGroup item = (ViewGroup)getView().findViewWithTag(tag);
+		item.setVisibility(mUser.isNull(tag) ? View.GONE : View.VISIBLE);
+		
+		TextView textView = (TextView)item.findViewById(R.id.profile_view_value);
+		textView.setText(text);		
+	}
+	
+	// Set up a ratings profile view item with the content of mUser
+	private void setRating(String tag) {
+		ViewGroup item = (ViewGroup)getView().findViewWithTag(tag);
+		item.setVisibility(View.VISIBLE);
+		
+		int numRatings = mUser.optInt("num_reviews");
+		float rating = (float)mUser.optDouble("score");
 		
 		String numRatingsStr = String.format(Locale.US, "(%d)", numRatings);
 		String ratingStr = String.format(Locale.US, "%.1f", rating);
@@ -110,68 +105,56 @@ public class ProfileViewFragment extends Fragment implements
 			rating = 0.0f;
 		}
 		
-		View field = inflater.inflate(R.layout.profile_view_item_rating, null);	
-		
-		((TextView)field.findViewById(R.id.profile_view_item_title)).setText(title);
-		((RatingBar)field.findViewById(R.id.profile_view_item_rating_stars)).setRating(rating);
-		((TextView)field.findViewById(R.id.profile_view_item_num_ratings)).setText(numRatingsStr);
-		((TextView)field.findViewById(R.id.profile_view_item_rating)).setText(ratingStr);
-		
-		addAction(field.findViewById(R.id.profile_view_item_rating_layout), action);
-
-		root.addView(field);
+		((RatingBar)item.findViewById(R.id.profile_view_item_rating_stars)).setRating(rating);
+		((TextView)item.findViewById(R.id.profile_view_item_num_ratings)).setText(numRatingsStr);
+		((TextView)item.findViewById(R.id.profile_view_item_rating)).setText(ratingStr);
 	}
 	
-	// Initialize views with values from a user object
-	private void onUserUpdated()
-	{
-		if(mUser == null) return;
+	private void onUserUpdated() {
+		if(mUser == null || getView() == null) return;
 		
 		// Update favorite start on options menu
-		getActivity().invalidateOptionsMenu();		
+		getActivity().invalidateOptionsMenu();
 		
-		// Build picture
+		// Put user's name in the title bar
+		getActivity().getActionBar().setTitle(mUser.optString("name"));		
+		
+		// Hide placeholder picture if user doesn't have one to load
 		if(!mUser.optBoolean("has_picture")) {
 			getView().findViewById(R.id.profilePicture).setVisibility(View.GONE);
 		}
 		
-		// Build price string
-		String price = null;
-		if(!mUser.isNull("price_per_hour")) {
-			String.format(Locale.US, "$%.2f/hr", mUser.optDouble("price_per_hour", 999.0));
+		// Default to all views turned off
+		ViewGroup list = (ViewGroup)getView().findViewById(R.id.profile_content_list);
+		for(int i = 0; i < list.getChildCount(); i++) {
+			list.getChildAt(i).setVisibility(View.GONE);
 		}
 		
-		// Build list of users to show on map when address is clicked
-		JSONArray mapUsers = new JSONArray();
-		mapUsers.put(mUser);
-		
-		// Add all variable user fields to the view
-		ViewGroup root = (ViewGroup)getView().findViewById(R.id.profile_content_list);
-		root.removeAllViews(); // Delete existing fields for a refresh
-		
-		addTextField(root, R.string.field_email,
-				mUser.optString("public_email_address", null), 
-				new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + mUser.optString("public_email_address"))),
-				null);
-		addTextField(root, R.string.field_phone,
-				mUser.optString("phone", null),
-				new Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + mUser.optString("phone"))),
-				new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + mUser.optString("phone"))));
-		
+		// Fill in view items
+		setText("public_email_address");
+		setText("phone");
 		if(mUser.optBoolean("tutor_flag")) {
-			addTextField(root, R.string.field_meeting_location,
-					mUser.optString("loc_address", null),
-					new Intent(getActivity(), MapActivity.class).putExtra("users", mapUsers.toString()),
-					null);
-			addTextField(root, R.string.field_subjects, mUser.optString("subject_tags", null));
-			addTextField(root, R.string.field_rate, price);
-			addTextField(root, R.string.field_about_me, mUser.optString("about_me", null));
-			addRatingField(root, R.string.field_rating, (float)mUser.optDouble("score"), mUser.optInt("num_reviews"),
-					new Intent(getActivity(), ReviewActivity.class).putExtra("user_id", mUser.optInt("user_id")));
+			setText("subject_tags");
+			setText("loc_address");
+			setText("price_per_hour", String.format(Locale.US, "$%.2f/hr", mUser.optDouble("price_per_hour", 999.0)));
+			setText("about_me");
+			setRating("rating");
 		}
 		
-		// Put user's name in the title bar
-		getActivity().getActionBar().setTitle(mUser.optString("name"));		
+		// Add view actions
+		JSONArray mapUsers = new JSONArray();
+        mapUsers.put(mUser);        
+        
+		addAction(findValue("public_email_address"),
+				new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + mUser.optString("public_email_address"))));
+		addAction(findValue("phone"), 
+				new Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + mUser.optString("phone"))));
+		addAction(getView().findViewById(R.id.profile_view_item_message_button),
+				new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + mUser.optString("phone"))));
+		addAction(findValue("loc_address"),
+				new Intent(getActivity(), MapActivity.class).putExtra("users", mapUsers.toString()));
+		addAction(getView().findViewById(R.id.profile_view_item_rating_layout),
+				new Intent(getActivity(), ReviewActivity.class).putExtra("user_id", mUser.optInt("user_id")));
 	}
 	
 	private void onPictureUpdated() {
@@ -261,11 +244,6 @@ public class ProfileViewFragment extends Fragment implements
 
 	}
 	
-	public Bitmap decodePicture(String picture) {
-		byte[] pictureBytes = Base64.decode(picture.getBytes(), Base64.DEFAULT);
-		return BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
-	}
-	
 	// Send database request to set favorite status for the viewed user
 	public void setFavorite(boolean favorited)
 	{
@@ -297,7 +275,7 @@ public class ProfileViewFragment extends Fragment implements
 			onUserUpdated();
 			
 		} else if(action.equals("get_picture") && !response.isNull("picture")) {
-			mPicture = decodePicture(response.optString("picture"));
+			mPicture = Util.decodePicture(response.optString("picture"));
 			onPictureUpdated();
 		}
 	}
@@ -313,7 +291,7 @@ public class ProfileViewFragment extends Fragment implements
 			onUserUpdated();
 			
 			if(mUser.has("picture")) {
-				mPicture = decodePicture(mUser.optString("picture"));
+				mPicture = Util.decodePicture(mUser.optString("picture"));
 				mUser.remove("picture");
 				onPictureUpdated();
 			}

@@ -17,6 +17,7 @@
     </style>
     
     <style name="ProfileItemTitleStyle" parent="@android:style/TextAppearance.Small">
+        <item name="android:id">@id/profile_item_title</item>
 		<item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">5dp</item>
@@ -26,6 +27,7 @@
         <item name="android:typeface">normal</item>
     </style>
     <style name="ProfileItemLayoutStyle">
+        <item name="android:id">@id/profile_item_layout</item>
         <item name="android:layout_width">fill_parent</item>
 	    <item name="android:layout_height">wrap_content</item>
 	    <item name="android:divider">@drawable/divider_horizontal</item>
@@ -33,10 +35,25 @@
 	    <item name="android:showDividers">middle</item>
     </style>
     <style name="ProfileItemEditTextStyle">
+        <item name="android:id">@id/profile_edit_value</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:freezesText">false</item>
     </style>
+    <style name="ProfileItemViewTextStyle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:id">@id/profile_view_value</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:autoLink">none</item>
+        <item name="android:background">@drawable/profile_view_item_selector</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:text">@string/placeholder</item>
+    </style>
+
 
 </resources>

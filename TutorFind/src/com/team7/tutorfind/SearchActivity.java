@@ -238,13 +238,13 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
     	case R.id.action_filter_by_distance:
-    		mAdapter.sort(new DistanceComparator());
+    		if(mAdapter != null) mAdapter.sort(new DistanceComparator());
     		break;
     	case R.id.action_filter_by_price:
-    		mAdapter.sort(new PriceComparator());
+    		if(mAdapter != null) mAdapter.sort(new PriceComparator());
     		break;
     	case R.id.action_filter_by_rating:
-    		mAdapter.sort(new ScoreComparator());
+    		if(mAdapter != null) mAdapter.sort(new ScoreComparator());
     		break;
     	case R.id.action_map:
     		if(mResults != null) {
