@@ -26,7 +26,8 @@
     <string name="error_connecting_to_server">Error: Could not connect to server</string>
     <string name="profile_edit_title">Please edit the following Categories</string>
     <string name="profile_placeholder">Profile Name Here</string>
-    <string name="placeholder">--text--</string>
+    <string name="placeholder">Loading&#8230;</string>
+    <string name="label_filter">Availability:</string>
     
     <string name="title_activity_profile_edit">My Profile</string>
     <string name="title_activity_profile_view">ProfileView</string>

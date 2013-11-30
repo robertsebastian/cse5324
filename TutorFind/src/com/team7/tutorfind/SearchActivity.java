@@ -1,7 +1,6 @@
 package com.team7.tutorfind;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -24,18 +23,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-public class SearchActivity extends TutorFindActivity implements OnItemClickListener
+public class SearchActivity extends TutorFindActivity implements OnItemClickListener, OnItemSelectedListener
 {
 	public static final String TAG = "search_activity";
 	public static final String SEARCH_QUERY = "com.team7.tutorfind.SEARCH_QUERY";
 	
 	private UserSummaryArrayAdapter mAdapter;
 	private JSONArray mResults;
+	private ArrayList<JSONObject> mDisplayedResults;
+	private Comparator<JSONObject> mComparator;
 	
 	// Array adapter to manage the search results ListView. Populates user
 	// summary views and handles sorting of the data set.
@@ -147,6 +150,17 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        
+ 		mDisplayedResults = new ArrayList<JSONObject>();    
+ 		mComparator = new DistanceComparator();
+		mAdapter = new UserSummaryArrayAdapter(this, mDisplayedResults);
+		
+		ListView list = (ListView)findViewById(R.id.search_results_list);		
+		list.setAdapter(mAdapter);
+		list.setOnItemClickListener(this);
+		
+		((Spinner)findViewById(R.id.day_filter)).setOnItemSelectedListener(this);
+		((Spinner)findViewById(R.id.time_filter)).setOnItemSelectedListener(this);
     }
 	
 	@Override
@@ -159,7 +173,6 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	protected void onResume() {
 		super.onResume();
 		Log.d(TAG, "RESUME");
-		//doSearch(getIntent().getStringExtra(SEARCH_QUERY));
 	}
 	
 	@Override
@@ -182,7 +195,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);
 		}
-		new DatabaseRequest(j, this, this);
+		new DatabaseRequest(j, this, this, false);
 	}
 
 	@Override
@@ -199,25 +212,33 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	}
 	
 	public void onNewResults() {
+		if(mResults == null) return;
+		
 		try {
-			ListView list = (ListView)findViewById(R.id.search_results_list);
+			// Build our availability filter mask
+			int day = ((Spinner)findViewById(R.id.day_filter)).getSelectedItemPosition();
+			int time = ((Spinner)findViewById(R.id.time_filter)).getSelectedItemPosition();
+			int dayMask[] = getResources().getIntArray(R.array.availability_days_mask);
+			int timeMask[] = getResources().getIntArray(R.array.availability_times_mask);
+			int filter = dayMask[day] & timeMask[time];
 			
 			// Build a list of results
-			ArrayList<JSONObject> results = new ArrayList<JSONObject>();
+			mDisplayedResults.clear();
 			for(int i = 0; i < mResults.length(); i++) {
-				results.add(mResults.getJSONObject(i));
+				JSONObject user = mResults.getJSONObject(i);
+				if((user.optInt("availability", 0xFFFFFFFF) & filter) != 0) {
+					mDisplayedResults.add(user);
+				}
 			}
-			
-			// Create new adapter using the list as its data source
-			Collections.sort(results, new DistanceComparator());
-			mAdapter = new UserSummaryArrayAdapter(this, results);
-			
-			list.setAdapter(mAdapter);
-			list.setOnItemClickListener(this);
-			
+			mAdapter.sort(mComparator);
+			mAdapter.notifyDataSetChanged();
 		} catch(JSONException e) {
 			Log.e("search", e.toString(), e);
 		}		
+	}
+	
+	private void onFilterChanged() {
+		if(mAdapter != null && mComparator != null) mAdapter.sort(mComparator);
 	}
 	
 	@Override
@@ -238,13 +259,16 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
     	case R.id.action_filter_by_distance:
-    		if(mAdapter != null) mAdapter.sort(new DistanceComparator());
+    		mComparator = new DistanceComparator();
+    		onFilterChanged();
     		break;
     	case R.id.action_filter_by_price:
-    		if(mAdapter != null) mAdapter.sort(new PriceComparator());
+    		mComparator = new PriceComparator();
+    		onFilterChanged();
     		break;
     	case R.id.action_filter_by_rating:
-    		if(mAdapter != null) mAdapter.sort(new ScoreComparator());
+    		mComparator = new ScoreComparator();
+    		onFilterChanged();
     		break;
     	case R.id.action_map:
     		if(mResults != null) {
@@ -256,5 +280,15 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     	}
     	
     	return true;
+    }
+    
+    @Override
+    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+        onNewResults();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parentView) {
+        onNewResults();
     }
 }

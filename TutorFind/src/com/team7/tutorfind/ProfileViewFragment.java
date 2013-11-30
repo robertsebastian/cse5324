@@ -82,7 +82,9 @@ public class ProfileViewFragment extends Fragment implements
 	// Find a profile item view with a given tag and set its text
 	private void setText(String tag, String text) {
 		ViewGroup item = (ViewGroup)getView().findViewWithTag(tag);
-		item.setVisibility(mUser.isNull(tag) ? View.GONE : View.VISIBLE);
+		
+		boolean isHidden = mUser.isNull(tag) || text.equals(""); 
+		item.setVisibility(isHidden ? View.GONE : View.VISIBLE);
 		
 		TextView textView = (TextView)item.findViewById(R.id.profile_view_value);
 		textView.setText(text);		
