@@ -137,6 +137,7 @@ public class ProfileViewFragment extends Fragment implements
 			setText("subject_tags");
 			setText("loc_address");
 			setText("price_per_hour", String.format(Locale.US, "$%.2f/hr", mUser.optDouble("price_per_hour", 999.0)));
+			setText("availability", Util.availabilityToString(mUser.optInt("availability", 0xFFFFFFFF), getActivity()));
 			setText("about_me");
 			setRating("rating");
 		}
@@ -217,7 +218,7 @@ public class ProfileViewFragment extends Fragment implements
 	// Handle edit item click
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getItemId() == R.id.action_profile_edit) {
+		if(item.getItemId() == R.id.action_profile_edit && mUser != null) {
 			Intent i = new Intent(getActivity(), ProfileEditActivity.class).putExtra("user", mUser.toString());
 			startActivityForResult(i, 0);
             return true;

@@ -45,23 +45,53 @@
     <string name="field_meeting_location">Meeting Location</string>
     <string name="field_rate">Rate</string>
     <string name="field_rating">Rating</string>
+    <string name="field_availability">Availability</string>
     
     <string name="hint_name">Your Name</string>
     <string name="hint_email">you@example.com</string>
     <string name="hint_phone">555-555-1234</string>
-    <string name="hint_about_me">Additional information about myself&amp;#8230;</string>
+    <string name="hint_about_me">Additional information about myself&#8230;</string>
     <string name="hint_subjects">Subject1, Subject2, CLASS-1234, &#8230;</string>
     <string name="hint_meeting_location">123 Somewhere St.\nSomewhere, TX 12345</string>
     <string name="hint_rate">$99.00/hr</string>
 
-    <string-array name="profile_items">
-        <item>Email</item>
-        <item>Phone Number</item>
-        <item>Meeting Location</item>
-        <item>Available Times</item>
-        <item>Price Rate</item>
-        <item>Bio Description</item>
+    <string-array name="availability_days">
+        <item>Any Day</item>
+        <item>Weekdays</item>
+        <item>Weekend</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
     </string-array>
+    <integer-array name="availability_days_mask">
+        <item>0x07777777</item>
+        <item>0x07777700</item>
+        <item>0x00000077</item>
+        <item>0x07000000</item>
+        <item>0x00700000</item>
+        <item>0x00070000</item>
+        <item>0x00007000</item>
+        <item>0x00000700</item>
+        <item>0x00000070</item>
+        <item>0x00000007</item>
+    </integer-array>
+    <string-array name="availability_times">
+        <item>Any Time</item>
+        <item>Morning</item>
+        <item>Afternoon</item>
+        <item>Evening</item>
+    </string-array>
+    <integer-array name="availability_times_mask">
+        <item>0x07777777</item>
+        <item>0x01111111</item>
+        <item>0x02222222</item>
+        <item>0x04444444</item>
+    </integer-array>
+    
     <string-array name="action_list">
         <item>@string/action_list_my_profile</item>
         <item>@string/action_list_favorites</item>
@@ -83,4 +113,5 @@
     <string name="advertisement">advertisement</string>
     <string name="action_edit_save">Save</string>
     <string name="action_edit_cancel">Discard</string>
+    <string name="action_add_day">Add Day</string>
 </resources>

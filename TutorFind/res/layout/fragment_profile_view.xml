@@ -79,6 +79,13 @@
 			    <TextView style="@style/ProfileItemViewTextStyle" />
 			</LinearLayout>
 			
+		<LinearLayout style="@style/ProfileItemLayoutStyle"
+			    android:tag="availability" >
+			    <TextView style="@style/ProfileItemTitleStyle"
+			        android:text="@string/field_availability" />
+				<TextView style="@style/ProfileItemViewTextStyle" />
+			</LinearLayout>
+						
 			<LinearLayout style="@style/ProfileItemLayoutStyle"
 			    android:tag="about_me" >
 			    <TextView style="@style/ProfileItemTitleStyle"

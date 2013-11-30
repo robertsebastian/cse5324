@@ -35,7 +35,7 @@
 	    <item name="android:showDividers">middle</item>
     </style>
     <style name="ProfileItemEditTextStyle">
-        <item name="android:id">@id/profile_edit_value</item>
+        <item name="android:tag">content</item>
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
