@@ -1,61 +1,67 @@
 package com.team7.tutorfind;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.location.Address;
-import android.location.Geocoder;
-import android.os.Bundle;
-import android.app.Activity;
-import android.util.Log;
-import android.view.Menu;
-
 public class MapActivity extends Activity {
+	private static final String TAG = "maps_activity";
+	
 	private GoogleMap map;
+	
+	ArrayList<JSONObject> mUsers;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.the_map)).getMap();
+
+		// Extract users list from intent parameters
+		try {
+			JSONArray userArr = new JSONArray(getIntent().getStringExtra("users"));
+			
+			mUsers = new ArrayList<JSONObject>();
+			for(int i = 0; i < userArr.length(); i++) {
+				mUsers.add((JSONObject)userArr.get(i));
+			}
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString(), e);
+		}
+
+		// Load markers for everybody in the user list with a position
+		LatLng defaultPos = null;
+		for(JSONObject user : mUsers) {
+			if(user.isNull("loc_lat") || user.isNull("loc_lon")) return;
+			
+			LatLng pos = new LatLng(user.optDouble("loc_lat"), user.optDouble("loc_lon"));
+			
+			if(defaultPos == null) defaultPos = pos; // First valid user is default position
+			
+			map.addMarker(new MarkerOptions()
+				.position(pos)
+				.title(user.optString("name")));
+		}
 		
-		Geocoder geoCoder = new Geocoder(this);
-		
-		try
-	    {
-			//Need to add input for the address here right here
-	    	List<Address> addressList = geoCoder.getFromLocationName("701 S Nedderman Dr, Arlington, TX 76019", 1);
-	    	Address address = addressList.get(0);
-	    	double lat = address.getLatitude();
-	    	double lon = address.getLongitude();
-	    	LatLng MyHouse = new LatLng(lat, lon);
-	    	addressList = geoCoder.getFromLocation(lat, lon, 1);
-	    	String addressname = addressList.get(0).getAddressLine(0);
-	    	String cityname = addressList.get(0).getAddressLine(1);
-	    	String countryname = addressList.get(0).getAddressLine(2);
-	    	
-	    	Marker myhouse = map.addMarker(new MarkerOptions().position(MyHouse).title(addressname+" "+cityname+" "+countryname));
-		    map.moveCamera(CameraUpdateFactory.newLatLngZoom(MyHouse, 17));
-	    }
-	    catch (IOException e)
-	    {
-	    	Log.i("Location fail", "Unable to resolve location");
-	    }
+		// Go to the first valid user in the list
+		if(defaultPos != null) {
+			CameraPosition p = new CameraPosition(defaultPos, 13.0f, 0.0f, 0.0f);
+			map.moveCamera(CameraUpdateFactory.newCameraPosition(p));
+		}
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.map, menu);
-//		return true;
-//	}
 
 }

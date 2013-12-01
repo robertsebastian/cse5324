@@ -14,6 +14,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -208,12 +210,28 @@ public class ProfileEditActivity extends Activity implements
 	// Handle actionbar menu actions
 	public void onSaveButton(MenuItem item) {
 		try {
+			// Look up the address field and add the lat/lon
+			if(!mUser.isNull("loc_address") && !mUser.optString("loc_address").isEmpty()) {
+				Geocoder g = new Geocoder(this, Locale.US);
+				List<Address> result = g.getFromLocationName(mUser.optString("loc_address"), 1);
+				
+				if(!result.isEmpty()) {
+					mUser.put("loc_lat", result.get(0).getLatitude());
+					mUser.put("loc_lon", result.get(0).getLongitude());
+					
+					Log.d(TAG, "Put lat: " + result.get(0).getLatitude());
+					Log.d(TAG, "Put lon: " + result.get(0).getLongitude());
+				}
+			}
+			
 			// Save all items to our user object and send it to the database
 			saveAllItems();
 			mUser.put("action", "update_user");
 			new DatabaseRequest(mUser, this, this, true);
 		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
+		} catch(IOException e) {
+			Log.e(TAG, e.toString(), e);
 		}
 	}
 	
