@@ -127,8 +127,8 @@ class DbTable:
 def geo_dist(lat1, lon1, lat2, lon2):
    """Calculate distance between two geographic points"""
    if not (lat1 and lon1 and lat2 and lon2): return float('inf')
-   dlon = lon2 - lon1 
-   dlat = lat2 - lat1 
+   dlon = (lon2 - lon1) * math.pi / 180.0
+   dlat = (lat2 - lat1) * math.pi / 180.0
    a = math.sin(dlat/2.0)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2.0)**2 
    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1.0-a)) 
    return 3963.1676 * c # Multiply by radius of earth to get distance
