@@ -119,8 +119,8 @@ public class ProfileViewFragment extends Fragment implements
 		getActivity().getActionBar().setTitle(mUser.optString("name"));		
 		
 		// Hide placeholder picture if user doesn't have one to load
-		if(!mUser.optBoolean("has_picture")) {
-			getView().findViewById(R.id.profilePicture).setVisibility(View.GONE);
+		if(mUser.optBoolean("has_picture")) {
+			getView().findViewById(R.id.profile_picture).setVisibility(View.VISIBLE);
 		}
 		
 		// Default to all views turned off
@@ -128,7 +128,7 @@ public class ProfileViewFragment extends Fragment implements
 		for(int i = 0; i < list.getChildCount(); i++) {
 			list.getChildAt(i).setVisibility(View.GONE);
 		}
-		
+
 		// Fill in view items
 		setText("public_email_address");
 		setText("phone");
@@ -155,10 +155,13 @@ public class ProfileViewFragment extends Fragment implements
 				new Intent(getActivity(), MapActivity.class).putExtra("users", mapUsers.toString()));
 		addAction(getView().findViewById(R.id.profile_view_item_rating_layout),
 				new Intent(getActivity(), ReviewActivity.class).putExtra("user_id", mUser.optInt("user_id")));
+		
+		// Show content list now that it's loaded
+		getView().findViewById(R.id.profile_content_list).setVisibility(View.VISIBLE);		
 	}
 	
 	private void onPictureUpdated() {
-		ImageView img = (ImageView)getView().findViewById(R.id.profilePicture);
+		ImageView img = (ImageView)getView().findViewById(R.id.profile_picture);
 		img.setImageBitmap(mPicture);
 	}
 	
@@ -171,6 +174,8 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
+		view.findViewById(R.id.profile_picture).setVisibility(View.GONE);
+		view.findViewById(R.id.profile_content_list).setVisibility(View.GONE);
 		return view;
 	}
 	

@@ -98,8 +98,6 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 			// Add session ID to request if available
 			requests[0].put("session_id", mSessionId);
 			
-			Log.d("DAT", "Connecting to " + mAddress + " " + mPort);
-			
 			// Open POST request
 			URL url = new URL("http", mAddress, mPort, "tutor_find_db.py");
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();

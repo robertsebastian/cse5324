@@ -37,8 +37,42 @@
 
     <ListView
         android:id="@+id/search_results_list"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
+
+    <RelativeLayout
+        android:id="@+id/empty_list_searching"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/empty_list_no_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/label_no_results"
+            android:enabled="false"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </RelativeLayout>
 
 </LinearLayout>

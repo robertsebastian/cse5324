@@ -158,22 +158,11 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		ListView list = (ListView)findViewById(R.id.search_results_list);		
 		list.setAdapter(mAdapter);
 		list.setOnItemClickListener(this);
+		list.setEmptyView(findViewById(R.id.empty_list_no_results));
 		
 		((Spinner)findViewById(R.id.day_filter)).setOnItemSelectedListener(this);
 		((Spinner)findViewById(R.id.time_filter)).setOnItemSelectedListener(this);
     }
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		Log.d(TAG, "SAVE STATE");
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.d(TAG, "RESUME");
-	}
 	
 	@Override
 	public void onStart() {
