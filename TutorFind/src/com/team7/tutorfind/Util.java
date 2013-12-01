@@ -1,5 +1,6 @@
 package com.team7.tutorfind;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,6 +42,13 @@ public class Util {
 	public static Bitmap decodePicture(String picture) {
 		byte[] pictureBytes = Base64.decode(picture.getBytes(), Base64.DEFAULT);
 		return BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
+	}
+	
+	public static String encodePicture(Bitmap picture) {
+	    ByteArrayOutputStream imgOut = new ByteArrayOutputStream();  
+	    picture.compress(Bitmap.CompressFormat.JPEG, 95, imgOut);
+	    byte[] imgBytes = imgOut.toByteArray();
+	    return Base64.encodeToString(imgBytes, Base64.DEFAULT);
 	}
 	
 	public static void setGroupEnabled(ViewGroup group, boolean enabled){

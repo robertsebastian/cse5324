@@ -1,5 +1,7 @@
 package com.team7.tutorfind;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -11,7 +13,10 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,6 +38,7 @@ public class ProfileEditActivity extends Activity implements
 	public static final String TAG = "profile_edit";
 	
 	private JSONObject mUser;
+	private Bitmap mPicture;
 	private List<Item> mCommonItems;
 	private List<Item> mTutorItems;
 
@@ -80,6 +87,7 @@ public class ProfileEditActivity extends Activity implements
 	public void loadAvailability() {
 		if(mUser.isNull("availability_string")) return;
 		
+		((ViewGroup)findViewById(R.id.availability_list)).removeAllViews();
 		for(int[] pair : Util.parseAvailability(mUser.optString("availability_string"))) {
 			addAvailabilityItem(pair[0], pair[1]);
 		}
@@ -141,8 +149,6 @@ public class ProfileEditActivity extends Activity implements
 	public void onUserUpdated() {
 		if(mUser == null) return;
 		
-		Util.resetViewId(); // Make sure everything gets the same ID as last time
-		
 		// Map to the profile view items in the layout
 		mCommonItems = addItemsFromLayout((ViewGroup)findViewById(R.id.common_list));
 		mTutorItems = addItemsFromLayout((ViewGroup)findViewById(R.id.tutor_list));
@@ -156,19 +162,35 @@ public class ProfileEditActivity extends Activity implements
 		Util.setGroupEnabled((ViewGroup)findViewById(R.id.tutor_list), mUser.optBoolean("tutor_flag"));
 	}
 	
+	public void onPictureUpdated() {
+		if(mPicture == null) return;
+		ImageButton img = (ImageButton)findViewById(R.id.profile_picture);
+		img.setImageBitmap(mPicture);
+		img.invalidate();
+		img.requestLayout();
+	}
+	
 	@Override
 	public void onStart()
 	{
 		super.onStart();
 
-		try {
-			mUser = new JSONObject(getIntent().getExtras().getString("user"));
-		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+		if(mUser == null) {
+			try {
+				mUser = new JSONObject(getIntent().getExtras().getString("user"));
+			} catch(JSONException e) {
+				Log.e(TAG, e.toString());
+			}
 		}
 		
+		if(!mUser.isNull("picture")) {
+			mPicture = Util.decodePicture(mUser.optString("picture"));
+		} else if(getIntent().getExtras().containsKey("picture")) {
+			mPicture = Util.decodePicture(getIntent().getExtras().getString("picture"));
+		}
 		
 		onUserUpdated();
+		onPictureUpdated();
 	}
 	
 	@Override
@@ -202,6 +224,54 @@ public class ProfileEditActivity extends Activity implements
 	public void addAvailabilityLine(View v) {
 		addAvailabilityItem(0, 0);
 	}
+		
+	public void onPictureClicked(View v) {
+		Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        
+        Uri fileUri = Uri.fromFile(new File(getExternalFilesDir(null), "temp.jpg"));
+	    i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+	    
+		startActivityForResult(i, 0);
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode != Activity.RESULT_OK) return;
+		
+		try {
+			// Load picture from camera and scale/crop it to at most 640x400
+			Uri imgFile = Uri.fromFile(new File(getExternalFilesDir(null), "temp.jpg"));
+			Bitmap img = MediaStore.Images.Media.getBitmap(getContentResolver(), imgFile);
+			
+			int newHeight = (int)((float)img.getHeight() / (float)img.getWidth() * 640.0f);
+			img = Bitmap.createScaledBitmap(img, 640, newHeight, true);
+			
+			if(img.getHeight() > 400) {
+				img = Bitmap.createBitmap(img, 0, (img.getHeight() - 400) / 2, img.getWidth(), 400);
+			}
+			
+			System.gc();
+			
+			Log.d(TAG, "Got picture");
+			
+			// Store picture with user
+			if(mUser != null) {
+				try {
+					mUser.put("picture", Util.encodePicture(img));
+					Log.d(TAG, mUser.toString());
+				} catch(JSONException e) {
+					Log.e(TAG, e.toString());
+				}
+			}
+			
+			// Show picture
+			Log.d(TAG, "Showing picture");
+			mPicture = img;
+			onPictureUpdated();
+		} catch(IOException e) {
+			Log.e(TAG, e.toString());
+		}
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -217,6 +287,16 @@ public class ProfileEditActivity extends Activity implements
 		
 		// If user successfully updated, return to calling activity
 		if(action.equals("update_user")) {
+			// Append picture if we have one
+			if(mPicture != null) {
+				try {
+					response.put("picture", Util.encodePicture(mPicture));
+				} catch(JSONException e) {
+					Log.e(TAG, e.toString(), e);
+				}
+			}
+			
+			// Send result to caller
 			Intent i = new Intent().putExtra("user", response.toString());
 			setResult(Activity.RESULT_OK, i);
 			finish();

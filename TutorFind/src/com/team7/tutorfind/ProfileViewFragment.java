@@ -53,12 +53,9 @@ public class ProfileViewFragment extends Fragment implements
 		return mUserId == ourUser;
 	}
 	
-	// Attach an ACTION_VIEW intent with a uri parameter. Used to handle phone,
-	// text, and e-mail address fields with the correct application
+	// Add an onClick event to a random view. Used to handle email, phone,
+	// SMS, and address clicks with the correct application
 	private void addAction(View v, final Intent intent) {
-		if(intent == null) return;
-		
-		v.setVisibility(View.VISIBLE);
 		v.setClickable(true);
 		v.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -212,7 +209,7 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-	
+		
 		mUserId = getArguments().getInt("user_id");
 		fetchUser();
 	}
@@ -221,7 +218,9 @@ public class ProfileViewFragment extends Fragment implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == R.id.action_profile_edit && mUser != null) {
-			Intent i = new Intent(getActivity(), ProfileEditActivity.class).putExtra("user", mUser.toString());
+			Intent i = new Intent(getActivity(), ProfileEditActivity.class);
+			i.putExtra("user", mUser.toString());
+			if(mPicture != null) i.putExtra("picture", Util.encodePicture(mPicture));
 			startActivityForResult(i, 0);
             return true;
 		}

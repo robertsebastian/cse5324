@@ -93,6 +93,7 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 	
 	// Make HTTP request to database
 	protected JSONObject doInBackground(JSONObject... requests) {
+		StringBuilder result = new StringBuilder();
 		try {
 			// Add session ID to request if available
 			requests[0].put("session_id", mSessionId);
@@ -113,7 +114,6 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 			InputStream in = conn.getInputStream();
 			
 			byte[] bytes = new byte[1000];
-			StringBuilder result = new StringBuilder();
 			int numRead = 0;
 			
 			while ((numRead = in.read(bytes)) >= 0) {
@@ -123,7 +123,7 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 			
 			return new JSONObject(result.toString());
 		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
+			Log.e(TAG, e.toString(), e);
 		} catch(MalformedURLException e) {
 			Log.e(TAG, e.toString());
 		} catch(IOException e) {
