@@ -95,6 +95,8 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		boolean aPreferred = a.optBoolean("preferred_flag");
 		boolean bPreferred = b.optBoolean("preferred_flag");
 		
+
+		
 		if(aPreferred && !bPreferred) return -1;
 		if(!aPreferred && bPreferred) return 1;
 		return ascending ? Double.compare(a.optDouble(key), b.optDouble(key)) :
