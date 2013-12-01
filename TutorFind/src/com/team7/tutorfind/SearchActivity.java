@@ -91,34 +91,35 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	}
 	
 	// User comparison function -- always sort preferred users to the top
-	static private int compareUser(String key, JSONObject a, JSONObject b) {
+	static private int compareUser(String key, JSONObject a, JSONObject b, boolean ascending) {
 		boolean aPreferred = a.optBoolean("preferred_flag");
 		boolean bPreferred = b.optBoolean("preferred_flag");
 		
 		if(aPreferred && !bPreferred) return -1;
 		if(!aPreferred && bPreferred) return 1;
-		return Double.compare(a.optDouble(key), b.optDouble(key));
+		return ascending ? Double.compare(a.optDouble(key), b.optDouble(key)) :
+						   Double.compare(b.optDouble(key), a.optDouble(key));
 	}
 	
 	// Comparison functions for sorting search results
 	private class DistanceComparator implements Comparator<JSONObject> {
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			return compareUser("distance", a, b);
+			return compareUser("distance", a, b, true);
 		}
 	}
 	
 	private class PriceComparator implements Comparator<JSONObject> {
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			return compareUser("price_per_hour", a, b);
+			return compareUser("price_per_hour", a, b, true);
 		}
 	}
 	
 	private class ScoreComparator implements Comparator<JSONObject> {
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			return compareUser("score", b, a);
+			return compareUser("score", a, b, false);
 		}
 	}
 	
