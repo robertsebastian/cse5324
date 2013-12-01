@@ -13,7 +13,7 @@ import time
 import re
 import base64
 
-cgitb.enable()
+cgitb.enable(logdir="error_logs")
 
 db_name = 'tutor.db'
 db      = None
@@ -22,8 +22,7 @@ db      = None
 class DbTable:
    """ Wrapper class to simplify common operations on a database table"""
 
-   DbVar = collections.namedtuple('DbVar', 'name editable type')
-
+   DbVar = collections.namedtuple('DbVar', 'name editable type') 
    def __init__(self, name, cols):
       self.name     = name
       self.cols     = [DbTable.DbVar._make(c) for c in cols]
@@ -437,8 +436,8 @@ def set_picture(req):
    session = validate_session(req)
 
    # Make sure user id doesn't already exist
-   already_present = pictures_table.count('user_id=?', [session.user_id]) > 0
-   if already_present:
+   picture = pictures_table.select_one('user_id=?', [session.user_id])
+   if picture:
       pictures_table.update(picture.row_id, {'picture': req['picture']})
    else:
       pictures_table.insert({'user_id': session.user_id, 'picture': req['picture']})
