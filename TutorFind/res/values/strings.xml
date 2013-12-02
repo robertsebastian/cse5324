@@ -29,6 +29,7 @@
     <string name="placeholder">Loading&#8230;</string>
     <string name="label_filter">Availability:</string>
     <string name="label_no_results">No Tutors Found</string>
+    <string name="label_no_reviews">No Reviews Yet</string>
     <string name="label_advertise_contact">Want more clients now? Contact us at ads@team7.dyndns.org to inquire about current advertising rates!</string>
     
     <string name="title_activity_profile_edit">My Profile</string>

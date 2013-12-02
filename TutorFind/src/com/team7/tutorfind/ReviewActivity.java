@@ -128,13 +128,14 @@ public class ReviewActivity extends TutorFindActivity
 					
 					// Make sure our review shows up first
 					reviews.add(0, reviewsArr.getJSONObject(i));
-				} else {
+				} else if(!review.isNull("text") && !review.optString("text").isEmpty()) {
 					reviews.add(reviewsArr.getJSONObject(i));
 				}
 			}
 			
 			// Create new adapter using the list as its data source
 			ListView list = (ListView)findViewById(R.id.reviews_list);
+			list.setEmptyView(findViewById(R.id.empty_list));
 			list.setAdapter(new ReviewArrayAdapter(this, reviews));
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);

@@ -314,7 +314,7 @@ public class ProfileEditActivity extends Activity implements
 		// If user successfully updated, return to calling activity
 		if(action.equals("update_user")) {
 			// Append picture if we have one
-			if(mPicture != null && mUser.optBoolean("picture_update")) {
+			if(mPicture != null && mUser.optBoolean("picture_updated")) {
 				try {
 					response.put("picture", Util.encodePicture(mPicture));
 				} catch(JSONException e) {

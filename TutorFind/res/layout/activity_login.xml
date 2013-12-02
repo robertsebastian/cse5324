@@ -54,7 +54,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#FF0000" />
+            android:textStyle="bold"
+            android:textColor="@color/login_error" />
 
         <LinearLayout
             android:layout_width="wrap_content"
