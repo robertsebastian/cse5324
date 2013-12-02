@@ -263,8 +263,13 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     		onFilterChanged();
     		break;
     	case R.id.action_map:
-    		if(mResults != null) {
-    			startActivity(new Intent(this, MapActivity.class).putExtra("users", mResults.toString()));
+    		if(mAdapter != null) {
+    			// Kick of maps activity with results that are actually displayed in the listview
+				JSONArray results = new JSONArray();
+				for(int i = 0; i < mAdapter.getCount(); i++) {
+					results.put((JSONObject)mAdapter.getItem(i));
+				}
+    			startActivity(new Intent(this, MapActivity.class).putExtra("users", results.toString()));
     		}
     		break;
     	default:
