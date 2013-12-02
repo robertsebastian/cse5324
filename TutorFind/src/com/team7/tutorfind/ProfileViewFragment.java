@@ -298,6 +298,8 @@ public class ProfileViewFragment extends Fragment implements
 			onUserUpdated();
 			
 			if(mUser.has("picture")) {
+				System.gc(); // Try to avoid having the system kill our activity
+				
 				mPicture = Util.decodePicture(mUser.optString("picture"));
 				mUser.remove("picture");
 				onPictureUpdated();

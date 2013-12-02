@@ -226,6 +226,11 @@ public class ProfileEditActivity extends Activity implements
 				}
 			}
 			
+			// Don't send picture if we didn't update it
+			if(!mUser.optBoolean("picture_updated")) {
+				mUser.remove("picture");
+			}
+			
 			// Save all items to our user object and send it to the database
 			saveAllItems();
 			mUser.put("action", "update_user");
@@ -277,6 +282,7 @@ public class ProfileEditActivity extends Activity implements
 			// Store picture with user
 			if(mUser != null) {
 				try {
+					mUser.put("picture_updated", true);
 					mUser.put("picture", Util.encodePicture(img));
 					Log.d(TAG, mUser.toString());
 				} catch(JSONException e) {
@@ -308,7 +314,7 @@ public class ProfileEditActivity extends Activity implements
 		// If user successfully updated, return to calling activity
 		if(action.equals("update_user")) {
 			// Append picture if we have one
-			if(mPicture != null) {
+			if(mPicture != null && mUser.optBoolean("picture_update")) {
 				try {
 					response.put("picture", Util.encodePicture(mPicture));
 				} catch(JSONException e) {
