@@ -140,6 +140,8 @@ public class ProfileEditActivity extends Activity implements
 	private List<Item> addItemsFromLayout(ViewGroup list) {
 		ArrayList<Item> items = new ArrayList<Item>();
 		for(int i = 0; i < list.getChildCount(); i++) {
+			if(!(list.getChildAt(i) instanceof ViewGroup)) continue;
+			
 			ViewGroup group = (ViewGroup)list.getChildAt(i);
 			if(group.findViewWithTag("content") != null) {
 				items.add(new Item(group));
