@@ -277,21 +277,17 @@ public class ProfileEditActivity extends Activity implements
 			
 			System.gc();
 			
-			Log.d(TAG, "Got picture");
-			
 			// Store picture with user
 			if(mUser != null) {
 				try {
 					mUser.put("picture_updated", true);
 					mUser.put("picture", Util.encodePicture(img));
-					Log.d(TAG, mUser.toString());
 				} catch(JSONException e) {
 					Log.e(TAG, e.toString());
 				}
 			}
 			
 			// Show picture
-			Log.d(TAG, "Showing picture");
 			mPicture = img;
 			onPictureUpdated();
 		} catch(IOException e) {

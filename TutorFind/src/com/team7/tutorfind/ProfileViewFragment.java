@@ -212,11 +212,11 @@ public class ProfileViewFragment extends Fragment implements
 
 	// Fill in user data if available, otherwise kick off request
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
-		mUserId = getArguments().getInt("user_id");
+	public void onStart() {
+		super.onStart();
+		mUserId = getArguments().getInt("user_id");		
 		fetchUser();
+		fetchPicture();		
 	}
 	
 	// Handle edit item click
@@ -240,15 +240,21 @@ public class ProfileViewFragment extends Fragment implements
 			userReq.put("action", "get_user");
 			userReq.put("user_id", mUserId);
 			new DatabaseRequest(userReq, this, getActivity(), false);
-			
+		} catch(JSONException e) {
+			Log.e(TAG, e.toString(), e);
+		}
+	}
+	
+	public void fetchPicture()
+	{
+		try {
 			JSONObject picReq = new JSONObject();
 			picReq.put("action", "get_picture");
 			picReq.put("user_id", mUserId);
 			new DatabaseRequest(picReq, this, getActivity(), false);
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString(), e);
-		}
-
+		}		
 	}
 	
 	// Send database request to set favorite status for the viewed user

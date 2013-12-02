@@ -145,7 +145,7 @@ public class ReviewActivity extends TutorFindActivity
 	@Override
 	public void onDatabaseResponse(JSONObject response) {
 		if(response == null) return;
-
+		
 		String action = response.optString("action");
 		if(action.equals("get_reviews")) {
 			// New reviews to post
