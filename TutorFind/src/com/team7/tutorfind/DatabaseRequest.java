@@ -71,20 +71,20 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 	private void attemptToHandleFromCache(JSONObject request) {
 		String action = request.optString("action");
 		
+		JSONObject result = null;
 		if(action.equals("get_user")) {
-			JSONObject user = CacheManager.get(mContext, "user", "user_id", request);
-			if(user != null) {
-				mListener.onDatabaseResponse(user);
-			}
+			result = CacheManager.get(mContext, action, "user_id", request);
 		} else if(action.equals("get_picture")) {
-			JSONObject picture = CacheManager.get(mContext, "picture", "user_id", request);
-			if(picture != null) {
-				mListener.onDatabaseResponse(picture);
-				try {
-					request.put("timestamp", picture.optInt("timestamp"));
-				} catch(JSONException e) {}
-			}
+			result = CacheManager.get(mContext, action, "user_id", request);
+			try {
+				// If we found a cached picture, tell the database how old it is
+				if(result != null) request.put("timestamp", result.optInt("timestamp"));
+			} catch(JSONException e) {}
+		} else if(action.equals("get_favorites")) {
+			result = CacheManager.get(mContext, action, null, request);
 		}
+		
+		if(result != null) mListener.onDatabaseResponse(result);
 	}
 	
 	@Override
@@ -158,9 +158,11 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 			// Cache requests
 			String action = response.optString("action");
 			if(action.equals("get_user") && response.has("user_id")) {
-				CacheManager.put(mContext, "user", "user_id", response);
+				CacheManager.put(mContext, action, "user_id", response);
 			} else if(action.equals("get_picture") && response.has("user_id")) {
-				CacheManager.put(mContext, "picture", "user_id", response);
+				CacheManager.put(mContext, action, "user_id", response);
+			} else if(action.equals("get_favorites")) {
+				CacheManager.put(mContext, action, null, response);
 			}
 		}
 		

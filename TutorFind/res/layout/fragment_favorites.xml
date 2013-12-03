@@ -1,44 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-
+    android:layout_height="match_parent" >
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <TextView
-        android:id="@+id/phonenumber_textbox"
+        android:id="@android:id/empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/lastname_textbox"
-        android:layout_below="@+id/lastname_textbox"
-        android:text="&lt;phone>" />
-
-    <TextView
-        android:id="@+id/email_textbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/phonenumber_textbox"
-        android:layout_alignBottom="@+id/phonenumber_textbox"
-        android:layout_marginLeft="30dp"
-        android:layout_toRightOf="@+id/phonenumber_textbox"
-        android:text="&lt;email>" />
-
-    <TextView
-        android:id="@+id/lastname_textbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="16dp"
-        android:text="&lt;last>" />
-
-    <ImageView
-        android:id="@+id/profile_view_item_message_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/phonenumber_textbox"
-        android:layout_toLeftOf="@+id/phonenumber_textbox"
-        android:src="@drawable/ic_launcher" />
-
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/label_no_favorites"
+        android:enabled="false"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 </RelativeLayout>
