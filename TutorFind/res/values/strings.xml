@@ -19,6 +19,8 @@
     <string name="pref_db_address_description">Address of database server</string>
     <string name="pref_db_port">Port</string>
     <string name="pref_db_port_description">Port of HTTP server at address</string>
+    <string name="pref_use_cache">Use cache</string>
+    <string name="pref_use_cache_description">Use experimental caching system</string>
     <string name="error_duplicate_user">Error: User already exists</string>
     <string name="error_invalid_password">Error: Password must contain at least 6 characters</string>
     <string name="error_invalid_login">Error: Invalid e-mail address</string>
@@ -103,9 +105,9 @@
 
     <string name="action_list_my_profile">My Profile</string>
     <string name="action_list_favorites">Favorites</string>
-    <string name="filter_by_distance">Distance</string>
-    <string name="filter_by_price">Price</string>
-    <string name="filter_by_rating">Rating</string>
+    <string name="filter_by_distance">By distance</string>
+    <string name="filter_by_price">By price</string>
+    <string name="filter_by_rating">By rating</string>
     <string name="action_filter">Filter</string>
     <string name="add_review_text">Add Review</string>
     <string name="showReviewsButton">Show Reviews</string>

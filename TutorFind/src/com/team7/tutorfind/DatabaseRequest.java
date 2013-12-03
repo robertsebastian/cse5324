@@ -33,36 +33,26 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 	protected Context mContext;
 	protected ProgressDialog mProgress;
 	protected boolean mShowProgress;
+	protected boolean mUseCache;
 	
 	public DatabaseRequest(JSONObject request, Listener listener, Context context) {
 		this(request, listener, context, true);
 	}
 	
 	public DatabaseRequest(JSONObject request, Listener listener, Context context, boolean showProgress) {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);		
+		
 		mListener = listener;
 		mContext = context;
 		mShowProgress = showProgress;
+		mUseCache = pref.getBoolean("pref_use_cache", true);
 		
-//		// Handle request from cache if possible
-//		String action = request.optString("action");
-//		if(action.equals("get_user")) {
-//			JSONObject user = CacheManager.get(context, "user", "user_id", request);
-//			if(user != null) {
-//				mListener.onDatabaseResponse(user);
-//				return;
-//			}
-//		} else if(action.equals("get_picture")) {
-//			JSONObject picture = CacheManager.get(context, "picture", "user_id", request);
-//			if(picture != null) {
-//				mListener.onDatabaseResponse(picture);
-//				return;
-//			}
-//		} else if(action.equals("update_user")) {
-//			CacheManager.del(context, "user", "user_id", request);
-//		}
+		// Immediately return cached data if possible
+		if(mUseCache) {
+			attemptToHandleFromCache(request);
+		}
 		
 		// Read address and port from preferences
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
 		mAddress = pref.getString("pref_db_address", "team7.dyndns.org");
 		mSessionId = pref.getString("session_id", null);
 		try {
@@ -73,6 +63,28 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 		
 		// Kick off request
 		execute(request);
+	}
+	
+	// Try to call onDatabaseResponse immediately with cached data if possible.
+	// onDatabaseResponse will be called again if fresh data is eventually
+	// received.
+	private void attemptToHandleFromCache(JSONObject request) {
+		String action = request.optString("action");
+		
+		if(action.equals("get_user")) {
+			JSONObject user = CacheManager.get(mContext, "user", "user_id", request);
+			if(user != null) {
+				mListener.onDatabaseResponse(user);
+			}
+		} else if(action.equals("get_picture")) {
+			JSONObject picture = CacheManager.get(mContext, "picture", "user_id", request);
+			if(picture != null) {
+				mListener.onDatabaseResponse(picture);
+				try {
+					request.put("timestamp", picture.optInt("timestamp"));
+				} catch(JSONException e) {}
+			}
+		}
 	}
 	
 	@Override
@@ -136,15 +148,21 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 			mProgress.dismiss();
 		}
 		
+		// Nothing to do if bad response
 		if(response == null) return;
 		
-//		// Cache requests
-//		String action = response.optString("action");
-//		if(action.equals("get_user") && response.has("user_id")) {
-//			CacheManager.put(mContext, "user", "user_id", response);
-//		} else if(action.equals("get_picture") && response.has("user_id")) {
-//			CacheManager.put(mContext, "picture", "user_id", response);
-//		}
+		if(mUseCache) {
+			// Nothing to do if request has already been satisfied by cache
+			if(response.optBoolean("cache_ok")) return;
+			
+			// Cache requests
+			String action = response.optString("action");
+			if(action.equals("get_user") && response.has("user_id")) {
+				CacheManager.put(mContext, "user", "user_id", response);
+			} else if(action.equals("get_picture") && response.has("user_id")) {
+				CacheManager.put(mContext, "picture", "user_id", response);
+			}
+		}
 		
 		mListener.onDatabaseResponse(response);
 	}

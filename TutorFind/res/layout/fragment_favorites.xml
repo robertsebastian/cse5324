@@ -14,14 +14,6 @@
         android:text="&lt;phone>" />
 
     <TextView
-        android:id="@+id/firstname_textbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/phonenumber_textbox"
-        android:layout_alignLeft="@+id/email_textbox"
-        android:text="&lt;first>" />
-
-    <TextView
         android:id="@+id/email_textbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -18,10 +18,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class FavoritesFragment extends ListFragment implements DatabaseRequest.Listener {
-	DatabaseRequest mDatabaseReq = null;
 	public static final String TAG = "favorites";
 
-    private ArrayList<Favorite> favoriteList;
+    private ArrayList<JSONObject> favoriteList;
     
    	private static AllFavorites allFavorites;
    	
@@ -43,16 +42,15 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 		JSONObject j = new JSONObject();
 		try {
 			j.put("action", "get_favorites");
-
 		} catch (JSONException e) {
-			Log.e("login", "Error handling JSON input");
+			Log.e(TAG, e.toString(), e);
 		}
 		new DatabaseRequest(j, this, context, false);
 	}
 	
-	private class FavoriteAdapter extends ArrayAdapter<Favorite> {
+	private class FavoriteAdapter extends ArrayAdapter<JSONObject> {
 
-		public FavoriteAdapter(ArrayList<Favorite> contacts) {
+		public FavoriteAdapter(ArrayList<JSONObject> contacts) {
 	    	
 	    		// An Adapter acts as a bridge between an AdapterView and the 
 				// data for that view. The Adapter also makes a View for each 
@@ -63,7 +61,7 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 				// android.R.layout.simple_list_item_1 is a predefined 
 				// layout provided by Android that stands in as a default
 	    	
-	            super(getActivity(), android.R.layout.simple_list_item_1, contacts);
+	            super(getActivity(), R.layout.fragment_favorites, contacts);
 	    }
 		
 		// getView is called each time it needs to display a new list item
@@ -90,29 +88,24 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 			
 			// Find the right data to put in the list item
 			
-			Favorite theFavorite = getItem(position);
+			JSONObject theFavorite = getItem(position);
 			
 			// Put the right data into the right components
 			
 			TextView lastNameTextView =
 	                (TextView)convertView.findViewById(R.id.lastname_textbox);
 			
-			lastNameTextView.setText(theFavorite.getLastName());
-			
-	        TextView firstNameView =
-	                (TextView)convertView.findViewById(R.id.firstname_textbox);
-	        
-	        firstNameView.setText(theFavorite.getfirstName());
+			lastNameTextView.setText(theFavorite.optString("name", ""));
 	        
 	        TextView phoneNumberView =
 	                (TextView)convertView.findViewById(R.id.phonenumber_textbox);
 	        
-	        phoneNumberView.setText(theFavorite.getPhoneNumber());
+	        phoneNumberView.setText(theFavorite.optString("phone", ""));
 	        
 	        TextView emailAddressView =
 	                (TextView)convertView.findViewById(R.id.email_textbox);
 	        
-	        emailAddressView.setText(theFavorite.getEmailAddress());
+	        emailAddressView.setText(theFavorite.optString("public_email_address", ""));
 			
 			// Return the finished list item for display
 			
@@ -136,100 +129,37 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 		return allFavorites;
 
 	}
-	public ArrayList<Favorite> getFavoriteList() {
+	public ArrayList<JSONObject> getFavoriteList() {
 		
 		return favoriteList;
 	}
 
 	public void onDatabaseResponse(JSONObject response) {
+		if(response == null || !response.optBoolean("success")) return;
 		
 		try {
-			if(response.getBoolean("success") && response.getString("action").equals("get_favorites")) {
+			if(response.getString("action").equals("get_favorites")) {
 				updateResults(response.getJSONArray("favorites"));
 			}
-			else if (response.getBoolean("success") && response.getString("action").equals("get_user"))
-			{
-				int userID = response.optInt("user_id", -1);
-				Intent i = new Intent(getActivity(), ProfileViewActivity.class);
-				i.putExtra("user_id", userID);
-				i.putExtra("user", response.toString());
-				startActivity(i);
-			}			
 		} catch(JSONException e) {
 			Log.e(TAG, e.toString());
 		} catch(NullPointerException e) {
 			Log.e(TAG, e.toString());
 		}
-		
-		/*favoriteList = new ArrayList<Favorite>();
-		Favorite paulSmith = new Favorite();
-
-		for (int i = 0; i < 5; i++) {
-			paulSmith.setLastName("Smith");
-			paulSmith.setfirstName("Paul");
-			paulSmith.setPhoneNumber("555-555-5555");
-			paulSmith.setEmailAddressy("paulsmith@example.com");
-			favoriteList.add(paulSmith);
-		}
-
-		Favorite dude9 = new Favorite();
-		dude9.setLastName("The");
-		dude9.setfirstName("End");
-		dude9.setPhoneNumber("555-555-5555");
-		dude9.setEmailAddressy("paulsmith1234567890@example.com");
-		favoriteList.add(dude9);
-		
-		FavoriteAdapter contactAdapter = new FavoriteAdapter(favoriteList);
-		
-		setListAdapter(contactAdapter);	
-
-		mDatabaseReq = null;*/
 	}
 	
 	public void updateResults(JSONArray resultArray) {
 		try {
-			favoriteList = new ArrayList<Favorite>();
+			favoriteList = new ArrayList<JSONObject>();
 						
 			// Build a list of results
-			int k = resultArray.length();
-			JSONObject results = new JSONObject();
 			for(int i = 0; i < resultArray.length(); i++) {
-				Favorite addFavorite = new Favorite();
-				results = resultArray.getJSONObject(i);
-				String userID = (String)results.getString("user_id");
-				addFavorite.setUserID(userID);
-				String Name = (String)results.get("name");
-				addFavorite.setLastName(Name);
-				if(results.getString("phone") != "null")
-				{
-					String phoneNumber = (String)results.getString("phone");
-					addFavorite.setPhoneNumber(phoneNumber);
-				}
-				String emailAddress = (String)results.get("public_email_address");
-				addFavorite.setEmailAddressy(emailAddress);
-				favoriteList.add(addFavorite);
+				favoriteList.add(resultArray.getJSONObject(i));
 			}
 			
 			favoriteAdapter = new FavoriteAdapter(favoriteList);
 			
 			setListAdapter(favoriteAdapter);	
-
-			mDatabaseReq = null;
-			
-			// Fill in available data
-			/*mapTextData(user, "name", R.id.profileNameText, R.id.profileNameText);
-			mapTextData(user, "public_email_address", R.id.viewEmailText, R.id.emailData);
-			mapTextData(user, "phone", R.id.viewPhoneText, R.id.phoneData);
-			mapTextData(user, "loc_address", R.id.viewMeetingText, R.id.meetingData);
-			mapTextData(null, R.id.viewTimesText, R.id.timesData);
-			mapTextData(user, "subject_tags", R.id.viewTagText, R.id.tagData);*/
-			
-			// Create new adapter using the list as its data source
-			/*Collections.sort(results, new DistanceComparator());
-			mAdapter = new UserSummaryArrayAdapter(this, results);
-			
-			list.setAdapter(mAdapter);
-			list.setOnItemClickListener(this);*/
 			
 		} catch(JSONException e) {
 			Log.e("search", e.toString());
@@ -238,17 +168,9 @@ public class FavoritesFragment extends ListFragment implements DatabaseRequest.L
 	
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
-	  
-	    JSONObject j = new JSONObject();
-	    Favorite favorite = favoriteAdapter.getItem(position);
-		String dude = favorite.getUserID();
-		int Num = Integer.parseInt(dude);
-	    try {
-			j.put("action", "get_user");
-			j.put("user_id", Num);
-		} catch(JSONException e) {
-			Log.e(TAG, e.toString());
-		}
-		new DatabaseRequest(j, this, getActivity());
+	    JSONObject favorite = favoriteAdapter.getItem(position);
+		Intent i = new Intent(getActivity(), ProfileViewActivity.class);
+		i.putExtra("user_id", favorite.optInt("user_id"));
+		startActivity(i);		
   }
 }
