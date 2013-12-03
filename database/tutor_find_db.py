@@ -12,6 +12,7 @@ import sys
 import time
 import re
 import base64
+from time import time
 
 cgitb.enable(logdir="error_logs")
 
@@ -182,6 +183,7 @@ favorites_table = DbTable('favorites', (
       ('subject_id',              True,  'integer')))
 pictures_table = DbTable('pictures', (
       ('row_id',                  False, 'integer primary key autoincrement'),
+      ('timestamp',               True,  'real'),
       ('user_id',                 False, 'integer'),
       ('picture',                 True,  'blob')))
 
@@ -380,8 +382,6 @@ def get_favorites(req):
       if not subject: continue
 
       subject = sanitize_user(session, subject)
-      subject['favorited'] = True
-      
       favorites.append(subject)
 
    return {'favorites': favorites}
@@ -438,9 +438,9 @@ def set_picture(req):
    # Make sure user id doesn't already exist
    picture = pictures_table.select_one('user_id=?', [session.user_id])
    if picture:
-      pictures_table.update(picture.row_id, {'picture': req['picture']})
+      pictures_table.update(picture.row_id, {'picture': req['picture'], 'timestamp': int(time())})
    else:
-      pictures_table.insert({'user_id': session.user_id, 'picture': req['picture']})
+      pictures_table.insert({'user_id': session.user_id, 'picture': req['picture'], 'timestamp': int(time())})
    db.commit()
 
    return {}
@@ -452,7 +452,9 @@ def get_picture(req):
    picture = pictures_table.select_one('user_id=?', [req['user_id']])
    if not picture:
       raise RequestError("no_picture")
-   return {'picture': picture.picture}
+   if 'timestamp' in req and req['timestamp'] == int(picture.timestamp):
+      return {'cache_ok': True}
+   return {'user_id': req['user_id'], 'picture': picture.picture, 'timestamp': int(picture.timestamp)}
 
 ################################################################################
 # Admin functions
@@ -497,8 +499,8 @@ def handle_request(req_str):
    # Make request
    try:
       result = request_table[req['action']].func(req)
-      result['success'] = True
-      result['action'] = req['action']
+      result['success']   = True
+      result['action']    = req['action']
       return json.dumps(result)
    except RequestError as e:
       return json.dumps({'success': False, 'error': e.args[0]})
