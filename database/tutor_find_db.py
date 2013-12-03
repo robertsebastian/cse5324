@@ -414,15 +414,21 @@ def search(req):
    """Search database for a tutor"""
    session = validate_session(req)
 
-   # First treat the query as a subject tag and search for that
+   # First treat the query as a subject tag or name and search for that
    query = normalize_search_string(req['query'])
    query_glob = '*%s*' % query
-
    results = users_table.select_many( """
       tutor_flag == 1 and (
          comp_tags(subject_tags_normalized, ?) or
          name_normalized glob ?
       )""", [query, query_glob])
+
+   # If it doesn't match subject tags or names, try to treat it as a location and search within 50 miles
+   if len(results) == 0 and 'query_lat' in req and 'query_lon' in req:
+      results = users_table.select_many(
+         "tutor_flag == 1 and geo_dist(loc_lat, loc_lon, ?, ?) < 50.0",
+         [req['query_lat'], req['query_lon']])
+
    results = [sanitize_user(session, u) for u in results]
 
    # Calculate distance from querying user
