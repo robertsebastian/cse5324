@@ -13,6 +13,7 @@ import time
 import re
 import base64
 from time import time
+from math import sin, cos, atan2, sqrt, radians
 
 cgitb.enable(logdir="error_logs")
 
@@ -128,11 +129,11 @@ class DbTable:
 def geo_dist(lat1, lon1, lat2, lon2):
    """Calculate distance between two geographic points"""
    if not (lat1 and lon1 and lat2 and lon2): return float('inf')
-   dlon = (lon2 - lon1) * math.pi / 180.0
-   dlat = (lat2 - lat1) * math.pi / 180.0
-   a = math.sin(dlat/2.0)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2.0)**2 
-   c = 2 * math.atan2(math.sqrt(a), math.sqrt(1.0-a)) 
-   return 3963.1676 * c # Multiply by radius of earth to get distance
+   dlat = radians(lat2 - lat1)
+   dlon = radians(lon2 - lon1)
+   a = sin(dlat/2.0)**2.0 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2.0)**2 
+   c = 2.0 * atan2(sqrt(a), sqrt(1.0-a)) 
+   return 3963.1676 * c # Multiply by radius of earth (miles) to get distance
 
 def comp_tags(tags1, tags2):
    """Check for overlap between two sets of tags"""
@@ -428,6 +429,10 @@ def search(req):
       results = users_table.select_many(
          "tutor_flag == 1 and geo_dist(loc_lat, loc_lon, ?, ?) < 50.0",
          [req['query_lat'], req['query_lon']])
+
+      # Make sure we calculate distance from search point
+      req['lat'] = req['query_lat']
+      req['lon'] = req['query_lon']
 
    results = [sanitize_user(session, u) for u in results]
 
