@@ -12,6 +12,7 @@ import sys
 import time
 import re
 import base64
+import smtplib
 from time import time
 from math import sin, cos, atan2, sqrt, radians
 
@@ -467,6 +468,40 @@ def get_picture(req):
       return {'cache_ok': True}
    return {'user_id': req['user_id'], 'picture': picture.picture, 'timestamp': int(picture.timestamp)}
 
+# Reset password and send e-mail informing them of new generated one
+def forgot_password(req):
+   user = users_table.select_one('account_email=?', [req['email']])
+
+   if not user: return {}
+
+   # Update with randomly generated password
+   new_pw = 'abc123' # TODO: Make random
+   new_pw_hash = hashlib.sha1(new_pw).hexdigest()
+   users_table.update(user.user_id, {'password_hash': new_pw_hash})
+   db.commit();
+   
+   # Send message notifying user of generated password
+   s = smtplib.SMTP_SSL('gator4053.hostgator.com', 465)
+   s.login('team7@team7.dyndns.org', '')
+   s.sendmail('team7@team7.dyndns.org', user.account_email, 
+      'From: team7@team7.dyndns.org\r\n'
+      'To: %s\r\n'
+      'Subject: Password Reset\r\n\r\n'
+      'Your password has been reset to "%s"' % (user.account_email, new_pw))
+   s.close()
+
+   return {}
+
+# Change password
+def change_password(req):
+   session = validate_session(req)
+
+   pw_hash = hashlib.sha1(req['password']).hexdigest()
+   users_table.update(session.user_id, {'password_hash': pw_hash})
+   db.commit();
+
+   return {}
+
 ################################################################################
 # Admin functions
 def set_preferred(user_id, flag):
@@ -478,17 +513,19 @@ def set_preferred(user_id, flag):
 # Table mapping request names to handler functions and required arguments
 RequestHandler = collections.namedtuple('RequestHandler', 'func required')
 request_table = {
-   'login':         RequestHandler(login,         set(['email', 'password'])),
-   'register':      RequestHandler(register,      set(['email', 'password'])),
-   'update_user':   RequestHandler(update_user,   set(['session_id'])),
-   'submit_review': RequestHandler(submit_review, set(['session_id', 'subject_id', 'score', 'text'])),
-   'get_user':      RequestHandler(get_user,      set(['session_id', 'user_id'])),
-   'get_reviews':   RequestHandler(get_reviews,   set(['session_id', 'subject_id'])),
-   'set_favorite':  RequestHandler(set_favorite,  set(['session_id', 'subject_id', 'favorited'])),
-   'get_favorites': RequestHandler(get_favorites, set(['session_id'])),
-   'set_picture':   RequestHandler(set_picture,   set(['session_id', 'picture'])),
-   'get_picture':   RequestHandler(get_picture,   set(['session_id', 'user_id'])),
-   'search':        RequestHandler(search,        set(['session_id', 'query', 'lat', 'lon'])),
+   'login':           RequestHandler(login,           set(['email', 'password'])),
+   'register':        RequestHandler(register,        set(['email', 'password'])),
+   'update_user':     RequestHandler(update_user,     set(['session_id'])),
+   'submit_review':   RequestHandler(submit_review,   set(['session_id', 'subject_id', 'score', 'text'])),
+   'get_user':        RequestHandler(get_user,        set(['session_id', 'user_id'])),
+   'get_reviews':     RequestHandler(get_reviews,     set(['session_id', 'subject_id'])),
+   'set_favorite':    RequestHandler(set_favorite,    set(['session_id', 'subject_id', 'favorited'])),
+   'get_favorites':   RequestHandler(get_favorites,   set(['session_id'])),
+   'set_picture':     RequestHandler(set_picture,     set(['session_id', 'picture'])),
+   'get_picture':     RequestHandler(get_picture,     set(['session_id', 'user_id'])),
+   'search':          RequestHandler(search,          set(['session_id', 'query', 'lat', 'lon'])),
+   'forgot_password': RequestHandler(forgot_password, set(['email'])),
+   'change_password': RequestHandler(change_password, set(['session_id', 'password'])),
 }
 
 ################################################################################
