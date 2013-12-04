@@ -4,6 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -46,6 +48,7 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 					errorText.setText(getString(R.string.error_invalid_password));
 				} else if(error.equals("login_failed")) {
 					errorText.setText(getString(R.string.error_login_failed));
+					findViewById(R.id.forgot_password_button).setVisibility(View.VISIBLE);
 				} else {
 					// Unknown error, just display text
 					errorText.setText(error);
@@ -71,6 +74,9 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 		// Clear out error text on new request
 		TextView errorText = (TextView)findViewById(R.id.login_error_text);
 		errorText.setText("");
+		
+		// Clear out reset button until an error shows up
+		findViewById(R.id.forgot_password_button).setVisibility(View.GONE);
 		
 		TextView login = (TextView)findViewById(R.id.login_field);
 		TextView password = (TextView)findViewById(R.id.password_field);
@@ -103,5 +109,18 @@ public class LoginActivity extends Activity implements DatabaseRequest.Listener 
 	public void onLoginButtonClicked(View v)
 	{
 		sendDatabaseRequest("login");
+	}
+	
+	public void onForgotPasswordButtonClicked(View v) {
+    	new AlertDialog.Builder(this)
+        .setTitle("Forgot password")
+        .setMessage("You will recieve an e-mail with your reset password.")
+        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            	sendDatabaseRequest("forgot_password");
+            }
+        })
+        .setNegativeButton(android.R.string.cancel, null)
+        .show();
 	}
 }

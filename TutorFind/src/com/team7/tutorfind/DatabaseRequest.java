@@ -108,7 +108,9 @@ public class DatabaseRequest extends AsyncTask<JSONObject, Void, JSONObject> imp
 		StringBuilder result = new StringBuilder();
 		try {
 			// Add session ID to request if available
-			requests[0].put("session_id", mSessionId);
+			if(mSessionId != null) {
+				requests[0].put("session_id", mSessionId);
+			}
 			
 			// Open POST request
 			URL url = new URL("http", mAddress, mPort, "tutor_find_db.py");
