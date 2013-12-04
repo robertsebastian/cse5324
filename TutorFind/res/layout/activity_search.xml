@@ -38,8 +38,9 @@
     <ListView
         android:id="@+id/search_results_list"
         android:visibility="visible"
+        android:divider="@null"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent" >
     </ListView>
 
     <RelativeLayout
@@ -69,8 +70,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="@string/label_no_results"
             android:enabled="false"
+            android:text="@string/label_no_results"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </RelativeLayout>

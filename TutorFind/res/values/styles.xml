@@ -54,6 +54,13 @@
         <item name="android:paddingTop">10dp</item>
         <item name="android:hint">@string/placeholder</item>
     </style>
-
+	
+    <style name="CardStyle">
+		<item name="android:layout_marginLeft">6dp</item>
+		<item name="android:layout_marginRight">6dp</item>
+		<item name="android:layout_marginTop">4dp</item>
+		<item name="android:layout_marginBottom">4dp</item>
+		<item name="android:background">@drawable/card</item>
+    </style>
 
 </resources>

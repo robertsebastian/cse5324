@@ -1,6 +1,8 @@
 package com.team7.tutorfind;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -11,10 +13,13 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,7 +51,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		private final List<JSONObject> mUsers;
 		
 		public UserSummaryArrayAdapter(Context context, List<JSONObject> users) {
-			super(context, R.layout.user_summary_row, users);
+			super(context, R.layout.search_result_row, users);
 			mUsers = users;
 		}
 		
@@ -63,14 +68,20 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 			String dist    = String.format(Locale.US, "%.1f mi", user.optDouble("distance", 999.0));
 			String reviews = String.format(Locale.US, "(%d)", user.optInt("num_reviews", 0));
 			
-			((TextView)v.findViewById(R.id.user_summary_name)).setText(name);
-			((TextView)v.findViewById(R.id.user_summary_price)).setText(price);
-			((TextView)v.findViewById(R.id.user_summary_distance)).setText(dist);
-			((TextView)v.findViewById(R.id.user_summary_num_reviews)).setText(reviews);
-			((RatingBar)v.findViewById(R.id.user_summary_score)).setRating(rating);
+			String subjectTags = user.isNull("subject_tags") ? "" : user.optString("subject_tags");
+			String subjectArr[] = TextUtils.split(subjectTags.toLowerCase(Locale.US), "\\s*,\\s*"); 
+			Arrays.sort(subjectArr, String.CASE_INSENSITIVE_ORDER);
+			String subjects = TextUtils.join("\n", subjectArr);
+			
+			((TextView)v.findViewById(R.id.name)).setText(name);
+			((TextView)v.findViewById(R.id.price)).setText(price);
+			((TextView)v.findViewById(R.id.distance)).setText(dist);
+			//((TextView)v.findViewById(R.id.subjects)).setText(subjects);
+			((TextView)v.findViewById(R.id.num_reviews)).setText(reviews);
+			((RatingBar)v.findViewById(R.id.score)).setRating(rating);
+			
 			
 			if(user.optBoolean("preferred_flag")) {
-				v.setBackgroundResource(R.color.search_result_preferred_background);
 				v.findViewById(R.id.advertisementText).setVisibility(View.VISIBLE);
 			} else {
 				v.setBackgroundResource(0);
@@ -82,7 +93,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View rowView = inflater.inflate(R.layout.user_summary_row, parent, false);
+			View rowView = inflater.inflate(R.layout.search_result_row, parent, false);
 			
 			fillUserSummary(mUsers.get(position), rowView);
 			
@@ -175,16 +186,26 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	
 	protected void doSearch(String query) {
 		JSONObject j = new JSONObject();
-		Location l = getLastLocation();
-		if(l != null) Log.d(TAG, l.toString());
+		
 		try {
-			Location loc = getLastLocation();	
-			
+			Location loc = getLastLocation();
+					
 			j.put("action", "search");
 			j.put("query", query);
 			j.put("lat", loc != null ? loc.getLatitude() : 32.715278);
 			j.put("lon", loc != null ? loc.getLongitude() : -97.016944);
+			
+			// If the search query can be converted into a location, add that
+			// in as a fall back search if subject/name fails
+			Geocoder g = new Geocoder(this, Locale.US);
+			List<Address> address = g.getFromLocationName(query, 1);			
+			if(address.size() > 0) {
+				j.put("query_lat", address.get(0).getLatitude());
+				j.put("query_lon", address.get(0).getLongitude());
+			}
 		} catch(JSONException e) {
+			Log.e(TAG, e.toString(), e);
+		} catch(IOException e) {
 			Log.e(TAG, e.toString(), e);
 		}
 		new DatabaseRequest(j, this, this, false);

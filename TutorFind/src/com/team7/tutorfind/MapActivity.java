@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -23,8 +24,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -61,24 +62,30 @@ public class MapActivity extends Activity implements InfoWindowAdapter, OnInfoWi
 		}
 
 		// Load markers for everybody in the user list with a position
-		Marker defaultMarker = null;
+		LatLngBounds.Builder points = new LatLngBounds.Builder();
 		for(JSONObject user : mUsers) {
 			if(user.isNull("loc_lat") || user.isNull("loc_lon")) return;	
 			
-			Marker mark = map.addMarker(new MarkerOptions()
-				.position(new LatLng(user.optDouble("loc_lat"), user.optDouble("loc_lon")))
-				.title(user.optString("name")));
+			LatLng loc = new LatLng(user.optDouble("loc_lat"), user.optDouble("loc_lon"));
+			Marker mark = map.addMarker(new MarkerOptions().position(loc).title(user.optString("name")));
 			mMarkerMap.put(mark.getId(), user);
 			
-			if(defaultMarker == null) defaultMarker = mark;
+			points.include(loc);
 		}
 		
-		// Go to the first valid user in the list
-		if(defaultMarker != null) {
-			CameraPosition p = new CameraPosition(defaultMarker.getPosition(), 13.0f, 0.0f, 0.0f);
-			map.moveCamera(CameraUpdateFactory.newCameraPosition(p));
-			defaultMarker.showInfoWindow();			
-		}
+		// Show all points as soon as the view is created
+		final LatLngBounds box = points.build();
+		final View mapView = findViewById(R.id.the_map);
+		mapView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
+		    @SuppressWarnings("deprecation")
+			@Override 
+		    public void onGlobalLayout() { 
+		        mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+				try {
+					map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 100));
+				} catch(IllegalStateException e) {}
+		    } 
+		});
 	}
 
 	// Show more detailed information for user pop-up
@@ -104,25 +111,13 @@ public class MapActivity extends Activity implements InfoWindowAdapter, OnInfoWi
 		
 		String name    = user.optString("name", "???");
 		String price   = String.format(Locale.US, "$%.2f/hr", user.optDouble("price_per_hour", 999.0));
-		String dist    = String.format(Locale.US, "%.1f mi", user.optDouble("distance", 999.0));
 		String reviews = String.format(Locale.US, "(%d)", user.optInt("num_reviews", 0));
 		
-		((TextView)info.findViewById(R.id.user_summary_name)).setText(name);
-		((TextView)info.findViewById(R.id.user_summary_price)).setText(price);
-		
-		// Don't show distance if we don't have it
-		if(!user.isNull("distance")) {
-			((TextView)info.findViewById(R.id.user_summary_distance)).setText(dist);
-		} else {
-			info.findViewById(R.id.user_summary_distance).setVisibility(View.GONE);
-		}
-		
-		((TextView)info.findViewById(R.id.user_summary_num_reviews)).setText(reviews);
-		((RatingBar)info.findViewById(R.id.user_summary_score)).setRating(rating);
+		((TextView)info.findViewById(R.id.name)).setText(name);
+		((TextView)info.findViewById(R.id.price)).setText(price);
+		((TextView)info.findViewById(R.id.num_reviews)).setText(reviews);
+		((RatingBar)info.findViewById(R.id.score)).setRating(rating);
 		info.setBackgroundResource(0);
-		
-		// No advertising here
-		info.findViewById(R.id.advertisementText).setVisibility(View.GONE);
 		
 		return info;
 	}

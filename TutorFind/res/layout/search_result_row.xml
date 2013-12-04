@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+	    style="@style/CardStyle"
+	    android:orientation="vertical"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:focusable="false"
+	    android:padding="5dp" >
+	
+	    <LinearLayout
+	        android:id="@+id/row_content"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	
+	        <TextView
+	            android:id="@+id/name"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:layout_gravity="center_vertical"
+	            android:text="&lt;name>"
+	            android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	        <LinearLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center_vertical"
+	            android:orientation="vertical"
+	            android:paddingRight="5dp" >
+	
+	            <LinearLayout
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="right" >
+	
+	                <RatingBar
+	                    android:id="@+id/score"
+	                    style="?android:attr/ratingBarStyleSmall"
+	                    android:layout_width="80dp"
+	                    android:layout_height="wrap_content"
+	                    android:layout_gravity="center_vertical"
+	                    android:max="5"
+	                    android:numStars="5"
+	                    android:stepSize="0.5" />
+	
+	                <TextView
+	                    android:id="@+id/num_reviews"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_gravity="center_vertical"
+	                    android:text="(0)"
+	                    android:textAppearance="?android:attr/textAppearanceSmall" />
+	            </LinearLayout>
+	
+	            <TextView
+	                android:id="@+id/price"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="right"
+	                android:text="$**/hr"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+	            <TextView
+	                android:id="@+id/distance"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="right"
+	                android:text="*** mi"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	        </LinearLayout>
+	
+	    </LinearLayout>
+	
+<!-- 	    <TextView -->
+<!-- 	        android:id="@+id/subjects" -->
+<!-- 	        android:layout_width="wrap_content" -->
+<!-- 	        android:layout_height="wrap_content" -->
+<!-- 	        android:textAppearance="?android:attr/textAppearanceSmall" /> -->
+	    <TextView
+	        android:id="@+id/advertisementText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBottom="@id/row_content"
+	        android:layout_centerHorizontal="true"
+	        android:text="@string/advertisement"
+	        android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:textColor="@color/advertisement"
+	        android:textSize="12sp" />	
+	</RelativeLayout>
+
+
+
+</LinearLayout>

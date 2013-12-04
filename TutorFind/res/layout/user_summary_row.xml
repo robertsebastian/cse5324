@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/user_summary_row"
+    android:id="@+id/row"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/user_summary_name"
+            android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -33,7 +33,7 @@
                 android:layout_gravity="right" >
 
                 <RatingBar
-                    android:id="@+id/user_summary_score"
+                    android:id="@+id/score"
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                     android:stepSize="0.5" />
 
                 <TextView
-                    android:id="@+id/user_summary_num_reviews"
+                    android:id="@+id/num_reviews"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -52,32 +52,14 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/user_summary_price"
+                android:id="@+id/price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:text="$**/hr"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/user_summary_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="*** mi"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/advertisementText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/advertisement"
-        android:textColor="@color/advertisement"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="12sp" />
 
 </LinearLayout>
