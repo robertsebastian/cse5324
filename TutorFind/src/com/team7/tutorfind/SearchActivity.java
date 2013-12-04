@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
@@ -40,14 +42,18 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	public static final String TAG = "search_activity";
 	public static final String SEARCH_QUERY = "com.team7.tutorfind.SEARCH_QUERY";
 	
+	private ListView mListView;
 	private UserSummaryArrayAdapter mAdapter;
 	private JSONArray mResults;
 	private ArrayList<JSONObject> mDisplayedResults;
 	private Comparator<JSONObject> mComparator;
 	
+	int mExpandedUser;
+	View mExpandedView;
+	
 	// Array adapter to manage the search results ListView. Populates user
 	// summary views and handles sorting of the data set.
-	private static class UserSummaryArrayAdapter extends ArrayAdapter<JSONObject> {
+	private class UserSummaryArrayAdapter extends ArrayAdapter<JSONObject> {
 		private final List<JSONObject> mUsers;
 		
 		public UserSummaryArrayAdapter(Context context, List<JSONObject> users) {
@@ -71,15 +77,14 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 			String subjectTags = user.isNull("subject_tags") ? "" : user.optString("subject_tags");
 			String subjectArr[] = TextUtils.split(subjectTags.toLowerCase(Locale.US), "\\s*,\\s*"); 
 			Arrays.sort(subjectArr, String.CASE_INSENSITIVE_ORDER);
-			String subjects = TextUtils.join("\n", subjectArr);
+			String subjects = " - " + TextUtils.join("\n - ", subjectArr);
 			
 			((TextView)v.findViewById(R.id.name)).setText(name);
 			((TextView)v.findViewById(R.id.price)).setText(price);
 			((TextView)v.findViewById(R.id.distance)).setText(dist);
-			//((TextView)v.findViewById(R.id.subjects)).setText(subjects);
+			((TextView)v.findViewById(R.id.subjects)).setText(subjects);
 			((TextView)v.findViewById(R.id.num_reviews)).setText(reviews);
 			((RatingBar)v.findViewById(R.id.score)).setRating(rating);
-			
 			
 			if(user.optBoolean("preferred_flag")) {
 				v.findViewById(R.id.advertisementText).setVisibility(View.VISIBLE);
@@ -87,17 +92,26 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 				v.setBackgroundResource(0);
 				v.findViewById(R.id.advertisementText).setVisibility(View.GONE);
 			}
+			
+			View expandView = v.findViewById(R.id.expander);
+			if(user.optInt("user_id") == mExpandedUser) {	
+				expandView.setVisibility(View.VISIBLE);
+				mExpandedView = expandView;
+			} else {
+				expandView.setVisibility(View.GONE);
+			}
 		}
 		
 		// Build the view for a given row position in the search results list
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View rowView = inflater.inflate(R.layout.search_result_row, parent, false);
-			
-			fillUserSummary(mUsers.get(position), rowView);
-			
-			return rowView;
+		public View getView(int position, View view, ViewGroup parent) {
+			if(view == null) {
+				LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				view = inflater.inflate(R.layout.search_result_row, null, false);
+			}
+			fillUserSummary(mUsers.get(position), view);
+
+			return view;
 		}
 	}
 	
@@ -138,13 +152,89 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		View v = view.findViewById(R.id.expander);
 		JSONObject user = mAdapter.getItem(position);
-		Intent i = new Intent(this, ProfileViewActivity.class);
-		i.putExtra("user_id", user.optInt("user_id", -1));
-		i.putExtra("user", user.toString());
-		startActivity(i);
+		
+		if(mExpandedView != null && mExpandedView != v) {
+			collapse(mExpandedView);
+			mExpandedUser = -1;
+			mExpandedView = null;
+		}
+
+		if(v.getVisibility() == View.GONE) {
+			expand(position, v);
+			mExpandedUser = user.optInt("user_id");
+			mExpandedView = v;
+		} else {
+			Intent i = new Intent(this, ProfileViewActivity.class);
+			i.putExtra("user_id", user.optInt("user_id", -1));
+			i.putExtra("user", user.toString());
+			startActivity(i);			
+		}
 	}
-	
+
+	private void expand(final int pos, View v) {
+		//set Visible
+		v.setVisibility(View.VISIBLE);
+
+		final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		v.measure(widthSpec, heightSpec);
+
+		ValueAnimator anim = slideAnimator(v, 0, v.getMeasuredHeight());
+		anim.addListener(new Animator.AnimatorListener() {
+			@Override
+			public void onAnimationEnd(Animator animator) {
+				mListView.smoothScrollToPosition(pos);
+			}
+
+			@Override
+			public void onAnimationCancel(Animator animation) {}
+			@Override
+			public void onAnimationRepeat(Animator animation) {}
+			@Override
+			public void onAnimationStart(Animator animation) {}
+		});	     
+		anim.start();
+	}
+
+	private void collapse(final View v) {
+		int finalHeight = v.getHeight();
+
+		ValueAnimator anim = slideAnimator(v, finalHeight, 0);
+		anim.addListener(new Animator.AnimatorListener() {
+			@Override
+			public void onAnimationEnd(Animator animator) {
+				v.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onAnimationCancel(Animator animation) {}
+			@Override
+			public void onAnimationRepeat(Animator animation) {}
+			@Override
+			public void onAnimationStart(Animator animation) {}
+		});
+		anim.start();
+	}
+
+	private ValueAnimator slideAnimator(final View v, int start, int end) {
+
+		ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+		animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator valueAnimator) {
+				//Update Height
+				int value = (Integer) valueAnimator.getAnimatedValue();
+				ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+				layoutParams.height = value;
+				v.setLayoutParams(layoutParams);
+			}
+		});
+		return animator;
+	}
+
 	// Get Simple method to grab the last known location. Warning: Can return null
 	protected Location getLastLocation()
 	{
@@ -169,10 +259,10 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
  		mComparator = new DistanceComparator();
 		mAdapter = new UserSummaryArrayAdapter(this, mDisplayedResults);
 		
-		ListView list = (ListView)findViewById(R.id.search_results_list);		
-		list.setAdapter(mAdapter);
-		list.setOnItemClickListener(this);
-		list.setEmptyView(findViewById(R.id.empty_list_no_results));
+		mListView = (ListView)findViewById(R.id.search_results_list);		
+		mListView.setAdapter(mAdapter);
+		mListView.setOnItemClickListener(this);
+		mListView.setEmptyView(findViewById(R.id.empty_list_no_results));
 		
 		((Spinner)findViewById(R.id.day_filter)).setOnItemSelectedListener(this);
 		((Spinner)findViewById(R.id.time_filter)).setOnItemSelectedListener(this);
@@ -284,7 +374,7 @@ public class SearchActivity extends TutorFindActivity implements OnItemClickList
     		onFilterChanged();
     		break;
     	case R.id.action_map:
-    		if(mAdapter != null) {
+    		if(mAdapter != null && !mAdapter.isEmpty()) {
     			// Kick of maps activity with results that are actually displayed in the listview
 				JSONArray results = new JSONArray();
 				for(int i = 0; i < mAdapter.getCount(); i++) {

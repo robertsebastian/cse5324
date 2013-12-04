@@ -241,18 +241,18 @@ containing a value of this type.
     }
     public static final class id {
         public static final int RelativeLayout1=0x7f060023;
-        public static final int action_add_review=0x7f06003c;
-        public static final int action_filter=0x7f06003d;
-        public static final int action_filter_by_distance=0x7f06003e;
-        public static final int action_filter_by_price=0x7f06003f;
-        public static final int action_filter_by_rating=0x7f060040;
-        public static final int action_logout=0x7f060037;
-        public static final int action_map=0x7f060041;
-        public static final int action_profile_edit=0x7f06003b;
-        public static final int action_search=0x7f060038;
-        public static final int action_settings=0x7f060036;
-        public static final int action_toggle_favorite=0x7f06003a;
-        public static final int advertisementText=0x7f060034;
+        public static final int action_add_review=0x7f06003e;
+        public static final int action_filter=0x7f06003f;
+        public static final int action_filter_by_distance=0x7f060040;
+        public static final int action_filter_by_price=0x7f060041;
+        public static final int action_filter_by_rating=0x7f060042;
+        public static final int action_logout=0x7f060039;
+        public static final int action_map=0x7f060043;
+        public static final int action_profile_edit=0x7f06003d;
+        public static final int action_search=0x7f06003a;
+        public static final int action_settings=0x7f060038;
+        public static final int action_toggle_favorite=0x7f06003c;
+        public static final int advertisementText=0x7f060036;
         public static final int availability_list=0x7f060016;
         public static final int comment=0x7f060022;
         public static final int common_list=0x7f060013;
@@ -262,6 +262,7 @@ containing a value of this type.
         public static final int empty_list=0x7f06001a;
         public static final int empty_list_no_results=0x7f06001f;
         public static final int empty_list_searching=0x7f06001e;
+        public static final int expander=0x7f060034;
         public static final int fragment_container=0x7f060010;
         public static final int hybrid=0x7f060004;
         public static final int imageButton1=0x7f060017;
@@ -293,13 +294,14 @@ containing a value of this type.
         public static final int rating_stars=0x7f06002e;
         public static final int register_button=0x7f06000f;
         public static final int reviews_list=0x7f060019;
-        public static final int row=0x7f060035;
+        public static final int row=0x7f060037;
         public static final int row_content=0x7f06002f;
         public static final int satellite=0x7f060002;
-        public static final int save=0x7f060039;
+        public static final int save=0x7f06003b;
         public static final int score=0x7f060030;
         public static final int search_results_list=0x7f06001d;
         public static final int starbutton=0x7f060009;
+        public static final int subjects=0x7f060035;
         public static final int terrain=0x7f060003;
         public static final int textView1=0x7f060018;
         public static final int textView2=0x7f060020;
