@@ -31,8 +31,7 @@
             android:background="@drawable/login_edit_box"
             android:ems="10"
             android:hint="@string/enter_login"
-            android:padding="5dp"
-            android:text="alice@example.org" >
+            android:padding="5dp" >
 
             <requestFocus />
         </EditText>
@@ -46,8 +45,7 @@
             android:ems="10"
             android:hint="@string/enter_password"
             android:inputType="textPassword"
-            android:padding="5dp"
-            android:text="password" />
+            android:padding="5dp" />
 
         <TextView
             android:id="@+id/login_error_text"
